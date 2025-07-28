@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """
-Training Data Generator and Model Trainer for AI Antivirus
+Training Data Generator and Model Trainer for AI Antivirus v4.X
 Creates dummy training data and trains the Random Forest model with proper validation.
 """
 
 import pandas as pd
 import numpy as np
 import pickle
+import matplotlib.pyplot as plt
+import seaborn as sns
 from pathlib import Path
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
@@ -22,6 +24,20 @@ import colorama
 from colorama import Fore, Style
 import logging
 from datetime import datetime
+import argparse
+import sys
+
+# Import our modules
+from config import (
+    MODEL_CONFIG, TRAINING_CONFIG, FEATURE_CONFIG, 
+    LOGS_DIR, MODEL_PATH, TRAINING_DATA_PATH,
+    SUSPICIOUS_EXTENSIONS, FILE_TYPE_CATEGORIES
+)
+from utils import (
+    get_entropy, get_file_type, get_filename_pattern_flags,
+    simulate_file_creation_randomness, calculate_file_complexity,
+    create_log_folders, print_colored
+)
 
 # Initialize colorama
 colorama.init(autoreset=True)
@@ -29,11 +45,10 @@ colorama.init(autoreset=True)
 
 def setup_logging():
     """Setup logging for model training metrics."""
-    logs_dir = Path("logs")
-    logs_dir.mkdir(exist_ok=True)
+    create_log_folders()
     
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    log_file = logs_dir / f"model_metrics_{timestamp}.txt"
+    log_file = LOGS_DIR / f"model_metrics_{timestamp}.txt"
     
     logging.basicConfig(
         level=logging.INFO,
@@ -46,9 +61,9 @@ def setup_logging():
     return log_file
 
 
-def create_training_data(output_path="model/training_data.csv"):
-    """Create comprehensive dummy training data for the AI model."""
-    print(f"{Fore.CYAN}📊 Creating training data...{Style.RESET_ALL}")
+def create_enhanced_training_data(output_path=TRAINING_DATA_PATH):
+    """Create comprehensive dummy training data with enhanced features."""
+    print_colored("📊 Creating enhanced training data...", Fore.CYAN)
     
     np.random.seed(42)  # For reproducible results
     data = []
@@ -89,46 +104,135 @@ def create_training_data(output_path="model/training_data.csv"):
         '.sys': (100, 10000),   # 100-10000 KB
     }
     
-    # Generate safe files
-    print(f"{Fore.GREEN}✅ Generating safe files...{Style.RESET_ALL}")
+    # Generate safe files with enhanced features
+    print_colored("✅ Generating safe files with enhanced features...", Fore.GREEN)
     for ext, (min_size, max_size) in safe_extensions.items():
-        for _ in range(20):  # Increased samples for better training
+        for i in range(25):  # Increased samples
             size = np.random.randint(min_size, max_size)
+            
+            # Generate realistic filename
+            filename = f"document_{i}_{ext[1:]}.{ext[1:]}"
+            
+            # Enhanced features
+            file_type = get_file_type(filename)
+            pattern_flags = get_filename_pattern_flags(filename)
+            entropy = np.random.uniform(3.0, 6.0)  # Lower entropy for safe files
+            complexity = np.random.uniform(0.2, 0.6)  # Lower complexity
+            creation_randomness = simulate_file_creation_randomness()
+            
             data.append({
                 'file_extension': ext,
                 'file_size_kb': size,
+                'filename': filename,
+                'file_type': file_type,
+                'entropy': entropy,
+                'complexity': complexity,
+                'creation_randomness': creation_randomness,
+                'contains_cheat': pattern_flags['contains_cheat'],
+                'contains_keygen': pattern_flags['contains_keygen'],
+                'contains_virus': pattern_flags['contains_virus'],
+                'contains_suspicious': pattern_flags['contains_suspicious'],
+                'has_random_chars': pattern_flags['has_random_chars'],
+                'is_hidden': pattern_flags['is_hidden'],
+                'has_multiple_extensions': pattern_flags['has_multiple_extensions'],
                 'is_malicious': 0
             })
     
-    # Generate suspicious files
-    print(f"{Fore.RED}⚠️ Generating suspicious files...{Style.RESET_ALL}")
+    # Generate suspicious files with enhanced features
+    print_colored("⚠️ Generating suspicious files with enhanced features...", Fore.RED)
     for ext, (min_size, max_size) in suspicious_extensions.items():
-        for _ in range(18):  # Increased samples for better training
+        for i in range(20):  # Increased samples
             size = np.random.randint(min_size, max_size)
+            
+            # Generate suspicious filename patterns
+            suspicious_names = [
+                f"free_cheats_{i}.{ext[1:]}",
+                f"keygen_crack_{i}.{ext[1:]}",
+                f"virus_trojan_{i}.{ext[1:]}",
+                f"hack_tool_{i}.{ext[1:]}",
+                f"malware_{i}.{ext[1:]}"
+            ]
+            filename = np.random.choice(suspicious_names)
+            
+            # Enhanced features
+            file_type = get_file_type(filename)
+            pattern_flags = get_filename_pattern_flags(filename)
+            entropy = np.random.uniform(6.0, 8.0)  # Higher entropy for suspicious files
+            complexity = np.random.uniform(0.7, 1.0)  # Higher complexity
+            creation_randomness = simulate_file_creation_randomness()
+            
             data.append({
                 'file_extension': ext,
                 'file_size_kb': size,
+                'filename': filename,
+                'file_type': file_type,
+                'entropy': entropy,
+                'complexity': complexity,
+                'creation_randomness': creation_randomness,
+                'contains_cheat': pattern_flags['contains_cheat'],
+                'contains_keygen': pattern_flags['contains_keygen'],
+                'contains_virus': pattern_flags['contains_virus'],
+                'contains_suspicious': pattern_flags['contains_suspicious'],
+                'has_random_chars': pattern_flags['has_random_chars'],
+                'is_hidden': pattern_flags['is_hidden'],
+                'has_multiple_extensions': pattern_flags['has_multiple_extensions'],
                 'is_malicious': 1
             })
     
-    # Add some edge cases
-    print(f"{Fore.YELLOW}🔍 Adding edge cases...{Style.RESET_ALL}")
+    # Add edge cases
+    print_colored("🔍 Adding edge cases with enhanced features...", Fore.YELLOW)
     
     # Small suspicious files (potential false negatives)
     for ext in ['.exe', '.bat', '.vbs', '.ps1']:
-        for _ in range(8):
+        for i in range(10):
+            size = np.random.randint(1, 10)
+            filename = f"small_suspicious_{i}.{ext[1:]}"
+            
+            file_type = get_file_type(filename)
+            pattern_flags = get_filename_pattern_flags(filename)
+            
             data.append({
                 'file_extension': ext,
-                'file_size_kb': np.random.randint(1, 10),
+                'file_size_kb': size,
+                'filename': filename,
+                'file_type': file_type,
+                'entropy': np.random.uniform(4.0, 7.0),
+                'complexity': np.random.uniform(0.5, 0.8),
+                'creation_randomness': simulate_file_creation_randomness(),
+                'contains_cheat': pattern_flags['contains_cheat'],
+                'contains_keygen': pattern_flags['contains_keygen'],
+                'contains_virus': pattern_flags['contains_virus'],
+                'contains_suspicious': pattern_flags['contains_suspicious'],
+                'has_random_chars': pattern_flags['has_random_chars'],
+                'is_hidden': pattern_flags['is_hidden'],
+                'has_multiple_extensions': pattern_flags['has_multiple_extensions'],
                 'is_malicious': 1
             })
     
     # Large safe files (potential false positives)
     for ext in ['.pdf', '.mp4', '.doc']:
-        for _ in range(8):
+        for i in range(10):
+            size = np.random.randint(10000, 50000)
+            filename = f"large_safe_{i}.{ext[1:]}"
+            
+            file_type = get_file_type(filename)
+            pattern_flags = get_filename_pattern_flags(filename)
+            
             data.append({
                 'file_extension': ext,
-                'file_size_kb': np.random.randint(10000, 50000),
+                'file_size_kb': size,
+                'filename': filename,
+                'file_type': file_type,
+                'entropy': np.random.uniform(2.0, 5.0),
+                'complexity': np.random.uniform(0.1, 0.4),
+                'creation_randomness': simulate_file_creation_randomness(),
+                'contains_cheat': pattern_flags['contains_cheat'],
+                'contains_keygen': pattern_flags['contains_keygen'],
+                'contains_virus': pattern_flags['contains_virus'],
+                'contains_suspicious': pattern_flags['contains_suspicious'],
+                'has_random_chars': pattern_flags['has_random_chars'],
+                'is_hidden': pattern_flags['is_hidden'],
+                'has_multiple_extensions': pattern_flags['has_multiple_extensions'],
                 'is_malicious': 0
             })
     
@@ -140,29 +244,49 @@ def create_training_data(output_path="model/training_data.csv"):
     output_path.parent.mkdir(exist_ok=True)
     df.to_csv(output_path, index=False)
     
-    print(f"{Fore.GREEN}📊 Training data created: {output_path}{Style.RESET_ALL}")
-    print(f"{Fore.CYAN}📈 Dataset statistics:{Style.RESET_ALL}")
+    print_colored(f"📊 Enhanced training data created: {output_path}", Fore.GREEN)
+    print_colored("📈 Enhanced dataset statistics:", Fore.CYAN)
     print(f"   Total samples: {len(df)}")
     print(f"   Safe files: {len(df[df['is_malicious'] == 0])}")
     print(f"   Suspicious files: {len(df[df['is_malicious'] == 1])}")
     print(f"   Unique extensions: {df['file_extension'].nunique()}")
+    print(f"   Features included: {list(df.columns)}")
     
     return df
 
 
-def prepare_features(df):
-    """Prepare features for model training."""
+def prepare_enhanced_features(df):
+    """Prepare enhanced features for model training."""
     # Convert extensions to numerical features (one-hot encoding)
     extension_dummies = pd.get_dummies(df['file_extension'], prefix='ext')
     
-    # Combine features
-    X = pd.concat([extension_dummies, df[['file_size_kb']]], axis=1)
+    # Convert file types to numerical features
+    file_type_dummies = pd.get_dummies(df['file_type'], prefix='type')
+    
+    # Convert boolean features to numerical
+    boolean_features = [
+        'contains_cheat', 'contains_keygen', 'contains_virus', 
+        'contains_suspicious', 'has_random_chars', 'is_hidden', 
+        'has_multiple_extensions'
+    ]
+    
+    # Combine all features
+    feature_columns = [
+        'file_size_kb', 'entropy', 'complexity', 'creation_randomness'
+    ] + boolean_features
+    
+    X = pd.concat([
+        extension_dummies,
+        file_type_dummies,
+        df[feature_columns]
+    ], axis=1)
+    
     y = df['is_malicious']
     
     return X, y
 
 
-def evaluate_model(model, X_test, y_test, y_pred):
+def evaluate_model(model, X_test, y_test, y_pred, split_name="Test"):
     """Evaluate model performance with comprehensive metrics."""
     # Calculate metrics
     accuracy = accuracy_score(y_test, y_pred)
@@ -178,13 +302,14 @@ def evaluate_model(model, X_test, y_test, y_pred):
         'precision': precision,
         'recall': recall,
         'f1_score': f1,
-        'confusion_matrix': cm
+        'confusion_matrix': cm,
+        'split_name': split_name
     }
 
 
-def print_metrics(metrics, split_name="Test"):
-    """Print formatted metrics."""
-    print(f"\n{Fore.CYAN}📊 {split_name} Set Performance:{Style.RESET_ALL}")
+def print_enhanced_metrics(metrics, split_name="Test"):
+    """Print formatted enhanced metrics."""
+    print_colored(f"\n📊 {split_name} Set Performance:", Fore.CYAN)
     print(f"   Accuracy:  {metrics['accuracy']:.3f} ({metrics['accuracy']:.1%})")
     print(f"   Precision: {metrics['precision']:.3f} ({metrics['precision']:.1%})")
     print(f"   Recall:    {metrics['recall']:.3f} ({metrics['recall']:.1%})")
@@ -192,16 +317,41 @@ def print_metrics(metrics, split_name="Test"):
     
     # Confusion matrix
     cm = metrics['confusion_matrix']
-    print(f"\n{Fore.MAGENTA}📋 Confusion Matrix ({split_name}):{Style.RESET_ALL}")
+    print_colored(f"\n📋 Confusion Matrix ({split_name}):", Fore.MAGENTA)
     print(f"                Predicted")
     print(f"                Safe  Suspicious")
     print(f"Actual Safe     {cm[0,0]:4d} {cm[0,1]:10d}")
     print(f"      Suspicious {cm[1,0]:4d} {cm[1,1]:10d}")
 
 
-def log_metrics(metrics, split_name, log_file):
-    """Log metrics to file."""
-    logging.info(f"=== {split_name} SET METRICS ===")
+def save_confusion_matrix_plot(cm, split_name, log_file):
+    """Save confusion matrix as PNG image."""
+    try:
+        plt.figure(figsize=(8, 6))
+        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', 
+                   xticklabels=['Safe', 'Suspicious'],
+                   yticklabels=['Safe', 'Suspicious'])
+        plt.title(f'Confusion Matrix - {split_name} Set')
+        plt.ylabel('Actual')
+        plt.xlabel('Predicted')
+        
+        # Save to logs directory
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        plot_path = LOGS_DIR / f"confusion_matrix_{split_name.lower()}_{timestamp}.png"
+        plt.savefig(plot_path, dpi=300, bbox_inches='tight')
+        plt.close()
+        
+        print_colored(f"📊 Confusion matrix saved: {plot_path}", Fore.GREEN)
+        logging.info(f"Confusion matrix plot saved: {plot_path}")
+        
+    except Exception as e:
+        print_colored(f"⚠️ Could not save confusion matrix plot: {e}", Fore.YELLOW)
+
+
+def log_enhanced_metrics(metrics, log_file):
+    """Log enhanced metrics to file."""
+    split_name = metrics['split_name']
+    logging.info(f"=== {split_name.upper()} SET METRICS ===")
     logging.info(f"Accuracy: {metrics['accuracy']:.3f} ({metrics['accuracy']:.1%})")
     logging.info(f"Precision: {metrics['precision']:.3f} ({metrics['precision']:.1%})")
     logging.info(f"Recall: {metrics['recall']:.3f} ({metrics['recall']:.1%})")
@@ -212,7 +362,7 @@ def log_metrics(metrics, split_name, log_file):
 
 def check_overfitting(train_metrics, test_metrics):
     """Check for overfitting by comparing train and test metrics."""
-    print(f"\n{Fore.YELLOW}🔍 Overfitting Analysis:{Style.RESET_ALL}")
+    print_colored("\n🔍 Overfitting Analysis:", Fore.YELLOW)
     
     accuracy_diff = train_metrics['accuracy'] - test_metrics['accuracy']
     f1_diff = train_metrics['f1_score'] - test_metrics['f1_score']
@@ -227,87 +377,110 @@ def check_overfitting(train_metrics, test_metrics):
     
     # Overfitting assessment
     if accuracy_diff > 0.05 or f1_diff > 0.05:
-        print(f"{Fore.RED}⚠️  WARNING: Potential overfitting detected!{Style.RESET_ALL}")
+        print_colored("⚠️  WARNING: Potential overfitting detected!", Fore.RED)
         print(f"   Consider reducing model complexity or adding more training data.")
     elif accuracy_diff > 0.02 or f1_diff > 0.02:
-        print(f"{Fore.YELLOW}⚠️  Minor overfitting detected.{Style.RESET_ALL}")
+        print_colored("⚠️  Minor overfitting detected.", Fore.YELLOW)
     else:
-        print(f"{Fore.GREEN}✅ No significant overfitting detected.{Style.RESET_ALL}")
+        print_colored("✅ No significant overfitting detected.", Fore.GREEN)
 
 
-def train_model(training_data_path="model/training_data.csv", model_path="model/model.pkl"):
-    """Train the Random Forest model with proper validation."""
-    print(f"{Fore.CYAN}🧠 Training AI model with validation...{Style.RESET_ALL}")
+def print_model_info(model, feature_names):
+    """Print detailed model information."""
+    print_colored("\n🧠 Model Information:", Fore.CYAN)
+    print(f"   Model Type: Random Forest Classifier")
+    print(f"   Estimators: {model.n_estimators}")
+    print(f"   Max Depth: {model.max_depth}")
+    print(f"   Min Samples Split: {model.min_samples_split}")
+    print(f"   Min Samples Leaf: {model.min_samples_leaf}")
+    print(f"   Total Features: {len(feature_names)}")
+    
+    # Feature importance
+    feature_importance = pd.DataFrame({
+        'feature': feature_names,
+        'importance': model.feature_importances_
+    }).sort_values('importance', ascending=False)
+    
+    print_colored("\n🔍 Top 10 Most Important Features:", Fore.BLUE)
+    for i, (_, row) in enumerate(feature_importance.head(10).iterrows()):
+        print(f"   {i+1:2d}. {row['feature']:<25} {row['importance']:.3f}")
+    
+    # Model statistics
+    print_colored("\n📊 Model Statistics:", Fore.MAGENTA)
+    print(f"   Feature Names: {list(feature_names)}")
+    print(f"   Classes: {model.classes_}")
+    print(f"   N Features: {model.n_features_in_}")
+    print(f"   N Outputs: {model.n_outputs_}")
+
+
+def train_enhanced_model(training_data_path=TRAINING_DATA_PATH, model_path=MODEL_PATH):
+    """Train the Random Forest model with enhanced features and proper validation."""
+    print_colored("🧠 Training AI model with enhanced features and validation...", Fore.CYAN)
     
     # Setup logging
     log_file = setup_logging()
-    logging.info("=== AI ANTIVIRUS MODEL TRAINING ===")
+    logging.info("=== AI ANTIVIRUS v4.X MODEL TRAINING ===")
     logging.info(f"Training started at: {datetime.now()}")
     
     # Load training data
     df = pd.read_csv(training_data_path)
     logging.info(f"Loaded {len(df)} training samples")
     
-    # Prepare features
-    X, y = prepare_features(df)
+    # Prepare enhanced features
+    X, y = prepare_enhanced_features(df)
     
-    print(f"{Fore.BLUE}📊 Feature matrix shape: {X.shape}{Style.RESET_ALL}")
-    print(f"{Fore.BLUE}📊 Target vector shape: {y.shape}{Style.RESET_ALL}")
+    print_colored(f"📊 Enhanced feature matrix shape: {X.shape}", Fore.BLUE)
+    print_colored(f"📊 Target vector shape: {y.shape}", Fore.BLUE)
     
-    # Split data with 75% train / 25% test
+    # Split data with proper validation
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.25, random_state=42, shuffle=True, stratify=y
+        X, y, 
+        test_size=TRAINING_CONFIG['test_size'], 
+        random_state=TRAINING_CONFIG['random_state'], 
+        shuffle=TRAINING_CONFIG['shuffle'], 
+        stratify=y if TRAINING_CONFIG['stratify'] else None
     )
     
-    print(f"{Fore.GREEN}📈 Training set size: {len(X_train)} (75%){Style.RESET_ALL}")
-    print(f"{Fore.GREEN}📊 Test set size: {len(X_test)} (25%){Style.RESET_ALL}")
+    print_colored(f"📈 Training set size: {len(X_train)} ({100-TRAINING_CONFIG['test_size']*100:.0f}%)", Fore.GREEN)
+    print_colored(f"📊 Test set size: {len(X_test)} ({TRAINING_CONFIG['test_size']*100:.0f}%)", Fore.GREEN)
     
     logging.info(f"Train set: {len(X_train)} samples, Test set: {len(X_test)} samples")
     
-    # Train model
-    model = RandomForestClassifier(
-        n_estimators=150,
-        max_depth=10,
-        min_samples_split=5,
-        min_samples_leaf=2,
-        random_state=42
-    )
+    # Train model with enhanced parameters
+    model = RandomForestClassifier(**MODEL_CONFIG)
     
-    print(f"{Fore.YELLOW}🔄 Training Random Forest model...{Style.RESET_ALL}")
+    print_colored("🔄 Training Random Forest model with enhanced features...", Fore.YELLOW)
     model.fit(X_train, y_train)
     
     # Evaluate on training set
     y_train_pred = model.predict(X_train)
-    train_metrics = evaluate_model(model, X_train, y_train, y_train_pred)
+    train_metrics = evaluate_model(model, X_train, y_train, y_train_pred, "Training")
     
     # Evaluate on test set
     y_test_pred = model.predict(X_test)
-    test_metrics = evaluate_model(model, X_test, y_test, y_test_pred)
+    test_metrics = evaluate_model(model, X_test, y_test, y_test_pred, "Test")
     
     # Print results
-    print_metrics(train_metrics, "Training")
-    print_metrics(test_metrics, "Test")
+    print_enhanced_metrics(train_metrics, "Training")
+    print_enhanced_metrics(test_metrics, "Test")
     
     # Log metrics
-    log_metrics(train_metrics, "TRAINING", log_file)
-    log_metrics(test_metrics, "TEST", log_file)
+    log_enhanced_metrics(train_metrics, log_file)
+    log_enhanced_metrics(test_metrics, log_file)
+    
+    # Save confusion matrix plots
+    save_confusion_matrix_plot(train_metrics['confusion_matrix'], "Training", log_file)
+    save_confusion_matrix_plot(test_metrics['confusion_matrix'], "Test", log_file)
     
     # Check for overfitting
     check_overfitting(train_metrics, test_metrics)
     
     # Detailed classification report
-    print(f"\n{Fore.MAGENTA}📋 Detailed Classification Report (Test Set):{Style.RESET_ALL}")
+    print_colored("\n📋 Detailed Classification Report (Test Set):", Fore.MAGENTA)
     print(classification_report(y_test, y_test_pred, target_names=['Safe', 'Suspicious']))
     
-    # Feature importance
-    feature_importance = pd.DataFrame({
-        'feature': model.feature_names_in_,
-        'importance': model.feature_importances_
-    }).sort_values('importance', ascending=False)
-    
-    print(f"\n{Fore.BLUE}🔍 Top 10 Most Important Features:{Style.RESET_ALL}")
-    for i, (_, row) in enumerate(feature_importance.head(10).iterrows()):
-        print(f"   {i+1:2d}. {row['feature']:<20} {row['importance']:.3f}")
+    # Print model information
+    print_model_info(model, model.feature_names_in_)
     
     # Save model
     model_path = Path(model_path)
@@ -316,48 +489,48 @@ def train_model(training_data_path="model/training_data.csv", model_path="model/
     with open(model_path, 'wb') as f:
         pickle.dump(model, f)
     
-    print(f"{Fore.GREEN}💾 Model saved to: {model_path}{Style.RESET_ALL}")
-    logging.info(f"Model saved to: {model_path}")
+    print_colored(f"💾 Enhanced model saved to: {model_path}", Fore.GREEN)
+    logging.info(f"Enhanced model saved to: {model_path}")
     
     # Final summary
-    print(f"\n{Fore.GREEN}🎉 Model Training Complete!{Style.RESET_ALL}")
-    print(f"{Fore.CYAN}📊 Final Test Accuracy: {test_metrics['accuracy']:.1%}{Style.RESET_ALL}")
+    print_colored("\n🎉 Enhanced Model Training Complete!", Fore.GREEN)
+    print_colored(f"📊 Final Test Accuracy: {test_metrics['accuracy']:.1%}", Fore.CYAN)
     
     return model, test_metrics
 
 
-def test_model(model_path="model/model.pkl"):
-    """Test the trained model with sample files."""
-    print(f"{Fore.CYAN}🧪 Testing model with sample files...{Style.RESET_ALL}")
+def test_enhanced_model(model_path=MODEL_PATH):
+    """Test the trained enhanced model with sample files."""
+    print_colored("🧪 Testing enhanced model with sample files...", Fore.CYAN)
     
     # Load model
     with open(model_path, 'rb') as f:
         model = pickle.load(f)
     
-    # Test cases
+    # Test cases with enhanced features
     test_cases = [
-        {'extension': '.exe', 'size_kb': 500, 'expected': 'Suspicious'},
-        {'extension': '.txt', 'size_kb': 10, 'expected': 'Safe'},
-        {'extension': '.bat', 'size_kb': 5, 'expected': 'Suspicious'},
-        {'extension': '.pdf', 'size_kb': 2000, 'expected': 'Safe'},
-        {'extension': '.vbs', 'size_kb': 50, 'expected': 'Suspicious'},
-        {'extension': '.jpg', 'size_kb': 100, 'expected': 'Safe'},
-        {'extension': '.ps1', 'size_kb': 150, 'expected': 'Suspicious'},
-        {'extension': '.dll', 'size_kb': 2000, 'expected': 'Suspicious'},
+        {'extension': '.exe', 'size_kb': 500, 'filename': 'free_cheats.exe', 'expected': 'Suspicious'},
+        {'extension': '.txt', 'size_kb': 10, 'filename': 'document.txt', 'expected': 'Safe'},
+        {'extension': '.bat', 'size_kb': 5, 'filename': 'keygen_crack.bat', 'expected': 'Suspicious'},
+        {'extension': '.pdf', 'size_kb': 2000, 'filename': 'document.pdf', 'expected': 'Safe'},
+        {'extension': '.vbs', 'size_kb': 50, 'filename': 'virus_trojan.vbs', 'expected': 'Suspicious'},
+        {'extension': '.jpg', 'size_kb': 100, 'filename': 'image.jpg', 'expected': 'Safe'},
+        {'extension': '.ps1', 'size_kb': 150, 'filename': 'hack_tool.ps1', 'expected': 'Suspicious'},
+        {'extension': '.dll', 'size_kb': 2000, 'filename': 'malware.dll', 'expected': 'Suspicious'},
     ]
     
-    print(f"{Fore.YELLOW}📋 Test Results:{Style.RESET_ALL}")
-    print(f"{'File Type':<15} {'Size (KB)':<10} {'Prediction':<12} {'Confidence':<12} {'Expected':<12} {'Status':<8}")
-    print("-" * 75)
+    print_colored("📋 Enhanced Test Results:", Fore.YELLOW)
+    print(f"{'File Type':<15} {'Size (KB)':<10} {'Filename':<20} {'Prediction':<12} {'Confidence':<12} {'Expected':<12} {'Status':<8}")
+    print("-" * 95)
     
     correct_predictions = 0
     total_predictions = len(test_cases)
     
     for test_case in test_cases:
-        # Create feature vector
+        # Create enhanced feature vector
         feature_vector = np.zeros(len(model.feature_names_in_))
         
-        # Set file size
+        # Set basic features
         size_idx = np.where(model.feature_names_in_ == 'file_size_kb')[0]
         if len(size_idx) > 0:
             feature_vector[size_idx[0]] = test_case['size_kb']
@@ -368,6 +541,38 @@ def test_model(model_path="model/model.pkl"):
             if feature_name.startswith(ext_prefix):
                 if feature_name == f'ext_{test_case["extension"]}':
                     feature_vector[i] = 1
+        
+        # Set file type
+        file_type = get_file_type(test_case['filename'])
+        type_prefix = 'type_'
+        for i, feature_name in enumerate(model.feature_names_in_):
+            if feature_name.startswith(type_prefix):
+                if feature_name == f'type_{file_type}':
+                    feature_vector[i] = 1
+        
+        # Set pattern flags
+        pattern_flags = get_filename_pattern_flags(test_case['filename'])
+        for flag_name, flag_value in pattern_flags.items():
+            if flag_name in model.feature_names_in_:
+                idx = np.where(model.feature_names_in_ == flag_name)[0]
+                if len(idx) > 0:
+                    feature_vector[idx[0]] = 1 if flag_value else 0
+        
+        # Set simulated features
+        if 'entropy' in model.feature_names_in_:
+            entropy_idx = np.where(model.feature_names_in_ == 'entropy')[0]
+            if len(entropy_idx) > 0:
+                feature_vector[entropy_idx[0]] = np.random.uniform(4.0, 7.0)
+        
+        if 'complexity' in model.feature_names_in_:
+            complexity_idx = np.where(model.feature_names_in_ == 'complexity')[0]
+            if len(complexity_idx) > 0:
+                feature_vector[complexity_idx[0]] = np.random.uniform(0.3, 0.8)
+        
+        if 'creation_randomness' in model.feature_names_in_:
+            randomness_idx = np.where(model.feature_names_in_ == 'creation_randomness')[0]
+            if len(randomness_idx) > 0:
+                feature_vector[randomness_idx[0]] = simulate_file_creation_randomness()
         
         # Make prediction
         prediction = model.predict([feature_vector])[0]
@@ -387,33 +592,67 @@ def test_model(model_path="model/model.pkl"):
             status_color = Fore.RED
         
         print(f"{status_color}{test_case['extension']:<15} {test_case['size_kb']:<10} "
-              f"{prediction_text:<12} {confidence_text:<12} {test_case['expected']:<12} {status:<8}{Style.RESET_ALL}")
+              f"{test_case['filename']:<20} {prediction_text:<12} {confidence_text:<12} "
+              f"{test_case['expected']:<12} {status:<8}{Style.RESET_ALL}")
     
-    print(f"\n{Fore.CYAN}📊 Test Summary:{Style.RESET_ALL}")
+    print_colored(f"\n📊 Enhanced Test Summary:", Fore.CYAN)
     print(f"   Correct predictions: {correct_predictions}/{total_predictions}")
     print(f"   Test accuracy: {correct_predictions/total_predictions:.1%}")
 
 
 def main():
-    """Main function to run the training process."""
-    print(f"{Fore.CYAN}🛡️ AI Antivirus Model Training with Validation{Style.RESET_ALL}")
+    """Main function to run the enhanced training process."""
+    parser = argparse.ArgumentParser(description="AI Antivirus v4.X Model Training")
+    parser.add_argument('--model-info', action='store_true', 
+                       help='Print model information and exit')
+    parser.add_argument('--create-data-only', action='store_true',
+                       help='Create training data only, skip training')
+    parser.add_argument('--test-only', action='store_true',
+                       help='Test existing model only')
+    
+    args = parser.parse_args()
+    
+    if args.model_info:
+        # Print model information
+        if MODEL_PATH.exists():
+            with open(MODEL_PATH, 'rb') as f:
+                model = pickle.load(f)
+            print_model_info(model, model.feature_names_in_)
+        else:
+            print_colored("❌ No trained model found. Run training first.", Fore.RED)
+        return
+    
+    if args.test_only:
+        # Test existing model
+        if MODEL_PATH.exists():
+            test_enhanced_model()
+        else:
+            print_colored("❌ No trained model found. Run training first.", Fore.RED)
+        return
+    
+    print_colored("🛡️ AI Antivirus v4.X Enhanced Model Training", Fore.CYAN)
     print("=" * 60)
     
-    # Create training data
-    training_data = create_training_data()
+    # Create enhanced training data
+    training_data = create_enhanced_training_data()
     
-    # Train model with validation
-    model, test_metrics = train_model()
+    if args.create_data_only:
+        print_colored("✅ Training data created. Skipping model training.", Fore.GREEN)
+        return
     
-    # Test model
-    test_model()
+    # Train enhanced model with validation
+    model, test_metrics = train_enhanced_model()
     
-    print(f"\n{Fore.GREEN}🎉 Training process complete!{Style.RESET_ALL}")
-    print(f"{Fore.CYAN}📖 Next steps:{Style.RESET_ALL}")
+    # Test enhanced model
+    test_enhanced_model()
+    
+    print_colored("\n🎉 Enhanced training process complete!", Fore.GREEN)
+    print_colored("📖 Next steps:", Fore.CYAN)
     print(f"   1. Run: python3 ai_antivirus.py --path /path/to/monitor")
     print(f"   2. Test with: python3 ai_antivirus.py --scan-only")
     print(f"   3. Retrain with: python3 ai_antivirus.py --retrain")
     print(f"   4. Check logs/model_metrics_*.txt for detailed metrics")
+    print(f"   5. View confusion matrix plots in logs/ directory")
 
 
 if __name__ == "__main__":
