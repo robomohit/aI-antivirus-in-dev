@@ -1,0 +1,10 @@
+Test document.
+Document content here.
+Safe file content.
+Document text.
+This is a safe document.
+Document text.
+Sample text.
+Test document.
+Lorem ipsum dolor sit amet.
+Safe content.

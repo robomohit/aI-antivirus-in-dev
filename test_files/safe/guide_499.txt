@@ -1,0 +1,10 @@
+Sample text.
+Sample text.
+Lorem ipsum dolor sit amet.
+This is a safe document.
+Sample text.
+Safe file content.
+This is a safe document.
+Document content here.
+Sample text.
+Safe content.

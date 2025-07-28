@@ -1,0 +1,18 @@
+Lorem ipsum dolor sit amet.
+Test file content.
+Sample text.
+Test document.
+Test file content.
+This is a safe document.
+Document content here.
+Test file content.
+Lorem ipsum dolor sit amet.
+Safe file content.
+Sample data for testing.
+Sample text.
+Document content here.
+Safe content.
+Document content here.
+Lorem ipsum dolor sit amet.
+Test document.
+Safe content.

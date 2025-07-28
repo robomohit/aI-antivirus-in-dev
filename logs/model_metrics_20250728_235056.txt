@@ -1,0 +1,40 @@
+🧠 ULTIMATE AI ANTIVIRUS MODEL METRICS
+==================================================
+Training Date: 2025-07-28 23:50:56
+
+📊 TEST METRICS
+--------------------
+Accuracy: 1.000
+Precision: 1.000
+Recall: 1.000
+F1-Score: 1.000
+
+🔍 VALIDATION METRICS
+-------------------------
+Accuracy: 0.999
+Precision: 1.000
+Recall: 0.998
+F1-Score: 0.999
+
+📈 FEATURE IMPORTANCE (Top 20)
+------------------------------
+entropy_score: 0.4729
+file_size_kb: 0.1098
+category_executable: 0.0881
+category_script: 0.0781
+category_media: 0.0568
+ext_.scr: 0.0268
+category_document: 0.0245
+ext_.cmd: 0.0156
+ext_.vbs: 0.0147
+ext_.ps1: 0.0143
+ext_.exe: 0.0123
+ext_.py: 0.0121
+ext_.bat: 0.0105
+category_config: 0.0090
+category_archive: 0.0088
+category_web: 0.0082
+category_other: 0.0062
+ext_.js: 0.0045
+ext_.pdf: 0.0023
+ext_.csv: 0.0023
