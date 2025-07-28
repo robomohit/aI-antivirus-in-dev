@@ -1,0 +1,21 @@
+2025-07-28 21:59:37,961 - INFO - === AI ANTIVIRUS MODEL TRAINING ===
+2025-07-28 21:59:37,962 - INFO - Training started at: 2025-07-28 21:59:37.961997
+2025-07-28 21:59:37,963 - INFO - Loaded 588 training samples
+2025-07-28 21:59:37,965 - INFO - Train set: 441 samples, Test set: 147 samples
+2025-07-28 21:59:38,082 - INFO - === TRAINING SET METRICS ===
+2025-07-28 21:59:38,082 - INFO - Accuracy: 0.966 (96.6%)
+2025-07-28 21:59:38,082 - INFO - Precision: 1.000 (100.0%)
+2025-07-28 21:59:38,082 - INFO - Recall: 0.930 (93.0%)
+2025-07-28 21:59:38,082 - INFO - F1-Score: 0.964 (96.4%)
+2025-07-28 21:59:38,082 - INFO - Confusion Matrix:
+2025-07-28 21:59:38,082 - INFO - [[228   0]
+ [ 15 198]]
+2025-07-28 21:59:38,082 - INFO - === TEST SET METRICS ===
+2025-07-28 21:59:38,082 - INFO - Accuracy: 0.932 (93.2%)
+2025-07-28 21:59:38,082 - INFO - Precision: 1.000 (100.0%)
+2025-07-28 21:59:38,082 - INFO - Recall: 0.859 (85.9%)
+2025-07-28 21:59:38,082 - INFO - F1-Score: 0.924 (92.4%)
+2025-07-28 21:59:38,082 - INFO - Confusion Matrix:
+2025-07-28 21:59:38,082 - INFO - [[76  0]
+ [10 61]]
+2025-07-28 21:59:38,094 - INFO - Model saved to: model/model.pkl
