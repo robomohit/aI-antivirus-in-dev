@@ -1,0 +1,8 @@
+2025-07-28 22:32:15 - INFO - 🚀 Ultimate AI Antivirus v4.X Started
+2025-07-28 22:32:15 - INFO - 📁 Monitoring path: /tmp
+2025-07-28 22:32:15 - INFO - 🛡️ Quarantine enabled: True
+2025-07-28 22:32:15 - INFO - 🔍 Scan mode: SMART
+2025-07-28 22:32:15 - INFO - 🧠 AI model loaded successfully
+2025-07-28 22:32:15 - INFO - 🧠 Smart scan mode: scanning 5 high-risk directories
+2025-07-28 22:32:15 - INFO - 🔍 Scanning directory: /tmp
+2025-07-28 22:32:21 - INFO - ✅ Initial scan complete. Found 0 suspicious files.
