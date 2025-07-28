@@ -1,1 +1,0 @@
-print("This is safe Python code")

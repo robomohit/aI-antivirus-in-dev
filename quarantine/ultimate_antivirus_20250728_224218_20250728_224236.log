@@ -1,0 +1,6 @@
+2025-07-28 22:42:18 - INFO - 🚀 Ultimate AI Antivirus v4.X Started
+2025-07-28 22:42:18 - INFO - 📁 Monitoring path: /workspace/test_files
+2025-07-28 22:42:18 - INFO - 🛡️ Quarantine enabled: True
+2025-07-28 22:42:18 - INFO - 🔍 Scan mode: NORMAL
+2025-07-28 22:42:18 - WARNING - 🧠 No existing model found. Training new model...
+2025-07-28 22:42:19 - INFO - 🧠 AI model trained and saved successfully
