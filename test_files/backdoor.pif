@@ -1,0 +1,4 @@
+@echo off
+echo "BACKDOOR ACTIVATED"
+echo "SYSTEM ACCESS GRANTED"
+pause

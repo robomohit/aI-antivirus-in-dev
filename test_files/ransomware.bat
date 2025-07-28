@@ -1,0 +1,5 @@
+@echo off
+echo "YOUR FILES ARE ENCRYPTED"
+echo "PAY BITCOIN TO DECRYPT"
+echo "HACKED BY RANSOMWARE"
+pause
