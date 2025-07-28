@@ -1,0 +1,9 @@
+2025-07-28 20:15:57,008 - INFO - 🧠 AI model loaded successfully
+2025-07-28 20:15:57,009 - INFO - 🔍 Scanning directory: /workspace/ai_test
+2025-07-28 20:15:57,017 - WARNING - 🚨 SUSPICIOUS FILE DETECTED: /workspace/ai_test/test.exe
+2025-07-28 20:15:57,017 - INFO - 📊 File size: 0.0 KB
+2025-07-28 20:15:57,017 - INFO - 🔍 Detection method: BOTH
+2025-07-28 20:15:57,017 - INFO - 🧠 AI confidence: 80.98%
+2025-07-28 20:15:57,017 - INFO - 🕒 Last modified: 2025-07-28 20:15:53.827201
+2025-07-28 20:15:57,017 - INFO - 🚫 Quarantined: /workspace/ai_test/test.exe -> quarantine/test_20250728_201557.exe
+2025-07-28 20:15:57,017 - INFO - ✅ Initial scan complete. Found 1 suspicious files.

@@ -1,0 +1,10 @@
+2025-07-28 19:23:21,868 - INFO - 🚀 Simple Antivirus started
+2025-07-28 19:23:21,868 - INFO - 📁 Monitoring: /workspace/setup_test
+2025-07-28 19:23:21,868 - INFO - 🛡️ Quarantine enabled: True
+2025-07-28 19:23:21,868 - INFO - ⚠️ Suspicious extensions: .bat, .cmd, .com, .dll, .exe, .jar, .js, .msi, .pif, .ps1, .reg, .scr, .sys, .vbs
+2025-07-28 19:23:21,869 - INFO - 🔍 Scanning directory: /workspace/setup_test
+2025-07-28 19:23:21,869 - WARNING - 🚨 SUSPICIOUS FILE DETECTED: /workspace/setup_test/test.exe
+2025-07-28 19:23:21,869 - INFO - 📊 File size: 19 bytes
+2025-07-28 19:23:21,869 - INFO - 🕒 Last modified: 2025-07-28 19:23:21.823973
+2025-07-28 19:23:21,869 - INFO - 🚫 Quarantined: /workspace/setup_test/test.exe -> quarantine/test_20250728_192321.exe
+2025-07-28 19:23:21,869 - INFO - ✅ Initial scan complete. Found 1 suspicious files.
