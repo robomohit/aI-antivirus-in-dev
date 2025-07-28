@@ -1,0 +1,94 @@
+2025-07-28 21:54:03 - INFO - 🚀 Ultimate AI Antivirus v3.0 Started
+2025-07-28 21:54:03 - INFO - 📁 Monitoring path: /workspace/test_files
+2025-07-28 21:54:03 - INFO - 🛡️ Quarantine enabled: True
+2025-07-28 21:54:03 - INFO - 🧠 AI model loaded successfully
+2025-07-28 21:54:03 - INFO - 🔍 Scanning directory: /workspace/test_files
+2025-07-28 21:54:03 - WARNING - 🚨 THREAT DETECTED: /workspace/test_files/rootkit.dll
+2025-07-28 21:54:03 - INFO - 📊 File size: 0.1 KB
+2025-07-28 21:54:03 - INFO - 🔍 Detection method: EXTENSION
+2025-07-28 21:54:03 - INFO - 🧠 AI confidence: 56.50%
+2025-07-28 21:54:03 - INFO - ⚠️ Threat level: SUSPICIOUS 🟡
+2025-07-28 21:54:03 - INFO - 🕒 Last modified: 2025-07-28 21:28:12.932789
+2025-07-28 21:54:03 - INFO - 📁 Extension: .dll
+2025-07-28 21:54:03 - INFO - 🚫 Quarantined: /workspace/test_files/rootkit.dll -> quarantine/rootkit_20250728_215403.dll
+2025-07-28 21:54:03 - WARNING - 🚨 THREAT DETECTED: /workspace/test_files/virus.scr
+2025-07-28 21:54:03 - INFO - 📊 File size: 0.1 KB
+2025-07-28 21:54:03 - INFO - 🔍 Detection method: BOTH
+2025-07-28 21:54:03 - INFO - 🧠 AI confidence: 58.12%
+2025-07-28 21:54:03 - INFO - ⚠️ Threat level: SUSPICIOUS 🟡
+2025-07-28 21:54:03 - INFO - 🕒 Last modified: 2025-07-28 21:28:12.932789
+2025-07-28 21:54:03 - INFO - 📁 Extension: .scr
+2025-07-28 21:54:03 - INFO - 🚫 Quarantined: /workspace/test_files/virus.scr -> quarantine/virus_20250728_215403.scr
+2025-07-28 21:54:03 - WARNING - 🚨 THREAT DETECTED: /workspace/test_files/free_cheats.exe
+2025-07-28 21:54:03 - INFO - 📊 File size: 0.1 KB
+2025-07-28 21:54:03 - INFO - 🔍 Detection method: BOTH
+2025-07-28 21:54:03 - INFO - 🧠 AI confidence: 80.98%
+2025-07-28 21:54:03 - INFO - ⚠️ Threat level: CRITICAL 🔥
+2025-07-28 21:54:03 - INFO - 🕒 Last modified: 2025-07-28 21:28:12.932789
+2025-07-28 21:54:03 - INFO - 📁 Extension: .exe
+2025-07-28 21:54:03 - INFO - 🚫 Quarantined: /workspace/test_files/free_cheats.exe -> quarantine/free_cheats_20250728_215403.exe
+2025-07-28 21:54:03 - WARNING - 🚨 THREAT DETECTED: /workspace/test_files/spyware.js
+2025-07-28 21:54:03 - INFO - 📊 File size: 0.1 KB
+2025-07-28 21:54:03 - INFO - 🔍 Detection method: EXTENSION
+2025-07-28 21:54:03 - INFO - 🧠 AI confidence: 58.46%
+2025-07-28 21:54:03 - INFO - ⚠️ Threat level: SUSPICIOUS 🟡
+2025-07-28 21:54:03 - INFO - 🕒 Last modified: 2025-07-28 21:28:12.932789
+2025-07-28 21:54:03 - INFO - 📁 Extension: .js
+2025-07-28 21:54:03 - INFO - 🚫 Quarantined: /workspace/test_files/spyware.js -> quarantine/spyware_20250728_215403.js
+2025-07-28 21:54:03 - WARNING - 🚨 THREAT DETECTED: /workspace/test_files/trojan.ps1
+2025-07-28 21:54:03 - INFO - 📊 File size: 0.1 KB
+2025-07-28 21:54:03 - INFO - 🔍 Detection method: BOTH
+2025-07-28 21:54:03 - INFO - 🧠 AI confidence: 80.39%
+2025-07-28 21:54:03 - INFO - ⚠️ Threat level: CRITICAL 🔥
+2025-07-28 21:54:03 - INFO - 🕒 Last modified: 2025-07-28 21:28:12.932789
+2025-07-28 21:54:03 - INFO - 📁 Extension: .ps1
+2025-07-28 21:54:03 - INFO - 🚫 Quarantined: /workspace/test_files/trojan.ps1 -> quarantine/trojan_20250728_215403.ps1
+2025-07-28 21:54:03 - WARNING - 🚨 THREAT DETECTED: /workspace/test_files/worm.reg
+2025-07-28 21:54:03 - INFO - 📊 File size: 0.1 KB
+2025-07-28 21:54:03 - INFO - 🔍 Detection method: BOTH
+2025-07-28 21:54:03 - INFO - 🧠 AI confidence: 75.19%
+2025-07-28 21:54:03 - INFO - ⚠️ Threat level: HIGH_RISK ⚠️
+2025-07-28 21:54:03 - INFO - 🕒 Last modified: 2025-07-28 21:28:12.932789
+2025-07-28 21:54:03 - INFO - 📁 Extension: .reg
+2025-07-28 21:54:03 - INFO - 🚫 Quarantined: /workspace/test_files/worm.reg -> quarantine/worm_20250728_215403.reg
+2025-07-28 21:54:03 - WARNING - 🚨 THREAT DETECTED: /workspace/test_files/ransomware.bat
+2025-07-28 21:54:03 - INFO - 📊 File size: 0.1 KB
+2025-07-28 21:54:03 - INFO - 🔍 Detection method: BOTH
+2025-07-28 21:54:03 - INFO - 🧠 AI confidence: 86.00%
+2025-07-28 21:54:03 - INFO - ⚠️ Threat level: CRITICAL 🔥
+2025-07-28 21:54:03 - INFO - 🕒 Last modified: 2025-07-28 21:28:12.932789
+2025-07-28 21:54:03 - INFO - 📁 Extension: .bat
+2025-07-28 21:54:03 - INFO - 🚫 Quarantined: /workspace/test_files/ransomware.bat -> quarantine/ransomware_20250728_215403.bat
+2025-07-28 21:54:03 - WARNING - 🚨 THREAT DETECTED: /workspace/test_files/eicar_test.com
+2025-07-28 21:54:03 - INFO - 📊 File size: 0.1 KB
+2025-07-28 21:54:03 - INFO - 🔍 Detection method: EXTENSION
+2025-07-28 21:54:03 - INFO - 🧠 AI confidence: 51.95%
+2025-07-28 21:54:03 - INFO - ⚠️ Threat level: SUSPICIOUS 🟡
+2025-07-28 21:54:03 - INFO - 🕒 Last modified: 2025-07-28 21:28:12.932789
+2025-07-28 21:54:03 - INFO - 📁 Extension: .com
+2025-07-28 21:54:03 - INFO - 🚫 Quarantined: /workspace/test_files/eicar_test.com -> quarantine/eicar_test_20250728_215403.com
+2025-07-28 21:54:03 - WARNING - 🚨 THREAT DETECTED: /workspace/test_files/malware.com
+2025-07-28 21:54:03 - INFO - 📊 File size: 0.1 KB
+2025-07-28 21:54:03 - INFO - 🔍 Detection method: EXTENSION
+2025-07-28 21:54:03 - INFO - 🧠 AI confidence: 51.95%
+2025-07-28 21:54:03 - INFO - ⚠️ Threat level: SUSPICIOUS 🟡
+2025-07-28 21:54:03 - INFO - 🕒 Last modified: 2025-07-28 21:28:12.932789
+2025-07-28 21:54:03 - INFO - 📁 Extension: .com
+2025-07-28 21:54:03 - INFO - 🚫 Quarantined: /workspace/test_files/malware.com -> quarantine/malware_20250728_215403.com
+2025-07-28 21:54:03 - WARNING - 🚨 THREAT DETECTED: /workspace/test_files/backdoor.pif
+2025-07-28 21:54:03 - INFO - 📊 File size: 0.1 KB
+2025-07-28 21:54:03 - INFO - 🔍 Detection method: EXTENSION
+2025-07-28 21:54:03 - INFO - 🧠 AI confidence: 53.56%
+2025-07-28 21:54:03 - INFO - ⚠️ Threat level: SUSPICIOUS 🟡
+2025-07-28 21:54:03 - INFO - 🕒 Last modified: 2025-07-28 21:28:12.932789
+2025-07-28 21:54:03 - INFO - 📁 Extension: .pif
+2025-07-28 21:54:03 - INFO - 🚫 Quarantined: /workspace/test_files/backdoor.pif -> quarantine/backdoor_20250728_215403.pif
+2025-07-28 21:54:03 - WARNING - 🚨 THREAT DETECTED: /workspace/test_files/keylogger.vbs
+2025-07-28 21:54:03 - INFO - 📊 File size: 0.1 KB
+2025-07-28 21:54:03 - INFO - 🔍 Detection method: BOTH
+2025-07-28 21:54:03 - INFO - 🧠 AI confidence: 82.16%
+2025-07-28 21:54:03 - INFO - ⚠️ Threat level: CRITICAL 🔥
+2025-07-28 21:54:03 - INFO - 🕒 Last modified: 2025-07-28 21:28:12.932789
+2025-07-28 21:54:03 - INFO - 📁 Extension: .vbs
+2025-07-28 21:54:03 - INFO - 🚫 Quarantined: /workspace/test_files/keylogger.vbs -> quarantine/keylogger_20250728_215403.vbs
+2025-07-28 21:54:03 - INFO - ✅ Initial scan complete. Found 11 suspicious files.
