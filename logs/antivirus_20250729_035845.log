@@ -1,0 +1,60 @@
+2025-07-29 03:58:45,453 - INFO - Ultimate AI Antivirus v4.X Started
+2025-07-29 03:58:45,453 - INFO - Ultimate AI Antivirus v4.X Started
+2025-07-29 03:58:45,453 - INFO - Monitoring path: /workspace
+2025-07-29 03:58:45,453 - INFO - Monitoring path: /workspace
+2025-07-29 03:58:45,453 - INFO - Quarantine enabled: True
+2025-07-29 03:58:45,453 - INFO - Quarantine enabled: True
+2025-07-29 03:58:45,453 - INFO - Scan mode: NORMAL
+2025-07-29 03:58:45,453 - INFO - Scan mode: NORMAL
+2025-07-29 03:58:45,457 - INFO - AI model loaded successfully
+2025-07-29 03:58:45,457 - INFO - AI model loaded successfully
+2025-07-29 03:58:45,458 - INFO - Normal scan: scanning path /workspace
+2025-07-29 03:58:45,458 - INFO - Normal scan: scanning path /workspace
+2025-07-29 03:58:45,458 - INFO - Searching 1 directories for files...
+2025-07-29 03:58:45,458 - INFO - Searching 1 directories for files...
+2025-07-29 03:58:45,664 - INFO - Found 24 files to scan
+2025-07-29 03:58:45,664 - INFO - Found 24 files to scan
+2025-07-29 03:58:45,664 - INFO - Finding files to scan...
+2025-07-29 03:58:45,664 - INFO - Finding files to scan...
+2025-07-29 03:58:45,664 - INFO - Normal scan: scanning path /workspace
+2025-07-29 03:58:45,664 - INFO - Normal scan: scanning path /workspace
+2025-07-29 03:58:45,664 - INFO - Searching 1 directories for files...
+2025-07-29 03:58:45,664 - INFO - Searching 1 directories for files...
+2025-07-29 03:58:45,802 - INFO - Found 24 files to scan
+2025-07-29 03:58:45,802 - INFO - Found 24 files to scan
+2025-07-29 03:58:45,802 - INFO - Starting scan of 24 files...
+2025-07-29 03:58:45,802 - INFO - Starting scan of 24 files...
+2025-07-29 03:58:45,826 - WARNING - THREAT DETECTED: setup_windows.bat | Level: SAFE | Method: EXTENSION | Confidence: 0.49 | Size: 1014.0 B
+2025-07-29 03:58:45,826 - WARNING - THREAT DETECTED: setup_windows.bat | Level: SAFE | Method: EXTENSION | Confidence: 0.49 | Size: 1014.0 B
+2025-07-29 03:58:45,826 - INFO - File quarantined: setup_windows.bat -> setup_windows_20250729_035845.bat
+2025-07-29 03:58:45,826 - INFO - File quarantined: setup_windows.bat -> setup_windows_20250729_035845.bat
+2025-07-29 03:58:45,908 - INFO - Scan progress: 41.7% (10/24)
+2025-07-29 03:58:45,908 - INFO - Scan progress: 41.7% (10/24)
+2025-07-29 03:58:45,928 - INFO - Known malware detected: config.py
+2025-07-29 03:58:45,928 - INFO - Known malware detected: config.py
+2025-07-29 03:58:45,928 - WARNING - THREAT DETECTED: config.py | Level: CRITICAL | Method: KNOWN_MALWARE | Confidence: 1.00 | Size: 10.3 KB
+2025-07-29 03:58:45,928 - WARNING - THREAT DETECTED: config.py | Level: CRITICAL | Method: KNOWN_MALWARE | Confidence: 1.00 | Size: 10.3 KB
+2025-07-29 03:58:45,928 - INFO - File quarantined: config.py -> config_20250729_035845.py
+2025-07-29 03:58:45,928 - INFO - File quarantined: config.py -> config_20250729_035845.py
+2025-07-29 03:58:45,978 - WARNING - THREAT DETECTED: run_antivirus.bat | Level: SAFE | Method: EXTENSION | Confidence: 0.49 | Size: 1.1 KB
+2025-07-29 03:58:45,978 - WARNING - THREAT DETECTED: run_antivirus.bat | Level: SAFE | Method: EXTENSION | Confidence: 0.49 | Size: 1.1 KB
+2025-07-29 03:58:45,979 - INFO - File quarantined: run_antivirus.bat -> run_antivirus_20250729_035845.bat
+2025-07-29 03:58:45,979 - INFO - File quarantined: run_antivirus.bat -> run_antivirus_20250729_035845.bat
+2025-07-29 03:58:45,991 - WARNING - THREAT DETECTED: malware_dataset.csv | Level: CRITICAL | Method: AI | Confidence: 0.97 | Size: 1.7 MB
+2025-07-29 03:58:45,991 - WARNING - THREAT DETECTED: malware_dataset.csv | Level: CRITICAL | Method: AI | Confidence: 0.97 | Size: 1.7 MB
+2025-07-29 03:58:45,994 - INFO - File quarantined: malware_dataset.csv -> malware_dataset_20250729_035845.csv
+2025-07-29 03:58:45,994 - INFO - File quarantined: malware_dataset.csv -> malware_dataset_20250729_035845.csv
+2025-07-29 03:58:45,995 - INFO - Known malware detected: ai_antivirus_copy.py
+2025-07-29 03:58:45,995 - INFO - Known malware detected: ai_antivirus_copy.py
+2025-07-29 03:58:45,995 - WARNING - THREAT DETECTED: ai_antivirus_copy.py | Level: CRITICAL | Method: KNOWN_MALWARE | Confidence: 1.00 | Size: 33.7 KB
+2025-07-29 03:58:45,995 - WARNING - THREAT DETECTED: ai_antivirus_copy.py | Level: CRITICAL | Method: KNOWN_MALWARE | Confidence: 1.00 | Size: 33.7 KB
+2025-07-29 03:58:45,995 - INFO - File quarantined: ai_antivirus_copy.py -> ai_antivirus_copy_20250729_035845.py
+2025-07-29 03:58:45,995 - INFO - File quarantined: ai_antivirus_copy.py -> ai_antivirus_copy_20250729_035845.py
+2025-07-29 03:58:45,995 - INFO - Scan progress: 83.3% (20/24)
+2025-07-29 03:58:45,995 - INFO - Scan progress: 83.3% (20/24)
+2025-07-29 03:58:46,036 - INFO - Scan complete. Scanned 24 files in 0.23s
+2025-07-29 03:58:46,036 - INFO - Scan complete. Scanned 24 files in 0.23s
+2025-07-29 03:58:46,036 - INFO - Performance: 102.8 files/second
+2025-07-29 03:58:46,036 - INFO - Performance: 102.8 files/second
+2025-07-29 03:58:46,036 - INFO - Threats found: 3
+2025-07-29 03:58:46,036 - INFO - Threats found: 3

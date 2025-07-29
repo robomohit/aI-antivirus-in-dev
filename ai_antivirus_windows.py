@@ -563,6 +563,7 @@ class UltimateAIAntivirus:
     
     def scan_directory(self, show_progress: bool = True):
         """Scan directory for suspicious files."""
+        safe_log(self.logger, "Finding files to scan...")
         files_to_scan = self._get_files_to_scan()
         
         if not files_to_scan:
@@ -581,16 +582,25 @@ class UltimateAIAntivirus:
                 if result and result['is_suspicious']:
                     self.handle_suspicious_file(result)
                 
-                # Show progress
-                if show_progress and (i + 1) % 100 == 0:
-                    progress = (i + 1) / len(files_to_scan) * 100
-                    safe_log(self.logger, f"Scan progress: {progress:.1f}% ({i + 1}/{len(files_to_scan)})")
+                # Show progress more frequently
+                if show_progress:
+                    if (i + 1) % 50 == 0:  # Every 50 files
+                        progress = (i + 1) / len(files_to_scan) * 100
+                        safe_log(self.logger, f"Scan progress: {progress:.1f}% ({i + 1}/{len(files_to_scan)})")
+                    elif (i + 1) % 10 == 0:  # Every 10 files for small scans
+                        if len(files_to_scan) < 1000:
+                            progress = (i + 1) / len(files_to_scan) * 100
+                            safe_log(self.logger, f"Scan progress: {progress:.1f}% ({i + 1}/{len(files_to_scan)})")
                     
             except Exception as e:
                 safe_log(self.logger, f"Error scanning {file_path}: {e}", "error")
         
         scan_time = time.time() - start_time
+        files_per_second = len(files_to_scan) / scan_time if scan_time > 0 else 0
+        
         safe_log(self.logger, f"Scan complete. Scanned {self.stats['files_scanned']} files in {scan_time:.2f}s")
+        safe_log(self.logger, f"Performance: {files_per_second:.1f} files/second")
+        safe_log(self.logger, f"Threats found: {self.stats['threats_found']}")
     
     def _get_files_to_scan(self) -> List[Path]:
         """Get list of files to scan based on scan mode."""
@@ -599,24 +609,35 @@ class UltimateAIAntivirus:
         if self.scan_mode == "smart":
             # Smart scan: only high-risk directories
             paths = get_high_risk_paths()
+            safe_log(self.logger, "Smart scan: scanning high-risk directories only")
         elif self.scan_mode == "full":
             # Full scan: entire system
             paths = get_full_scan_paths()
+            safe_log(self.logger, "Full scan: scanning entire system (this may take a while)")
         else:
             # Normal scan: specified path
             paths = [self.monitor_path]
+            safe_log(self.logger, f"Normal scan: scanning path {self.monitor_path}")
         
-        for path in paths:
+        safe_log(self.logger, f"Searching {len(paths)} directories for files...")
+        
+        for i, path in enumerate(paths):
             path_obj = Path(path)
             if path_obj.exists():
                 if path_obj.is_file():
                     files_to_scan.append(path_obj)
                 else:
                     # Recursively find all files
+                    file_count = 0
                     for file_path in path_obj.rglob('*'):
                         if file_path.is_file() and self._should_scan_file(file_path):
                             files_to_scan.append(file_path)
+                            file_count += 1
+                            # Show progress for large directories
+                            if file_count % 1000 == 0:
+                                safe_log(self.logger, f"Found {file_count} files in {path_obj}...")
         
+        safe_log(self.logger, f"Found {len(files_to_scan)} files to scan")
         return files_to_scan
     
     def _should_scan_file(self, file_path: Path) -> bool:
