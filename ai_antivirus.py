@@ -19,6 +19,7 @@ import platform
 # Data science imports
 import numpy as np
 import pandas as pd
+import torch
 from sklearn.ensemble import RandomForestClassifier
 
 # File monitoring
@@ -262,18 +263,23 @@ class UltimateAIAntivirus:
             print("=" * 60)
     
     def _load_or_train_model(self):
-        """Load existing model or train a new one."""
+        """Load existing PyTorch model or train a new one."""
         try:
-            if self.model_path.exists():
-                with open(self.model_path, 'rb') as f:
-                    model = pickle.load(f)
-                safe_log(self.logger, "AI model loaded successfully")
+            # Try to load PyTorch model
+            model_files = list(Path("model").glob("ai_model_*.pt"))
+            if model_files:
+                # Load the most recent model
+                latest_model = max(model_files, key=lambda x: x.stat().st_mtime)
+                import torch
+                model = torch.load(str(latest_model), map_location='cpu')
+                model.eval()
+                safe_log(self.logger, f"PyTorch AI model loaded successfully: {latest_model.name}")
                 return model
             else:
-                safe_log(self.logger, "No existing model found. Training new model...", "warning")
+                safe_log(self.logger, "No PyTorch model found, training new model...")
                 return self._train_model()
         except Exception as e:
-            safe_log(self.logger, f"Error loading model: {e}", "error")
+            safe_log(self.logger, f"Error loading PyTorch model: {e}")
             return self._train_model()
     
     def _create_training_data(self):
@@ -395,43 +401,113 @@ class UltimateAIAntivirus:
             return None
     
     def _predict_with_ai(self, features: Dict) -> Dict:
-        """Make AI prediction for file analysis."""
+        """Make AI prediction for file analysis using PyTorch model."""
         try:
             if not self.model:
                 return {'is_malicious': False, 'confidence': 0.0}
             
-            # Create DataFrame with proper feature names
-            feature_df = pd.DataFrame([features])
-            
-            # Add category dummies
-            category_dummies = pd.get_dummies([features.get('file_category', 'other')], prefix='category')
-            extension_dummies = pd.get_dummies([features.get('extension', '.unknown')], prefix='ext')
-            
-            # Combine features
-            feature_df = pd.concat([feature_df, category_dummies, extension_dummies], axis=1)
-            
-            # Ensure all model features are present
-            if hasattr(self.model, 'feature_names_in_'):
-                model_features = self.model.feature_names_in_
-                for feature in model_features:
-                    if feature not in feature_df.columns:
-                        feature_df[feature] = 0.0
+            # Check if this is a PyTorch model
+            if hasattr(self.model, 'eval'):
+                # PyTorch model
+                feature_vector = self._prepare_features_for_pytorch(features)
+                feature_tensor = torch.FloatTensor(feature_vector).unsqueeze(0)
                 
-                # Reorder columns to match model expectations
-                feature_df = feature_df[model_features]
-            
-            # Make prediction
-            prediction = self.model.predict(feature_df)[0]
-            confidence = self.model.predict_proba(feature_df)[0][1]
-            
-            return {
-                'is_malicious': bool(prediction),
-                'confidence': confidence
-            }
+                self.model.eval()
+                with torch.no_grad():
+                    prediction = self.model(feature_tensor)
+                    confidence = prediction.item()
+                
+                return {
+                    'is_malicious': confidence > 0.5,
+                    'confidence': confidence
+                }
+            else:
+                # Fallback to scikit-learn model
+                feature_df = pd.DataFrame([features])
+                prediction = self.model.predict(feature_df)[0]
+                confidence = self.model.predict_proba(feature_df)[0][1]
+                
+                return {
+                    'is_malicious': bool(prediction),
+                    'confidence': confidence
+                }
             
         except Exception as e:
             safe_log(self.logger, f"Error in AI prediction: {e}", "error")
             return {'is_malicious': False, 'confidence': 0.0}
+    
+    def _prepare_features_for_pytorch(self, features: Dict) -> List[float]:
+        """Prepare features for PyTorch model input."""
+        try:
+            # Import required modules
+            import torch
+            from sklearn.preprocessing import MinMaxScaler, LabelEncoder
+            
+            # Define feature order (must match training)
+            numerical_features = [
+                'file_size_kb', 'entropy_score', 'creation_randomness',
+                'behavior_score', 'signature_count', 'content_flags', 'filename_risk'
+            ]
+            
+            binary_features = [
+                'pattern_hack', 'pattern_steal', 'pattern_crack', 'pattern_keygen',
+                'pattern_cheat', 'pattern_free', 'pattern_cracked', 'pattern_premium',
+                'pattern_unlock', 'pattern_bypass', 'pattern_admin', 'pattern_root',
+                'pattern_system', 'pattern_kernel', 'pattern_driver', 'pattern_service',
+                'pattern_daemon', 'pattern_bot', 'pattern_miner', 'pattern_malware',
+                'pattern_virus', 'pattern_infect', 'pattern_spread'
+            ]
+            
+            categorical_features = ['file_category', 'extension']
+            
+            # Build feature vector
+            feature_vector = []
+            
+            # Add numerical features (normalized)
+            for feature in numerical_features:
+                value = features.get(feature, 0.0)
+                # Simple normalization (0-1)
+                if feature == 'file_size_kb':
+                    value = min(value / 1000.0, 1.0)  # Normalize to 1MB max
+                elif feature == 'entropy_score':
+                    value = min(value / 8.0, 1.0)  # Normalize to max entropy
+                elif feature == 'behavior_score':
+                    value = value / 10.0  # Already 0-10
+                elif feature == 'signature_count':
+                    value = min(value / 10.0, 1.0)  # Normalize to max 10 signatures
+                feature_vector.append(value)
+            
+            # Add binary features
+            for feature in binary_features:
+                value = 1.0 if features.get(feature, False) else 0.0
+                feature_vector.append(value)
+            
+            # Add categorical features (encoded)
+            for feature in categorical_features:
+                value = features.get(feature, 'unknown')
+                # Simple encoding for common categories
+                if feature == 'file_category':
+                    category_encoding = {
+                        'executable': 0, 'script': 1, 'document': 2, 
+                        'media': 3, 'archive': 4, 'config': 5, 'web': 6, 'other': 7
+                    }
+                    encoded_value = category_encoding.get(value, 7) / 7.0  # Normalize
+                elif feature == 'extension':
+                    # Simple extension encoding
+                    ext_encoding = {
+                        '.exe': 0, '.bat': 1, '.cmd': 2, '.com': 3, '.scr': 4,
+                        '.vbs': 5, '.js': 6, '.ps1': 7, '.py': 8, '.sh': 9,
+                        '.txt': 10, '.pdf': 11, '.doc': 12, '.zip': 13, '.rar': 14
+                    }
+                    encoded_value = ext_encoding.get(value, 15) / 15.0  # Normalize
+                feature_vector.append(encoded_value)
+            
+            return feature_vector
+            
+        except Exception as e:
+            safe_log(self.logger, f"Error preparing features for PyTorch: {e}", "error")
+            # Return zero vector as fallback
+            return [0.0] * 32
     
     def is_suspicious_by_extension(self, file_path: Path) -> bool:
         """Check if file is suspicious based on extension."""

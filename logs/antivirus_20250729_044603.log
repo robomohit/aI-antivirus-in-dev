@@ -1,0 +1,78 @@
+2025-07-29 04:46:03,038 - INFO - Ultimate AI Antivirus v4.X Started
+2025-07-29 04:46:03,038 - INFO - Ultimate AI Antivirus v4.X Started
+2025-07-29 04:46:03,038 - INFO - Monitoring path: /workspace
+2025-07-29 04:46:03,038 - INFO - Monitoring path: /workspace
+2025-07-29 04:46:03,038 - INFO - Quarantine enabled: True
+2025-07-29 04:46:03,038 - INFO - Quarantine enabled: True
+2025-07-29 04:46:03,038 - INFO - Scan mode: NORMAL
+2025-07-29 04:46:03,038 - INFO - Scan mode: NORMAL
+2025-07-29 04:46:03,041 - INFO - Error loading PyTorch model: 'collections.OrderedDict' object has no attribute 'eval'
+2025-07-29 04:46:03,041 - INFO - Error loading PyTorch model: 'collections.OrderedDict' object has no attribute 'eval'
+2025-07-29 04:46:03,144 - INFO - AI model trained and saved successfully
+2025-07-29 04:46:03,144 - INFO - AI model trained and saved successfully
+2025-07-29 04:46:03,145 - INFO - Normal scan: scanning path /workspace
+2025-07-29 04:46:03,145 - INFO - Normal scan: scanning path /workspace
+2025-07-29 04:46:03,145 - INFO - Searching 1 directories for files...
+2025-07-29 04:46:03,145 - INFO - Searching 1 directories for files...
+2025-07-29 04:46:03,452 - INFO - Found 11 files to scan
+2025-07-29 04:46:03,452 - INFO - Found 11 files to scan
+2025-07-29 04:46:03,453 - INFO - Finding files to scan...
+2025-07-29 04:46:03,453 - INFO - Finding files to scan...
+2025-07-29 04:46:03,453 - INFO - Normal scan: scanning path /workspace
+2025-07-29 04:46:03,453 - INFO - Normal scan: scanning path /workspace
+2025-07-29 04:46:03,453 - INFO - Searching 1 directories for files...
+2025-07-29 04:46:03,453 - INFO - Searching 1 directories for files...
+2025-07-29 04:46:03,706 - INFO - Found 11 files to scan
+2025-07-29 04:46:03,706 - INFO - Found 11 files to scan
+2025-07-29 04:46:03,706 - INFO - Starting scan of 11 files...
+2025-07-29 04:46:03,706 - INFO - Starting scan of 11 files...
+2025-07-29 04:46:03,707 - ERROR - Error in AI prediction: 'RandomForestClassifier' object has no attribute 'eval'
+2025-07-29 04:46:03,707 - ERROR - Error in AI prediction: 'RandomForestClassifier' object has no attribute 'eval'
+2025-07-29 04:46:03,709 - INFO - Known malware detected: malware_dataset.csv
+2025-07-29 04:46:03,709 - INFO - Known malware detected: malware_dataset.csv
+2025-07-29 04:46:03,709 - WARNING - THREAT DETECTED: malware_dataset.csv | Level: CRITICAL | Method: KNOWN_MALWARE | Confidence: 1.00 | Size: 1.9 MB
+2025-07-29 04:46:03,709 - WARNING - THREAT DETECTED: malware_dataset.csv | Level: CRITICAL | Method: KNOWN_MALWARE | Confidence: 1.00 | Size: 1.9 MB
+2025-07-29 04:46:03,710 - INFO - File quarantined: malware_dataset.csv -> malware_dataset_20250729_044603.csv
+2025-07-29 04:46:03,710 - INFO - File quarantined: malware_dataset.csv -> malware_dataset_20250729_044603.csv
+2025-07-29 04:46:03,710 - ERROR - Error in AI prediction: 'RandomForestClassifier' object has no attribute 'eval'
+2025-07-29 04:46:03,710 - ERROR - Error in AI prediction: 'RandomForestClassifier' object has no attribute 'eval'
+2025-07-29 04:46:03,711 - ERROR - Error in AI prediction: 'RandomForestClassifier' object has no attribute 'eval'
+2025-07-29 04:46:03,711 - ERROR - Error in AI prediction: 'RandomForestClassifier' object has no attribute 'eval'
+2025-07-29 04:46:03,711 - WARNING - THREAT DETECTED: trojan_test.bat | Level: SAFE | Method: EXTENSION | Confidence: 0.00 | Size: 188.0 B
+2025-07-29 04:46:03,711 - WARNING - THREAT DETECTED: trojan_test.bat | Level: SAFE | Method: EXTENSION | Confidence: 0.00 | Size: 188.0 B
+2025-07-29 04:46:03,711 - INFO - File quarantined: trojan_test.bat -> trojan_test_20250729_044603.bat
+2025-07-29 04:46:03,711 - INFO - File quarantined: trojan_test.bat -> trojan_test_20250729_044603.bat
+2025-07-29 04:46:03,711 - ERROR - Error in AI prediction: 'RandomForestClassifier' object has no attribute 'eval'
+2025-07-29 04:46:03,711 - ERROR - Error in AI prediction: 'RandomForestClassifier' object has no attribute 'eval'
+2025-07-29 04:46:03,711 - WARNING - THREAT DETECTED: backdoor_test.ps1 | Level: SAFE | Method: EXTENSION | Confidence: 0.00 | Size: 339.0 B
+2025-07-29 04:46:03,711 - WARNING - THREAT DETECTED: backdoor_test.ps1 | Level: SAFE | Method: EXTENSION | Confidence: 0.00 | Size: 339.0 B
+2025-07-29 04:46:03,711 - INFO - File quarantined: backdoor_test.ps1 -> backdoor_test_20250729_044603.ps1
+2025-07-29 04:46:03,711 - INFO - File quarantined: backdoor_test.ps1 -> backdoor_test_20250729_044603.ps1
+2025-07-29 04:46:03,712 - ERROR - Error in AI prediction: 'RandomForestClassifier' object has no attribute 'eval'
+2025-07-29 04:46:03,712 - ERROR - Error in AI prediction: 'RandomForestClassifier' object has no attribute 'eval'
+2025-07-29 04:46:03,712 - WARNING - THREAT DETECTED: keylogger_test.js | Level: SAFE | Method: EXTENSION | Confidence: 0.00 | Size: 481.0 B
+2025-07-29 04:46:03,712 - WARNING - THREAT DETECTED: keylogger_test.js | Level: SAFE | Method: EXTENSION | Confidence: 0.00 | Size: 481.0 B
+2025-07-29 04:46:03,712 - INFO - File quarantined: keylogger_test.js -> keylogger_test_20250729_044603.js
+2025-07-29 04:46:03,712 - INFO - File quarantined: keylogger_test.js -> keylogger_test_20250729_044603.js
+2025-07-29 04:46:03,712 - ERROR - Error in AI prediction: 'RandomForestClassifier' object has no attribute 'eval'
+2025-07-29 04:46:03,712 - ERROR - Error in AI prediction: 'RandomForestClassifier' object has no attribute 'eval'
+2025-07-29 04:46:03,712 - WARNING - THREAT DETECTED: worm_test.vbs | Level: SAFE | Method: EXTENSION | Confidence: 0.00 | Size: 450.0 B
+2025-07-29 04:46:03,712 - WARNING - THREAT DETECTED: worm_test.vbs | Level: SAFE | Method: EXTENSION | Confidence: 0.00 | Size: 450.0 B
+2025-07-29 04:46:03,712 - INFO - File quarantined: worm_test.vbs -> worm_test_20250729_044603.vbs
+2025-07-29 04:46:03,712 - INFO - File quarantined: worm_test.vbs -> worm_test_20250729_044603.vbs
+2025-07-29 04:46:03,713 - ERROR - Error in AI prediction: 'RandomForestClassifier' object has no attribute 'eval'
+2025-07-29 04:46:03,713 - ERROR - Error in AI prediction: 'RandomForestClassifier' object has no attribute 'eval'
+2025-07-29 04:46:03,713 - ERROR - Error in AI prediction: 'RandomForestClassifier' object has no attribute 'eval'
+2025-07-29 04:46:03,713 - ERROR - Error in AI prediction: 'RandomForestClassifier' object has no attribute 'eval'
+2025-07-29 04:46:03,714 - ERROR - Error in AI prediction: 'RandomForestClassifier' object has no attribute 'eval'
+2025-07-29 04:46:03,714 - ERROR - Error in AI prediction: 'RandomForestClassifier' object has no attribute 'eval'
+2025-07-29 04:46:03,714 - INFO - Scan progress: 90.9% (10/11)
+2025-07-29 04:46:03,714 - INFO - Scan progress: 90.9% (10/11)
+2025-07-29 04:46:03,714 - ERROR - Error in AI prediction: 'RandomForestClassifier' object has no attribute 'eval'
+2025-07-29 04:46:03,714 - ERROR - Error in AI prediction: 'RandomForestClassifier' object has no attribute 'eval'
+2025-07-29 04:46:03,714 - INFO - Scan complete. Scanned 11 files in 0.01s
+2025-07-29 04:46:03,714 - INFO - Scan complete. Scanned 11 files in 0.01s
+2025-07-29 04:46:03,714 - INFO - Performance: 1306.1 files/second
+2025-07-29 04:46:03,714 - INFO - Performance: 1306.1 files/second
+2025-07-29 04:46:03,714 - INFO - Threats found: 4
+2025-07-29 04:46:03,714 - INFO - Threats found: 4

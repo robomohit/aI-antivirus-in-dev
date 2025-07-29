@@ -1,0 +1,32 @@
+
+PYTORCH AI ANTIVIRUS MODEL METRICS
+==================================
+Timestamp: 20250729_044500
+
+MODEL PERFORMANCE:
+=================
+Accuracy:  0.9980
+Precision: 0.9980
+Recall:    0.9980
+F1-Score:  0.9980
+AUC:       1.0000
+
+TRAINING HISTORY:
+================
+Final Train Accuracy: 0.9922
+Final Val Accuracy:   0.9987
+Final Test Accuracy:  0.9980
+
+MODEL ARCHITECTURE:
+==================
+- Input Size: 32
+- Hidden Layers: 3
+- Activation: ReLU
+- Dropout: 0.3
+- Output: Sigmoid (Binary Classification)
+
+SAVED FILES:
+============
+- Model: model/ai_model_20250729_044500.pt
+- State Dict: model/ai_model_state_20250729_044500.pt
+- Visualizations: logs/
