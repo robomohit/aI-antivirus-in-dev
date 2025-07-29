@@ -1,0 +1,53 @@
+ULTIMATE AI ANTIVIRUS MODEL METRICS
+==================================================
+
+DATASET SUMMARY
+------------------------------
+Total samples: 5000
+Malware samples: 2500
+Safe samples: 2500
+Feature columns: 70
+File categories: 7
+Extensions: 33
+
+MODEL PERFORMANCE
+------------------------------
+
+TRAIN SET:
+  Accuracy:  1.0000
+  Precision: 1.0000
+  Recall:    1.0000
+  F1-Score:  1.0000
+  AUC:       1.0000
+
+VAL SET:
+  Accuracy:  1.0000
+  Precision: 1.0000
+  Recall:    1.0000
+  F1-Score:  1.0000
+  AUC:       1.0000
+
+TEST SET:
+  Accuracy:  1.0000
+  Precision: 1.0000
+  Recall:    1.0000
+  F1-Score:  1.0000
+  AUC:       1.0000
+
+TOP 10 FEATURE IMPORTANCES
+------------------------------
+ 1. behavior_score                 0.1380
+ 2. entropy_score                  0.1335
+ 3. content_flags                  0.1240
+ 4. signature_count                0.1154
+ 5. filename_risk                  0.1150
+ 6. creation_randomness            0.1116
+ 7. file_size_kb                   0.0350
+ 8. pattern_bypass                 0.0263
+ 9. pattern_cracked                0.0216
+10. pattern_cheat                  0.0179
+
+OVERFITTING ANALYSIS
+------------------------------
+Train-Val Difference: 0.0000
+Model appears well-balanced
