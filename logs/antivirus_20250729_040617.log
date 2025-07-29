@@ -1,0 +1,42 @@
+2025-07-29 04:06:17,166 - INFO - Ultimate AI Antivirus v4.X Started
+2025-07-29 04:06:17,166 - INFO - Ultimate AI Antivirus v4.X Started
+2025-07-29 04:06:17,166 - INFO - Monitoring path: /workspace
+2025-07-29 04:06:17,166 - INFO - Monitoring path: /workspace
+2025-07-29 04:06:17,166 - INFO - Quarantine enabled: True
+2025-07-29 04:06:17,166 - INFO - Quarantine enabled: True
+2025-07-29 04:06:17,166 - INFO - Scan mode: NORMAL
+2025-07-29 04:06:17,166 - INFO - Scan mode: NORMAL
+2025-07-29 04:06:17,169 - INFO - AI model loaded successfully
+2025-07-29 04:06:17,169 - INFO - AI model loaded successfully
+2025-07-29 04:06:17,170 - INFO - Normal scan: scanning path /workspace
+2025-07-29 04:06:17,170 - INFO - Normal scan: scanning path /workspace
+2025-07-29 04:06:17,170 - INFO - Searching 1 directories for files...
+2025-07-29 04:06:17,170 - INFO - Searching 1 directories for files...
+2025-07-29 04:06:17,336 - INFO - Found 20 files to scan
+2025-07-29 04:06:17,336 - INFO - Found 20 files to scan
+2025-07-29 04:06:17,336 - INFO - Finding files to scan...
+2025-07-29 04:06:17,336 - INFO - Finding files to scan...
+2025-07-29 04:06:17,336 - INFO - Normal scan: scanning path /workspace
+2025-07-29 04:06:17,336 - INFO - Normal scan: scanning path /workspace
+2025-07-29 04:06:17,336 - INFO - Searching 1 directories for files...
+2025-07-29 04:06:17,336 - INFO - Searching 1 directories for files...
+2025-07-29 04:06:17,468 - INFO - Found 20 files to scan
+2025-07-29 04:06:17,468 - INFO - Found 20 files to scan
+2025-07-29 04:06:17,468 - INFO - Starting scan of 20 files...
+2025-07-29 04:06:17,468 - INFO - Starting scan of 20 files...
+2025-07-29 04:06:17,569 - INFO - Scan progress: 50.0% (10/20)
+2025-07-29 04:06:17,569 - INFO - Scan progress: 50.0% (10/20)
+2025-07-29 04:06:17,579 - INFO - Known malware detected: config.py
+2025-07-29 04:06:17,579 - INFO - Known malware detected: config.py
+2025-07-29 04:06:17,580 - WARNING - THREAT DETECTED: config.py | Level: CRITICAL | Method: KNOWN_MALWARE | Confidence: 1.00 | Size: 10.3 KB
+2025-07-29 04:06:17,580 - WARNING - THREAT DETECTED: config.py | Level: CRITICAL | Method: KNOWN_MALWARE | Confidence: 1.00 | Size: 10.3 KB
+2025-07-29 04:06:17,580 - INFO - File quarantined: config.py -> config_20250729_040617.py
+2025-07-29 04:06:17,580 - INFO - File quarantined: config.py -> config_20250729_040617.py
+2025-07-29 04:06:17,659 - INFO - Scan progress: 100.0% (20/20)
+2025-07-29 04:06:17,659 - INFO - Scan progress: 100.0% (20/20)
+2025-07-29 04:06:17,659 - INFO - Scan complete. Scanned 20 files in 0.19s
+2025-07-29 04:06:17,659 - INFO - Scan complete. Scanned 20 files in 0.19s
+2025-07-29 04:06:17,659 - INFO - Performance: 104.7 files/second
+2025-07-29 04:06:17,659 - INFO - Performance: 104.7 files/second
+2025-07-29 04:06:17,659 - INFO - Threats found: 0
+2025-07-29 04:06:17,659 - INFO - Threats found: 0

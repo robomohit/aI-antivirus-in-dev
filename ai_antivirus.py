@@ -1,33 +1,44 @@
 #!/usr/bin/env python3
 """
-🚀 ULTIMATE AI ANTIVIRUS v4.X
-Enhanced AI-powered security agent with modular design, real-time monitoring, and comprehensive threat detection.
+Ultimate AI Antivirus v5.X - Windows Optimized Version
+Enhanced security agent with AI integration and Windows compatibility
 """
 
 import os
 import sys
 import time
 import signal
-import shutil
 import logging
 import argparse
+import pickle
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple
-import pickle
+import platform
+
+# Data science imports
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
+
+# File monitoring
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-import colorama
-from colorama import Fore, Style
-from rich.console import Console
-from rich.table import Table
-from rich.panel import Panel
-from rich.progress import Progress, SpinnerColumn, TextColumn
-from rich.layout import Layout
-from rich.live import Live
+
+# Rich terminal output (Windows compatible)
+try:
+    from rich.console import Console
+    from rich.table import Table
+    from rich.panel import Panel
+    from rich.layout import Layout
+    from rich.live import Live
+    import colorama
+    from colorama import Fore, Style
+    RICH_AVAILABLE = True
+except ImportError:
+    RICH_AVAILABLE = False
+    print("Rich not available, using basic output")
+
 import threading
 
 # Import our modules
@@ -44,8 +55,41 @@ from utils import (
 )
 
 # Initialize colorama and rich with Windows compatibility
-colorama.init(autoreset=True)
-console = Console(force_terminal=True, color_system="auto")
+if RICH_AVAILABLE:
+    colorama.init(autoreset=True)
+    console = Console(force_terminal=True, color_system="auto")
+else:
+    console = None
+
+# ============================================================================
+# WINDOWS-SAFE PRINT FUNCTIONS
+# ============================================================================
+
+def safe_print(text: str, color: str = "white"):
+    """Safely print text with fallback for Windows encoding issues."""
+    if not RICH_AVAILABLE:
+        print(text)
+        return
+        
+    try:
+        console.print(text, style=color)
+    except UnicodeEncodeError:
+        # Fallback for Windows encoding issues
+        clean_text = text.replace("⚠️", "WARNING").replace("❌", "ERROR").replace("✅", "OK").replace("🧠", "AI").replace("🛡️", "SHIELD")
+        print(clean_text)
+    except Exception as e:
+        # Ultimate fallback
+        print(text)
+
+def safe_log(logger, message: str, level: str = "info"):
+    """Safely log messages without emojis for Windows compatibility."""
+    clean_message = message.replace("🚀", "").replace("📁", "").replace("🛡️", "").replace("🔍", "").replace("🧠", "AI").replace("❌", "ERROR").replace("✅", "OK")
+    if level == "info":
+        logger.info(clean_message)
+    elif level == "warning":
+        logger.warning(clean_message)
+    elif level == "error":
+        logger.error(clean_message)
 
 # ============================================================================
 # THREAT LEVEL FUNCTIONS
@@ -74,17 +118,6 @@ def format_file_size(size_bytes: int) -> str:
 def create_timestamp() -> str:
     """Create timestamp string for logging."""
     return datetime.now().strftime("%Y%m%d_%H%M%S")
-
-def safe_print(text: str, color: str = "white"):
-    """Safely print text with fallback for Windows encoding issues."""
-    try:
-        console.print(text, style=color)
-    except UnicodeEncodeError:
-        # Fallback for Windows encoding issues
-        print(text.replace("⚠️", "WARNING").replace("❌", "ERROR").replace("✅", "OK").replace("🧠", "AI").replace("🛡️", "SHIELD"))
-    except Exception as e:
-        # Ultimate fallback
-        print(text)
 
 # ============================================================================
 # ENHANCED AI ANTIVIRUS CLASS
@@ -139,48 +172,73 @@ class UltimateAIAntivirus:
         self.event_handler = UltimateAIAntivirusEventHandler(self)
         
         # Dashboard components
-        self.dashboard_active = False
-        self.dashboard_thread = None
+        self.dashboard_live = None
+        self.dashboard_running = False
         
+        # Print startup info
         self._print_startup_info()
     
     def _create_directories(self):
-        """Create logs, quarantine, and model directories if they don't exist."""
-        create_log_folders()
+        """Create necessary directories."""
+        self.logs_dir.mkdir(exist_ok=True)
+        self.quarantine_dir.mkdir(exist_ok=True)
+        self.model_dir.mkdir(exist_ok=True)
     
     def _setup_logging(self):
-        """Setup enhanced logging configuration."""
-        timestamp = create_timestamp()
-        log_file = self.logs_dir / f"ultimate_antivirus_{timestamp}.log"
+        """Setup comprehensive logging system."""
+        # Create logs directory
+        self.logs_dir.mkdir(exist_ok=True)
         
-        # Create formatter
-        formatter = logging.Formatter(
-            '%(asctime)s - %(levelname)s - %(message)s',
-            datefmt='%Y-%m-%d %H:%M:%S'
+        # Create timestamp for log file
+        timestamp = create_timestamp()
+        log_file = self.logs_dir / f"antivirus_{timestamp}.log"
+        
+        # Configure logging
+        logging.basicConfig(
+            level=logging.INFO,
+            format='%(asctime)s - %(levelname)s - %(message)s',
+            handlers=[
+                logging.FileHandler(log_file),
+                logging.StreamHandler(sys.stdout)
+            ]
         )
         
-        # File handler
-        file_handler = logging.FileHandler(log_file)
-        file_handler.setFormatter(formatter)
-        
-        # Console handler
-        console_handler = logging.StreamHandler(sys.stdout)
-        console_handler.setFormatter(formatter)
-        
-        # Setup logger
+        # Create logger for this class
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.INFO)
+        
+        # Add file handler
+        file_handler = logging.FileHandler(log_file)
+        file_handler.setLevel(logging.INFO)
+        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+        file_handler.setFormatter(formatter)
         self.logger.addHandler(file_handler)
+        
+        # Add console handler
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setLevel(logging.INFO)
+        console_handler.setFormatter(formatter)
         self.logger.addHandler(console_handler)
         
         # Log startup
-        self.logger.info("Ultimate AI Antivirus v4.X Started")
-        self.logger.info(f"Monitoring path: {self.monitor_path}")
-        self.logger.info(f"Quarantine enabled: {self.quarantine_enabled}")
-        self.logger.info(f"Scan mode: {self.scan_mode.upper()}")
+        safe_log(self.logger, "Ultimate AI Antivirus v4.X Started")
+        safe_log(self.logger, f"Monitoring path: {self.monitor_path}")
+        safe_log(self.logger, f"Quarantine enabled: {self.quarantine_enabled}")
+        safe_log(self.logger, f"Scan mode: {self.scan_mode.upper()}")
     
     def _print_startup_info(self):
         """Print enhanced startup information."""
+        if not RICH_AVAILABLE:
+            print("=" * 60)
+            print("ULTIMATE AI ANTIVIRUS v4.X")
+            print("Enhanced Security Agent with AI Integration")
+            print(f"Monitoring: {self.monitor_path}")
+            print(f"Quarantine: {'Enabled' if self.quarantine_enabled else 'Disabled'}")
+            print(f"AI Model: {'Loaded' if self.model else 'Training...'}")
+            print(f"Scan Mode: {self.scan_mode.upper()}")
+            print("=" * 60)
+            return
+            
         try:
             console.print(Panel(
                 f"[bold cyan]ULTIMATE AI ANTIVIRUS v4.X[/bold cyan]\n"
@@ -209,13 +267,13 @@ class UltimateAIAntivirus:
             if self.model_path.exists():
                 with open(self.model_path, 'rb') as f:
                     model = pickle.load(f)
-                self.logger.info("AI model loaded successfully")
+                safe_log(self.logger, "AI model loaded successfully")
                 return model
             else:
-                self.logger.warning("No existing model found. Training new model...")
+                safe_log(self.logger, "No existing model found. Training new model...", "warning")
                 return self._train_model()
         except Exception as e:
-            self.logger.error(f"Error loading model: {e}")
+            safe_log(self.logger, f"Error loading model: {e}", "error")
             return self._train_model()
     
     def _create_training_data(self):
@@ -265,11 +323,11 @@ class UltimateAIAntivirus:
             with open(self.model_path, 'wb') as f:
                 pickle.dump(model, f)
             
-            self.logger.info("AI model trained and saved successfully")
+            safe_log(self.logger, "AI model trained and saved successfully")
             return model
             
         except Exception as e:
-            self.logger.error(f"Error training model: {e}")
+            safe_log(self.logger, f"Error training model: {e}", "error")
             return None
     
     def _extract_features(self, file_path: Path) -> Optional[Dict]:
@@ -312,7 +370,7 @@ class UltimateAIAntivirus:
             return features
             
         except Exception as e:
-            self.logger.error(f"Error extracting features from {file_path}: {e}")
+            safe_log(self.logger, f"Error extracting features from {file_path}: {e}", "error")
             return None
     
     def _predict_with_ai(self, features: Dict) -> Dict:
@@ -351,7 +409,7 @@ class UltimateAIAntivirus:
             }
             
         except Exception as e:
-            self.logger.error(f"Error in AI prediction: {e}")
+            safe_log(self.logger, f"Error in AI prediction: {e}", "error")
             return {'is_malicious': False, 'confidence': 0.0}
     
     def is_suspicious_by_extension(self, file_path: Path) -> bool:
@@ -366,7 +424,7 @@ class UltimateAIAntivirus:
         # Check if file is already known malware
         file_hash = get_file_hash(str(file_path))
         if file_hash and is_known_malware(file_hash):
-            self.logger.info(f"Known malware detected: {file_path.name}")
+            safe_log(self.logger, f"Known malware detected: {file_path.name}")
             self.stats['files_scanned'] += 1
             self.stats['last_scan_time'] = datetime.now()
             return {
@@ -415,6 +473,8 @@ class UltimateAIAntivirus:
         
         # Update statistics
         self.stats['files_scanned'] += 1
+        self.stats['last_scan_time'] = datetime.now()
+        
         if is_suspicious:
             self.stats['threats_found'] += 1
             if detection_method == "AI":
@@ -423,8 +483,6 @@ class UltimateAIAntivirus:
                 self.stats['extension_detections'] += 1
             elif detection_method == "BOTH":
                 self.stats['both_detections'] += 1
-        
-        self.stats['last_scan_time'] = datetime.now()
         
         return {
             'file_path': file_path,
@@ -440,26 +498,27 @@ class UltimateAIAntivirus:
         }
     
     def log_threat(self, analysis_result: Dict):
-        """Log threat detection with enhanced information."""
+        """Log threat detection with enhanced details."""
         file_path = analysis_result['file_path']
-        detection_method = analysis_result['detection_method']
-        ai_confidence = analysis_result['ai_confidence']
         threat_level = analysis_result['threat_level']
-        file_size = analysis_result['file_size_kb']
+        detection_method = analysis_result['detection_method']
+        confidence = analysis_result['ai_confidence']
         
-        # Log detailed information
-        self.logger.warning(f"THREAT DETECTED: {file_path}")
-        self.logger.info(f"File size: {file_size:.1f} KB")
-        self.logger.info(f"Detection method: {detection_method}")
-        self.logger.info(f"AI confidence: {ai_confidence:.2%}")
-        self.logger.info(f"Threat level: {threat_level}")
-        self.logger.info(f"Last modified: {analysis_result['last_modified']}")
-        self.logger.info(f"Extension: {analysis_result['extension']}")
+        # Create detailed log message
+        log_message = (
+            f"THREAT DETECTED: {file_path.name} | "
+            f"Level: {threat_level} | "
+            f"Method: {detection_method} | "
+            f"Confidence: {confidence:.2f} | "
+            f"Size: {format_file_size(int(analysis_result['file_size_kb'] * 1024))}"
+        )
+        
+        safe_log(self.logger, log_message, "warning")
     
     def quarantine_file(self, file_path: Path) -> Tuple[bool, Optional[Path]]:
-        """Move a suspicious file to the quarantine folder."""
+        """Move suspicious file to quarantine with timestamp."""
         try:
-            if not self.quarantine_enabled:
+            if not file_path.exists():
                 return False, None
             
             # Create quarantine filename with timestamp
@@ -468,264 +527,169 @@ class UltimateAIAntivirus:
             quarantine_path = self.quarantine_dir / quarantine_name
             
             # Move file to quarantine
+            import shutil
             shutil.move(str(file_path), str(quarantine_path))
+            
+            safe_log(self.logger, f"File quarantined: {file_path.name} -> {quarantine_name}")
             self.stats['quarantined'] += 1
+            
             return True, quarantine_path
             
         except Exception as e:
-            self.logger.error(f"Failed to quarantine {file_path}: {e}")
+            safe_log(self.logger, f"Error quarantining {file_path}: {e}", "error")
             return False, None
     
     def handle_suspicious_file(self, analysis_result: Dict):
-        """Handle a suspicious file with enhanced logging."""
+        """Handle suspicious file detection."""
         file_path = analysis_result['file_path']
-        detection_method = analysis_result['detection_method']
-        ai_confidence = analysis_result['ai_confidence']
-        threat_level = analysis_result['threat_level']
         
         # Log the threat
         self.log_threat(analysis_result)
         
-        # Print colored alert
-        threat_emoji = THREAT_LEVELS.get(threat_level, {}).get('emoji', '⚠️')
-        threat_color = THREAT_LEVELS.get(threat_level, {}).get('color', Fore.YELLOW)
-        
-        safe_print(f"THREAT DETECTED!")
-        safe_print(f"File: {file_path}")
-        safe_print(f"Detection: {detection_method}")
-        safe_print(f"Size: {analysis_result['file_size_kb']:.1f} KB")
-        safe_print(f"AI Confidence: {ai_confidence:.2%}")
-        safe_print(f"Threat Level: {threat_level}")
-        
-        # Add to known malware database if it's a new AI or BOTH detection
-        if detection_method in ["AI", "BOTH"]:
-            features = {
-                'file_size_kb': analysis_result['file_size_kb'],
-                'extension': analysis_result['extension'],
-                'entropy': 0.0  # Will be calculated in add_to_known_malware
-            }
-            add_to_known_malware(str(file_path), features, ai_confidence, detection_method)
+        # Add to known malware database if AI detected
+        if analysis_result['ai_suspicious'] or analysis_result['detection_method'] == "BOTH":
+            file_hash = get_file_hash(str(file_path))
+            if file_hash:
+                add_to_known_malware(
+                    str(file_path),
+                    analysis_result,
+                    analysis_result['ai_confidence'],
+                    analysis_result['detection_method']
+                )
         
         # Quarantine if enabled
         if self.quarantine_enabled:
-            success, quarantine_path = self.quarantine_file(file_path)
-            if success:
-                safe_print(f"Quarantined: {quarantine_path}")
-            else:
-                safe_print("Failed to quarantine file")
+            self.quarantine_file(file_path)
     
     def scan_directory(self, show_progress: bool = True):
-        """Scan directory with enhanced progress tracking."""
-        if not self.monitor_path.exists():
-            self.logger.error(f"Monitor path does not exist: {self.monitor_path}")
-            return
-        
-        # Get files to scan based on scan mode
+        """Scan directory for suspicious files."""
+        safe_log(self.logger, "Finding files to scan...")
         files_to_scan = self._get_files_to_scan()
         
         if not files_to_scan:
-            self.logger.info("No files to scan")
+            safe_log(self.logger, "No files to scan")
             return
         
-        self.logger.info(f"Scanning directory: {self.monitor_path}")
+        safe_log(self.logger, f"Starting scan of {len(files_to_scan)} files...")
         
-        if show_progress:
-            with Progress(
-                SpinnerColumn(),
-                TextColumn("[progress.description]{task.description}"),
-                console=console
-            ) as progress:
-                task = progress.add_task("Scanning files...", total=len(files_to_scan))
+        start_time = time.time()
+        
+        for i, file_path in enumerate(files_to_scan):
+            try:
+                # Analyze file
+                result = self.analyze_file(file_path)
                 
-                for file_path in files_to_scan:
-                    progress.update(task, description=f"Scanning: {file_path.name}")
+                if result and result['is_suspicious']:
+                    self.handle_suspicious_file(result)
+                
+                # Show progress more frequently
+                if show_progress:
+                    if (i + 1) % 50 == 0:  # Every 50 files
+                        progress = (i + 1) / len(files_to_scan) * 100
+                        safe_log(self.logger, f"Scan progress: {progress:.1f}% ({i + 1}/{len(files_to_scan)})")
+                    elif (i + 1) % 10 == 0:  # Every 10 files for small scans
+                        if len(files_to_scan) < 1000:
+                            progress = (i + 1) / len(files_to_scan) * 100
+                            safe_log(self.logger, f"Scan progress: {progress:.1f}% ({i + 1}/{len(files_to_scan)})")
                     
-                    try:
-                        analysis_result = self.analyze_file(file_path)
-                        if analysis_result and analysis_result['is_suspicious']:
-                            self.handle_suspicious_file(analysis_result)
-                    except Exception as e:
-                        self.logger.error(f"Error scanning {file_path}: {e}")
-                    
-                    progress.advance(task)
-        else:
-            for file_path in files_to_scan:
-                try:
-                    analysis_result = self.analyze_file(file_path)
-                    if analysis_result and analysis_result['is_suspicious']:
-                        self.handle_suspicious_file(analysis_result)
-                except Exception as e:
-                    self.logger.error(f"❌ Error scanning {file_path}: {e}")
+            except Exception as e:
+                safe_log(self.logger, f"Error scanning {file_path}: {e}", "error")
         
-        self.logger.info(f"Initial scan complete. Found {self.stats['threats_found']} suspicious files.")
+        scan_time = time.time() - start_time
+        files_per_second = len(files_to_scan) / scan_time if scan_time > 0 else 0
+        
+        safe_log(self.logger, f"Scan complete. Scanned {self.stats['files_scanned']} files in {scan_time:.2f}s")
+        safe_log(self.logger, f"Performance: {files_per_second:.1f} files/second")
+        safe_log(self.logger, f"Threats found: {self.stats['threats_found']}")
     
     def _get_files_to_scan(self) -> List[Path]:
-        """Get files to scan based on scan mode."""
-        files = []
+        """Get list of files to scan based on scan mode."""
+        files_to_scan = []
         
         if self.scan_mode == "smart":
             # Smart scan: only high-risk directories
-            scan_paths = get_high_risk_paths()
-            self.logger.info(f"Smart scan mode: scanning {len(scan_paths)} high-risk directories")
-            
+            paths = get_high_risk_paths()
+            safe_log(self.logger, "Smart scan: scanning high-risk directories only")
         elif self.scan_mode == "full":
             # Full scan: entire system
-            scan_paths = get_full_scan_paths()
-            self.logger.info(f"Full scan mode: scanning {len(scan_paths)} system paths")
-            
+            paths = get_full_scan_paths()
+            safe_log(self.logger, "Full scan: scanning entire system (this may take a while)")
         else:
-            # Normal scan: just the monitor path
-            scan_paths = [self.monitor_path]
-            self.logger.info(f"Normal scan mode: scanning monitor path")
+            # Normal scan: specified path
+            paths = [self.monitor_path]
+            safe_log(self.logger, f"Normal scan: scanning path {self.monitor_path}")
         
-        # Collect files from all scan paths
-        for scan_path in scan_paths:
-            scan_path = Path(scan_path)
-            if scan_path.exists():
-                for file_path in scan_path.rglob("*"):
-                    if file_path.is_file() and self._should_scan_file(file_path):
-                        files.append(file_path)
+        safe_log(self.logger, f"Searching {len(paths)} directories for files...")
         
-        return files
+        for i, path in enumerate(paths):
+            path_obj = Path(path)
+            if path_obj.exists():
+                if path_obj.is_file():
+                    files_to_scan.append(path_obj)
+                else:
+                    # Recursively find all files
+                    file_count = 0
+                    for file_path in path_obj.rglob('*'):
+                        if file_path.is_file() and self._should_scan_file(file_path):
+                            files_to_scan.append(file_path)
+                            file_count += 1
+                            # Show progress for large directories
+                            if file_count % 1000 == 0:
+                                safe_log(self.logger, f"Found {file_count} files in {path_obj}...")
+        
+        safe_log(self.logger, f"Found {len(files_to_scan)} files to scan")
+        return files_to_scan
     
     def _should_scan_file(self, file_path: Path) -> bool:
-        """Determine if a file should be scanned based on size and type."""
+        """Determine if a file should be scanned."""
+        # Exclude certain directories and files
+        excluded_patterns = {
+            'quarantine', 'logs', 'model', 'test_files',
+            'known_malware.csv', '.git', '.svn', '.hg',
+            '__pycache__', '.pytest_cache', 'node_modules',
+            '.venv', 'venv', '.env'
+        }
+        
+        # Check if file path contains any excluded patterns
+        file_path_str = str(file_path).lower()
+        for pattern in excluded_patterns:
+            if pattern in file_path_str:
+                return False
+        
+        # Check file size (skip very large files)
         try:
-            # Check file size limits
-            stat = file_path.stat()
-            if stat.st_size < SCAN_THRESHOLDS['min_file_size']:
+            if file_path.stat().st_size > 100 * 1024 * 1024:  # 100MB
                 return False
-            if stat.st_size > SCAN_THRESHOLDS['max_file_size']:
-                return False
-            
-            # Skip system directories and common exclusions
-            excluded_patterns = [
-                '/proc', '/dev', '/sys', '/tmp', '/var/cache', '/var/log',
-                '.git', '.svn', '.hg', '__pycache__', '.pytest_cache',
-                'node_modules', '.venv', 'venv', '.env', 'quarantine', 'logs', 'model',
-                'known_malware.csv'
-            ]
-            
-            file_path_str = str(file_path)
-            if any(pattern in file_path_str for pattern in excluded_patterns):
-                return False
-            
-            return True
-            
-        except Exception:
+        except:
             return False
-    
-    def create_dashboard(self) -> Layout:
-        """Create enhanced real-time dashboard."""
-        layout = Layout()
         
-        # Header
-        header = Panel(
-            f"[bold cyan]🚀 ULTIMATE AI ANTIVIRUS v4.X DASHBOARD[/bold cyan]\n"
-            f"[green]Real-time Security Monitoring[/green]",
-            border_style="blue"
-        )
-        
-        # Statistics table
-        table = Table(title="📊 Live Statistics", show_header=True, header_style="bold magenta")
-        table.add_column("Metric", style="cyan")
-        table.add_column("Value", style="green")
-        table.add_column("Details", style="yellow")
-        
-        # Calculate uptime
-        uptime = datetime.now() - self.stats['start_time']
-        uptime_str = f"{uptime.days}d {uptime.seconds//3600}h {(uptime.seconds//60)%60}m"
-        
-        # Calculate files per second
-        if self.stats['last_scan_time']:
-            time_diff = (datetime.now() - self.stats['last_scan_time']).total_seconds()
-            files_per_sec = self.stats['files_scanned'] / max(time_diff, 1)
-        else:
-            files_per_sec = 0
-        
-        table.add_row("Files Scanned", str(self.stats['files_scanned']), "Total files analyzed")
-        table.add_row("Threats Found", str(self.stats['threats_found']), "Suspicious files detected")
-        table.add_row("Quarantined", str(self.stats['quarantined']), "Files moved to quarantine")
-        table.add_row("AI Detections", str(self.stats['ai_detections']), "ML-based detections")
-        table.add_row("Extension Detections", str(self.stats['extension_detections']), "Rule-based detections")
-        table.add_row("Both Detections", str(self.stats['both_detections']), "AI + Extension detections")
-        table.add_row("Known Malware", str(get_known_malware_count()), "Hash-based detections")
-        table.add_row("Uptime", uptime_str, "System running time")
-        table.add_row("Files/Second", f"{files_per_sec:.1f}", "Processing speed")
-        table.add_row("Scan Mode", self.scan_mode.upper(), "Current scan mode")
-        
-        layout.split_column(
-            Layout(header, size=3),
-            Layout(table, size=10)
-        )
-        
-        return layout
-    
-    def start_dashboard(self):
-        """Start the real-time dashboard."""
-        if self.gui_mode:
-            return
-        
-        self.dashboard_active = True
-        
-        def dashboard_loop():
-            with Live(self.create_dashboard(), refresh_per_second=2) as live:
-                while self.dashboard_active:
-                    live.update(self.create_dashboard())
-                    time.sleep(0.5)
-        
-        self.dashboard_thread = threading.Thread(target=dashboard_loop, daemon=True)
-        self.dashboard_thread.start()
-    
-    def stop_dashboard(self):
-        """Stop the real-time dashboard."""
-        self.dashboard_active = False
-        if self.dashboard_thread:
-            self.dashboard_thread.join(timeout=1)
+        return True
     
     def start_monitoring(self):
         """Start file system monitoring."""
-        if self.gui_mode:
-            return
-        
-        # Start dashboard if not in GUI mode
-        self.start_dashboard()
-        
-        # Schedule initial scan
-        self.scan_directory(show_progress=True)
-        
-        # Start file system monitoring
-        self.observer.schedule(self.event_handler, str(self.monitor_path), recursive=True)
-        self.observer.start()
-        
-        safe_print("File monitoring started")
-        console.print("Press Ctrl+C to stop monitoring")
-        
         try:
-            while True:
-                time.sleep(1)
-        except KeyboardInterrupt:
-            self.stop_monitoring()
+            self.observer.schedule(self.event_handler, str(self.monitor_path), recursive=True)
+            self.observer.start()
+            safe_log(self.logger, f"Started monitoring: {self.monitor_path}")
+            
+            # Keep running
+            try:
+                while True:
+                    time.sleep(1)
+            except KeyboardInterrupt:
+                self.stop_monitoring()
+                
+        except Exception as e:
+            safe_log(self.logger, f"Error starting monitoring: {e}", "error")
     
     def stop_monitoring(self):
         """Stop file system monitoring."""
-        self.stop_dashboard()
-        self.observer.stop()
-        self.observer.join()
-        console.print("\n🛑 Monitoring stopped")
-    
-    def get_system_tray_status(self) -> Dict:
-        """Get system tray status (placeholder for future implementation)."""
-        return {
-            'active': True,
-            'threats_detected': self.stats['threats_found'],
-            'files_scanned': self.stats['files_scanned'],
-            'uptime': str(datetime.now() - self.stats['start_time'])
-        }
-
-# ============================================================================
-# FILE SYSTEM EVENT HANDLER
-# ============================================================================
+        try:
+            self.observer.stop()
+            self.observer.join()
+            safe_log(self.logger, "Monitoring stopped")
+        except Exception as e:
+            safe_log(self.logger, f"Error stopping monitoring: {e}", "error")
 
 class UltimateAIAntivirusEventHandler(FileSystemEventHandler):
     def __init__(self, antivirus):
@@ -733,55 +697,39 @@ class UltimateAIAntivirusEventHandler(FileSystemEventHandler):
     
     def on_created(self, event):
         """Handle file creation events."""
-        if event.is_directory:
-            return
-        
-        file_path = Path(event.src_path)
-        if self.antivirus._should_scan_file(file_path):
-            try:
-                analysis_result = self.antivirus.analyze_file(file_path)
-                if analysis_result and analysis_result['is_suspicious']:
-                    self.antivirus.handle_suspicious_file(analysis_result)
-            except Exception as e:
-                self.antivirus.logger.error(f"❌ Error analyzing new file {file_path}: {e}")
+        if not event.is_directory:
+            file_path = Path(event.src_path)
+            if self.antivirus._should_scan_file(file_path):
+                result = self.antivirus.analyze_file(file_path)
+                if result and result['is_suspicious']:
+                    self.antivirus.handle_suspicious_file(result)
     
     def on_moved(self, event):
         """Handle file move events."""
-        if event.is_directory:
-            return
-        
-        file_path = Path(event.dest_path)
-        if self.antivirus._should_scan_file(file_path):
-            try:
-                analysis_result = self.antivirus.analyze_file(file_path)
-                if analysis_result and analysis_result['is_suspicious']:
-                    self.antivirus.handle_suspicious_file(analysis_result)
-            except Exception as e:
-                self.antivirus.logger.error(f"❌ Error analyzing moved file {file_path}: {e}")
-
-# ============================================================================
-# SIGNAL HANDLERS
-# ============================================================================
+        if not event.is_directory:
+            file_path = Path(event.dest_path)
+            if self.antivirus._should_scan_file(file_path):
+                result = self.antivirus.analyze_file(file_path)
+                if result and result['is_suspicious']:
+                    self.antivirus.handle_suspicious_file(result)
 
 def signal_handler(signum, frame):
-    """Handle shutdown signals gracefully."""
-    console.print("\n🛑 Shutdown signal received. Stopping antivirus...")
+    """Handle interrupt signals gracefully."""
+    safe_log(logging.getLogger(), "Received interrupt signal, shutting down...")
     sys.exit(0)
 
-# ============================================================================
-# GUI PLACEHOLDER
-# ============================================================================
-
 def create_gui_placeholder():
-    """Launch the GUI interface."""
+    """Launch GUI mode."""
     try:
         import subprocess
         import sys
-        safe_print("Launching GUI...")
+        
+        # Launch GUI
         subprocess.run([sys.executable, "gui.py"])
+        
     except Exception as e:
-                  safe_print(f"Error launching GUI: {e}")
-        console.print("[yellow]You can run the GUI manually with: python3 gui.py[/yellow]")
+        safe_print(f"Error launching GUI: {e}", "red")
+        safe_print("You can run the GUI manually with: python3 gui.py", "yellow")
 
 # ============================================================================
 # MAIN FUNCTION
@@ -790,7 +738,7 @@ def create_gui_placeholder():
 def main():
     """Main function with enhanced CLI options."""
     parser = argparse.ArgumentParser(
-        description="🚀 Ultimate AI Antivirus v4.X - Enhanced Security Agent",
+        description="Ultimate AI Antivirus v4.X - Enhanced Security Agent",
         epilog="Example: python3 ai_antivirus.py --path /home/user --smart-scan"
     )
     
@@ -818,26 +766,26 @@ def main():
     # Validate scan mode conflicts
     scan_modes = [args.smart_scan, args.full_scan]
     if sum(scan_modes) > 1:
-        safe_print("[red]ERROR: Only one scan mode allowed (--smart-scan OR --full-scan)[/red]", "red")
+        safe_print("ERROR: Only one scan mode allowed (--smart-scan OR --full-scan)", "red")
         return
     
     # Validate path conflicts with scan modes
     if args.path != "." and (args.smart_scan or args.full_scan):
-        safe_print("[red]ERROR: Cannot use --path with --smart-scan or --full-scan[/red]", "red")
-        safe_print("[red]Use --path for specific directory OR use scan modes for system-wide scanning[/red]", "red")
+        safe_print("ERROR: Cannot use --path with --smart-scan or --full-scan", "red")
+        safe_print("Use --path for specific directory OR use scan modes for system-wide scanning", "red")
         return
     
     # Determine scan mode
     if args.smart_scan:
         scan_mode = "smart"
-        safe_print("[yellow]AI Smart Scan mode active[/yellow]", "yellow")
+        safe_print("AI Smart Scan mode active", "yellow")
     elif args.full_scan:
         scan_mode = "full"
-        safe_print("[red]WARNING: Full system scan requested![/red]", "red")
-        safe_print("[red]This will scan your entire system. Continue? (y/N):[/red]", "red")
+        safe_print("WARNING: Full system scan requested!", "red")
+        safe_print("This will scan your entire system. Continue? (y/N):", "red")
         response = input().lower()
         if response != 'y':
-            safe_print("[yellow]Scan cancelled.[/yellow]", "yellow")
+            safe_print("Scan cancelled.", "yellow")
             return
     else:
         scan_mode = "normal"
@@ -853,16 +801,25 @@ def main():
         if model_path.exists():
             with open(model_path, 'rb') as f:
                 model = pickle.load(f)
-            console.print(Panel(
-                f"[bold cyan]🧠 Model Information[/bold cyan]\n"
-                f"Model Type: Random Forest Classifier\n"
-                f"Estimators: {model.n_estimators}\n"
-                f"Features: {model.n_features_in_}\n"
-                f"Classes: {list(model.classes_)}",
-                border_style="blue"
-            ))
+            if RICH_AVAILABLE:
+                console.print(Panel(
+                    f"[bold cyan]Model Information[/bold cyan]\n"
+                    f"Model Type: Random Forest Classifier\n"
+                    f"Estimators: {model.n_estimators}\n"
+                    f"Features: {model.n_features_in_}\n"
+                    f"Classes: {list(model.classes_)}",
+                    border_style="blue"
+                ))
+            else:
+                print("=" * 40)
+                print("Model Information")
+                print(f"Model Type: Random Forest Classifier")
+                print(f"Estimators: {model.n_estimators}")
+                print(f"Features: {model.n_features_in_}")
+                print(f"Classes: {list(model.classes_)}")
+                print("=" * 40)
         else:
-            safe_print("[red]ERROR No trained model found[/red]", "red")
+            safe_print("ERROR No trained model found", "red")
         return
     
     # Setup signal handlers
@@ -879,14 +836,14 @@ def main():
     
     # Handle retrain mode
     if args.retrain:
-        safe_print("[yellow]Retraining AI model...[/yellow]", "yellow")
+        safe_print("Retraining AI model...", "yellow")
         antivirus.model = antivirus._train_model()
-        safe_print("[green]OK Model retraining complete![/green]", "green")
+        safe_print("OK Model retraining complete!", "green")
         return
     
     # Handle demo mode
     if args.demo:
-        safe_print("[cyan]Demo mode: Creating sample files...[/cyan]", "cyan")
+        safe_print("Demo mode: Creating sample files...", "cyan")
         # Create some sample files for demonstration
         demo_dir = Path("demo_files")
         demo_dir.mkdir(exist_ok=True)
@@ -898,19 +855,19 @@ def main():
         (demo_dir / "suspicious_script.bat").write_text("@echo off\necho 'This is a demo suspicious file'")
         
         antivirus.monitor_path = demo_dir
-        safe_print(f"[green]OK Demo files created in: {demo_dir}[/green]", "green")
+        safe_print(f"OK Demo files created in: {demo_dir}", "green")
     
     # Handle scan-only mode
     if args.scan_only:
-        safe_print("[cyan]Performing one-time scan...[/cyan]", "cyan")
+        safe_print("Performing one-time scan...", "cyan")
         antivirus.scan_directory(show_progress=True)
         safe_print("OK Scan complete. Exiting...", "green")
         return
     
     # Handle upload logs (placeholder)
     if args.upload_logs:
-        safe_print("[yellow]Upload logs feature (placeholder)[/yellow]", "yellow")
-        safe_print("[yellow]Future versions will include cloud log upload functionality.[/yellow]", "yellow")
+        safe_print("Upload logs feature (placeholder)", "yellow")
+        safe_print("Future versions will include cloud log upload functionality.", "yellow")
     
     # Start monitoring
     antivirus.start_monitoring()
