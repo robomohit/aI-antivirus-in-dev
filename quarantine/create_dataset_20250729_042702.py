@@ -34,10 +34,30 @@ def extract_features(file_path: Path, label: int, source: str, method: str) -> d
         # Creation randomness (simulated)
         creation_randomness = np.random.random()
         
-        # Threat level based on source
+        # NEW: Signature-based detection
+        from utils import scan_file_content, check_behavior_flags
+        signature_threats = scan_file_content(str(file_path))
+        signature_match = len(signature_threats) > 0
+        signature_count = sum(len(signatures) for signatures in signature_threats.values())
+        
+        # NEW: Behavior analysis
+        behavior_score, behavior_flags = check_behavior_flags(str(file_path))
+        
+        # NEW: Content flags
+        content_flags = 1 if signature_match else 0
+        
+        # NEW: Filename risk flag
+        filename_risk = 1 if any(pattern in filename.lower() for pattern in 
+                                ['stealer', 'keylogger', 'backdoor', 'trojan', 'virus', 'hack', 'crack']) else 0
+        
+        # Threat level based on source and detection
         if source == 'eicar':
             threat_level = 'HIGH_RISK'
         elif source == 'simulated':
+            threat_level = 'SUSPICIOUS'
+        elif signature_match:
+            threat_level = 'CRITICAL'
+        elif behavior_score > 5:
             threat_level = 'SUSPICIOUS'
         else:
             threat_level = 'SAFE'
@@ -50,29 +70,37 @@ def extract_features(file_path: Path, label: int, source: str, method: str) -> d
             'extension': extension,
             'file_category': file_category,
             'creation_randomness': creation_randomness,
-            'pattern_hack': pattern_flags.get('hack', False),
-            'pattern_steal': pattern_flags.get('steal', False),
-            'pattern_crack': pattern_flags.get('crack', False),
-            'pattern_keygen': pattern_flags.get('keygen', False),
-            'pattern_cheat': pattern_flags.get('cheat', False),
-            'pattern_free': pattern_flags.get('free', False),
-            'pattern_cracked': pattern_flags.get('cracked', False),
-            'pattern_premium': pattern_flags.get('premium', False),
-            'pattern_unlock': pattern_flags.get('unlock', False),
-            'pattern_bypass': pattern_flags.get('bypass', False),
-            'pattern_admin': pattern_flags.get('admin', False),
-            'pattern_root': pattern_flags.get('root', False),
-            'pattern_system': pattern_flags.get('system', False),
-            'pattern_kernel': pattern_flags.get('kernel', False),
-            'pattern_driver': pattern_flags.get('driver', False),
-            'pattern_service': pattern_flags.get('service', False),
-            'pattern_daemon': pattern_flags.get('daemon', False),
-            'pattern_bot': pattern_flags.get('bot', False),
-            'pattern_miner': pattern_flags.get('miner', False),
-            'pattern_malware': pattern_flags.get('malware', False),
-            'pattern_virus': pattern_flags.get('virus', False),
-            'pattern_infect': pattern_flags.get('infect', False),
-            'pattern_spread': pattern_flags.get('spread', False),
+            'pattern_hack': pattern_flags.get('pattern_hack', False),
+            'pattern_steal': pattern_flags.get('pattern_steal', False),
+            'pattern_crack': pattern_flags.get('pattern_crack', False),
+            'pattern_keygen': pattern_flags.get('pattern_keygen', False),
+            'pattern_cheat': pattern_flags.get('pattern_cheat', False),
+            'pattern_free': pattern_flags.get('pattern_free', False),
+            'pattern_cracked': pattern_flags.get('pattern_cracked', False),
+            'pattern_premium': pattern_flags.get('pattern_premium', False),
+            'pattern_unlock': pattern_flags.get('pattern_unlock', False),
+            'pattern_bypass': pattern_flags.get('pattern_bypass', False),
+            'pattern_admin': pattern_flags.get('pattern_admin', False),
+            'pattern_root': pattern_flags.get('pattern_root', False),
+            'pattern_system': pattern_flags.get('pattern_system', False),
+            'pattern_kernel': pattern_flags.get('pattern_kernel', False),
+            'pattern_driver': pattern_flags.get('pattern_driver', False),
+            'pattern_service': pattern_flags.get('pattern_service', False),
+            'pattern_daemon': pattern_flags.get('pattern_daemon', False),
+            'pattern_bot': pattern_flags.get('pattern_bot', False),
+            'pattern_miner': pattern_flags.get('pattern_miner', False),
+            'pattern_malware': pattern_flags.get('pattern_malware', False),
+            'pattern_virus': pattern_flags.get('pattern_virus', False),
+            'pattern_infect': pattern_flags.get('pattern_infect', False),
+            'pattern_spread': pattern_flags.get('pattern_spread', False),
+            # NEW FEATURES
+            'behavior_score': behavior_score,
+            'signature_match': signature_match,
+            'signature_count': signature_count,
+            'content_flags': content_flags,
+            'filename_risk': filename_risk,
+            'behavior_flags': '; '.join(behavior_flags) if behavior_flags else '',
+            'signature_threats': '; '.join([f"{k}:{len(v)}" for k, v in signature_threats.items()]) if signature_threats else '',
             'sha256_hash': file_hash,
             'label': label,
             'source': source,

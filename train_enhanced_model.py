@@ -31,7 +31,7 @@ def load_and_prepare_data():
     print(f"📁 Source distribution:")
     print(df['source'].value_counts())
     
-    # Prepare features
+    # Prepare features with NEW signature and behavior features
     feature_columns = [
         'file_size_kb', 'entropy_score', 'creation_randomness',
         'pattern_hack', 'pattern_steal', 'pattern_crack', 'pattern_keygen',
@@ -39,7 +39,10 @@ def load_and_prepare_data():
         'pattern_unlock', 'pattern_bypass', 'pattern_admin', 'pattern_root',
         'pattern_system', 'pattern_kernel', 'pattern_driver', 'pattern_service',
         'pattern_daemon', 'pattern_bot', 'pattern_miner', 'pattern_malware',
-        'pattern_virus', 'pattern_infect', 'pattern_spread'
+        'pattern_virus', 'pattern_infect', 'pattern_spread',
+        # NEW FEATURES
+        'behavior_score', 'signature_match', 'signature_count', 
+        'content_flags', 'filename_risk'
     ]
     
     # Add file category dummies

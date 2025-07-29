@@ -1,0 +1,12 @@
+2025-07-29 04:29:17,598 - INFO - Ultimate AI Antivirus v4.X Started
+2025-07-29 04:29:17,598 - INFO - Ultimate AI Antivirus v4.X Started
+2025-07-29 04:29:17,598 - INFO - Monitoring path: /workspace/test_signature_detection
+2025-07-29 04:29:17,598 - INFO - Monitoring path: /workspace/test_signature_detection
+2025-07-29 04:29:17,598 - INFO - Quarantine enabled: True
+2025-07-29 04:29:17,598 - INFO - Quarantine enabled: True
+2025-07-29 04:29:17,599 - INFO - Scan mode: NORMAL
+2025-07-29 04:29:17,599 - INFO - Scan mode: NORMAL
+2025-07-29 04:29:17,601 - INFO - AI model loaded successfully
+2025-07-29 04:29:17,601 - INFO - AI model loaded successfully
+2025-07-29 04:29:17,603 - INFO - Started monitoring: /workspace/test_signature_detection
+2025-07-29 04:29:17,603 - INFO - Started monitoring: /workspace/test_signature_detection
