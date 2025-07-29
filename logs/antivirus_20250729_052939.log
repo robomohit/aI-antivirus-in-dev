@@ -1,0 +1,30 @@
+2025-07-29 05:29:39,039 - INFO - Ultimate AI Antivirus v4.X Started
+2025-07-29 05:29:39,039 - INFO - Ultimate AI Antivirus v4.X Started
+2025-07-29 05:29:39,040 - INFO - Monitoring path: /workspace
+2025-07-29 05:29:39,040 - INFO - Monitoring path: /workspace
+2025-07-29 05:29:39,040 - INFO - Quarantine enabled: True
+2025-07-29 05:29:39,040 - INFO - Quarantine enabled: True
+2025-07-29 05:29:39,040 - INFO - Scan mode: NORMAL
+2025-07-29 05:29:39,040 - INFO - Scan mode: NORMAL
+2025-07-29 05:29:39,043 - INFO - Error loading PyTorch model: 'collections.OrderedDict' object has no attribute 'eval'
+2025-07-29 05:29:39,043 - INFO - Error loading PyTorch model: 'collections.OrderedDict' object has no attribute 'eval'
+2025-07-29 05:29:41,168 - INFO - Error in PyTorch training: 'collections.OrderedDict' object has no attribute 'eval'
+2025-07-29 05:29:41,168 - INFO - Error in PyTorch training: 'collections.OrderedDict' object has no attribute 'eval'
+2025-07-29 05:29:41,273 - INFO - AI model trained and saved successfully
+2025-07-29 05:29:41,273 - INFO - AI model trained and saved successfully
+2025-07-29 05:29:41,274 - INFO - Normal scan: scanning path /workspace
+2025-07-29 05:29:41,274 - INFO - Normal scan: scanning path /workspace
+2025-07-29 05:29:41,274 - INFO - Searching 1 directories for files...
+2025-07-29 05:29:41,274 - INFO - Searching 1 directories for files...
+2025-07-29 05:29:41,708 - INFO - Found 0 files to scan
+2025-07-29 05:29:41,708 - INFO - Found 0 files to scan
+2025-07-29 05:29:41,709 - INFO - Finding files to scan...
+2025-07-29 05:29:41,709 - INFO - Finding files to scan...
+2025-07-29 05:29:41,709 - INFO - Normal scan: scanning path /workspace
+2025-07-29 05:29:41,709 - INFO - Normal scan: scanning path /workspace
+2025-07-29 05:29:41,709 - INFO - Searching 1 directories for files...
+2025-07-29 05:29:41,709 - INFO - Searching 1 directories for files...
+2025-07-29 05:29:41,973 - INFO - Found 0 files to scan
+2025-07-29 05:29:41,973 - INFO - Found 0 files to scan
+2025-07-29 05:29:41,973 - INFO - No files to scan
+2025-07-29 05:29:41,973 - INFO - No files to scan

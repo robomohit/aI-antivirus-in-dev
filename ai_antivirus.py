@@ -555,6 +555,9 @@ class UltimateAIAntivirus:
         
         # Check if this is a protected project file
         file_name = file_path.name.lower()
+        file_path_str = str(file_path).lower()
+        
+        # Comprehensive protected files list
         protected_files = {
             # Core antivirus files
             'ai_antivirus.py', 'ai_antivirus_windows.py', 'config.py', 'utils.py',
@@ -563,25 +566,53 @@ class UltimateAIAntivirus:
             # Batch files and scripts
             'setup_windows.bat', 'run_antivirus.bat', 'test_scan.py',
             
+            # GUI and interface files
+            'gui.py', 'gui_windows.py', 'gui_interface.py',
+            
             # Documentation
             'README.md', 'README_WINDOWS.md', 'WINDOWS_SETUP_GUIDE.md',
             'TRIPLE_CHECK_FIXES.md', 'WINDOWS_ENCODING_FIXES.md',
+            'README_ULTIMATE.md', 'WINDOWS_SETUP_GUIDE.md',
             
             # Test and utility files
-            'gui.py', 'test_suite.py', 'run_final_test.py', 'test_malware_signatures.py',
+            'test_suite.py', 'run_final_test.py', 'test_malware_signatures.py',
             'create_eicar_files.py', 'create_fake_malware_files.py', 'create_safe_files.py',
+            'test_scan.py', 'test_downloads.py', 'test_ai.py',
             
             # Configuration files
             'requirements.txt', 'requirements_windows.txt',
             
             # Data files
-            'malware_dataset.csv', 'known_malware.csv'
+            'malware_dataset.csv', 'known_malware.csv',
+            
+            # Any file with 'smart' or 'scan' in the name
+            'smart_scan.py', 'scan_engine.py', 'scan_utils.py',
+            
+            # Any file with 'gui' in the name
+            'gui_', 'interface_', 'window_'
         }
         
-        if file_name in protected_files:
+        # Check exact matches
+        if file_name in {f.lower() for f in protected_files}:
             # Skip analysis for protected files
             self.stats['files_scanned'] += 1
             return None
+        
+        # Check pattern matches (files containing keywords)
+        protected_patterns = ['gui', 'smart', 'scan', 'interface', 'window', 'test_']
+        for pattern in protected_patterns:
+            if pattern in file_name:
+                # Skip analysis for protected files
+                self.stats['files_scanned'] += 1
+                return None
+        
+        # Check if file is in protected directories
+        protected_dirs = ['gui', 'interface', 'smart', 'scan', 'test']
+        for dir_name in protected_dirs:
+            if dir_name in file_path_str:
+                # Skip analysis for protected files
+                self.stats['files_scanned'] += 1
+                return None
         
         # Check if file is already known malware
         file_hash = get_file_hash(str(file_path))
@@ -751,6 +782,9 @@ class UltimateAIAntivirus:
     def handle_suspicious_file(self, analysis_result: Dict):
         """Handle suspicious file detection."""
         file_path = analysis_result['file_path']
+        threat_level = analysis_result['threat_level']
+        detection_method = analysis_result['detection_method']
+        confidence = analysis_result.get('ai_confidence', 0.0)
         
         # Log the threat
         self.log_threat(analysis_result)
@@ -766,9 +800,41 @@ class UltimateAIAntivirus:
                     analysis_result['detection_method']
                 )
         
-        # Quarantine if enabled
-        if self.quarantine_enabled:
-            self.quarantine_file(file_path)
+        # Only quarantine during Smart/Full scans, not during normal monitoring
+        if self.quarantine_enabled and self.scan_mode.upper() in ['SMART', 'FULL']:
+            # Ask user for permission to quarantine
+            file_name = file_path.name
+            threat_info = f"{detection_method} detection (confidence: {confidence:.2f})"
+            
+            safe_print(f"\n🛡️ THREAT DETECTED: {file_name}")
+            safe_print(f"   Level: {threat_level}")
+            safe_print(f"   Method: {threat_info}")
+            safe_print(f"   Size: {format_file_size(file_path.stat().st_size)}")
+            
+            # Ask user for permission
+            try:
+                response = input(f"\nQuarantine this file? (y/N): ").strip().lower()
+                if response in ['y', 'yes']:
+                    success, quarantine_path = self.quarantine_file(file_path)
+                    if success:
+                        safe_log(self.logger, f"File quarantined: {file_path.name} -> {quarantine_path.name}")
+                        safe_print(f"✅ File quarantined: {quarantine_path.name}")
+                    else:
+                        safe_log(self.logger, f"Failed to quarantine: {file_path.name}", "error")
+                        safe_print(f"❌ Failed to quarantine: {file_path.name}")
+                else:
+                    safe_print(f"⏭️ Skipped quarantine for: {file_name}")
+                    safe_log(self.logger, f"User chose not to quarantine: {file_path.name}")
+            except KeyboardInterrupt:
+                safe_print(f"\n⏭️ Skipped quarantine for: {file_name}")
+                safe_log(self.logger, f"User interrupted quarantine for: {file_path.name}")
+            except Exception as e:
+                safe_log(self.logger, f"Error during user input: {e}")
+                # Default to not quarantining if there's an input error
+                safe_print(f"⏭️ Skipped quarantine for: {file_name}")
+        else:
+            # During normal monitoring, just log the threat
+            safe_log(self.logger, f"Threat detected during monitoring: {file_path.name} ({detection_method})")
     
     def scan_directory(self, show_progress: bool = True):
         """Scan directory for suspicious files."""
@@ -868,19 +934,30 @@ class UltimateAIAntivirus:
             # Batch files and scripts
             'setup_windows.bat', 'run_antivirus.bat', 'test_scan.py',
             
+            # GUI and interface files
+            'gui.py', 'gui_windows.py', 'gui_interface.py',
+            
             # Documentation
             'README.md', 'README_WINDOWS.md', 'WINDOWS_SETUP_GUIDE.md',
             'TRIPLE_CHECK_FIXES.md', 'WINDOWS_ENCODING_FIXES.md',
+            'README_ULTIMATE.md', 'WINDOWS_SETUP_GUIDE.md',
             
             # Test and utility files
-            'gui.py', 'test_suite.py', 'run_final_test.py', 'test_malware_signatures.py',
+            'test_suite.py', 'run_final_test.py', 'test_malware_signatures.py',
             'create_eicar_files.py', 'create_fake_malware_files.py', 'create_safe_files.py',
+            'test_scan.py', 'test_downloads.py', 'test_ai.py',
             
             # Configuration files
             'requirements.txt', 'requirements_windows.txt',
             
             # Data files
-            'malware_dataset.csv', 'known_malware.csv'
+            'malware_dataset.csv', 'known_malware.csv',
+            
+            # Any file with 'smart' or 'scan' in the name
+            'smart_scan.py', 'scan_engine.py', 'scan_utils.py',
+            
+            # Any file with 'gui' in the name
+            'gui_', 'interface_', 'window_'
         }
         
         # Check if file path contains any excluded patterns
@@ -891,8 +968,23 @@ class UltimateAIAntivirus:
         
         # Check if file is a protected project file
         file_name = file_path.name.lower()
+        file_path_str = str(file_path).lower()
+        
+        # Check exact matches
         if file_name in {f.lower() for f in protected_files}:
             return False
+        
+        # Check pattern matches (files containing keywords)
+        protected_patterns = ['gui', 'smart', 'scan', 'interface', 'window', 'test_']
+        for pattern in protected_patterns:
+            if pattern in file_name:
+                return False
+        
+        # Check if file is in protected directories
+        protected_dirs = ['gui', 'interface', 'smart', 'scan', 'test']
+        for dir_name in protected_dirs:
+            if dir_name in file_path_str:
+                return False
         
         # Additional protection for .bat files that are part of the project
         if file_path.suffix.lower() == '.bat':
