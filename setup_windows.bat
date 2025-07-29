@@ -25,6 +25,9 @@ echo 📦 Installing dependencies...
 pip install -r requirements.txt
 
 echo.
+echo Creating malware dataset...
+python create_dataset_windows.py
+
 echo Training AI model (this may take a few minutes)...
 python train_enhanced_model.py
 

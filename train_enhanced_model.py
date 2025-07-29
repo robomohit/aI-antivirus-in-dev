@@ -27,11 +27,9 @@ def load_and_prepare_data():
     
     print(f"📈 Dataset shape: {df.shape}")
     print(f"🎯 Label distribution:")
-    print(df['label'].value_counts())
-    print(f"📁 Source distribution:")
-    print(df['source'].value_counts())
+    print(df['is_malicious'].value_counts())
     
-    # Prepare features with NEW signature and behavior features
+    # Prepare features with comprehensive feature engineering
     feature_columns = [
         'file_size_kb', 'entropy_score', 'creation_randomness',
         'pattern_hack', 'pattern_steal', 'pattern_crack', 'pattern_keygen',
@@ -40,9 +38,8 @@ def load_and_prepare_data():
         'pattern_system', 'pattern_kernel', 'pattern_driver', 'pattern_service',
         'pattern_daemon', 'pattern_bot', 'pattern_miner', 'pattern_malware',
         'pattern_virus', 'pattern_infect', 'pattern_spread',
-        # NEW FEATURES
-        'behavior_score', 'signature_match', 'signature_count', 
-        'content_flags', 'filename_risk'
+        # Behavior and signature features
+        'behavior_score', 'signature_count', 'content_flags', 'filename_risk'
     ]
     
     # Add file category dummies
@@ -52,7 +49,7 @@ def load_and_prepare_data():
     # Combine features
     X = df[feature_columns].copy()
     X = pd.concat([X, category_dummies, extension_dummies], axis=1)
-    y = df['label']
+    y = df['is_malicious']
     
     print(f"📊 Features: {X.shape[1]}")
     print(f"📊 Samples: {len(X)}")
@@ -221,6 +218,7 @@ def save_visualizations(model, results, feature_names):
 
 def save_model_and_metrics(model, results, feature_names, df):
     """Save model and comprehensive metrics."""
+    """Save model and comprehensive metrics."""
     print("💾 Saving model and metrics...")
     
     # Create directories
@@ -247,11 +245,11 @@ def save_model_and_metrics(model, results, feature_names, df):
         f.write("📊 DATASET SUMMARY\n")
         f.write("-" * 30 + "\n")
         f.write(f"Total samples: {len(df)}\n")
-        f.write(f"Malware samples: {len(df[df['label'] == 1])}\n")
-        f.write(f"Safe samples: {len(df[df['label'] == 0])}\n")
-        f.write(f"EICAR samples: {len(df[df['source'] == 'eicar'])}\n")
-        f.write(f"Simulated samples: {len(df[df['source'] == 'simulated'])}\n")
-        f.write(f"Safe samples: {len(df[df['source'] == 'safe'])}\n\n")
+        f.write(f"Malware samples: {len(df[df['is_malicious'] == 1])}\n")
+        f.write(f"Safe samples: {len(df[df['is_malicious'] == 0])}\n")
+        f.write(f"Feature columns: {len(feature_names)}\n")
+        f.write(f"File categories: {df['file_category'].nunique()}\n")
+        f.write(f"Extensions: {df['extension'].nunique()}\n\n")
         
         # Model performance
         f.write("📈 MODEL PERFORMANCE\n")
