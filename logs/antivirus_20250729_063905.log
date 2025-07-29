@@ -1,0 +1,74 @@
+2025-07-29 06:39:05,606 - INFO - Ultimate AI Antivirus v4.X Started
+2025-07-29 06:39:05,606 - INFO - Ultimate AI Antivirus v4.X Started
+2025-07-29 06:39:05,606 - INFO - Monitoring path: /workspace
+2025-07-29 06:39:05,606 - INFO - Monitoring path: /workspace
+2025-07-29 06:39:05,606 - INFO - Quarantine enabled: True
+2025-07-29 06:39:05,606 - INFO - Quarantine enabled: True
+2025-07-29 06:39:05,606 - INFO - Scan mode: NORMAL
+2025-07-29 06:39:05,606 - INFO - Scan mode: NORMAL
+2025-07-29 06:39:05,609 - INFO - Error loading PyTorch model: 'collections.OrderedDict' object has no attribute 'eval'
+2025-07-29 06:39:05,609 - INFO - Error loading PyTorch model: 'collections.OrderedDict' object has no attribute 'eval'
+2025-07-29 06:39:07,678 - INFO - Error training PyTorch model: Traceback (most recent call last):
+  File "/workspace/train_model_pytorch.py", line 509, in <module>
+    main()
+    ~~~~^^
+  File "/workspace/train_model_pytorch.py", line 481, in main
+    X, y, scaler, label_encoders = prepare_data()
+                                   ~~~~~~~~~~~~^^
+  File "/workspace/train_model_pytorch.py", line 112, in prepare_data
+    X = df[feature_columns].copy()
+        ~~^^^^^^^^^^^^^^^^^
+  File "/workspace/venv/lib/python3.13/site-packages/pandas/core/frame.py", line 4113, in __getitem__
+    indexer = self.columns._get_indexer_strict(key, "columns")[1]
+              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/workspace/venv/lib/python3.13/site-packages/pandas/core/indexes/base.py", line 6212, in _get_indexer_strict
+    self._raise_if_missing(keyarr, indexer, axis_name)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/venv/lib/python3.13/site-packages/pandas/core/indexes/base.py", line 6264, in _raise_if_missing
+    raise KeyError(f"{not_found} not in index")
+KeyError: "['behavior_score', 'signature_count', 'content_flags', 'filename_risk'] not in index"
+
+2025-07-29 06:39:07,678 - INFO - Error training PyTorch model: Traceback (most recent call last):
+  File "/workspace/train_model_pytorch.py", line 509, in <module>
+    main()
+    ~~~~^^
+  File "/workspace/train_model_pytorch.py", line 481, in main
+    X, y, scaler, label_encoders = prepare_data()
+                                   ~~~~~~~~~~~~^^
+  File "/workspace/train_model_pytorch.py", line 112, in prepare_data
+    X = df[feature_columns].copy()
+        ~~^^^^^^^^^^^^^^^^^
+  File "/workspace/venv/lib/python3.13/site-packages/pandas/core/frame.py", line 4113, in __getitem__
+    indexer = self.columns._get_indexer_strict(key, "columns")[1]
+              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/workspace/venv/lib/python3.13/site-packages/pandas/core/indexes/base.py", line 6212, in _get_indexer_strict
+    self._raise_if_missing(keyarr, indexer, axis_name)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/venv/lib/python3.13/site-packages/pandas/core/indexes/base.py", line 6264, in _raise_if_missing
+    raise KeyError(f"{not_found} not in index")
+KeyError: "['behavior_score', 'signature_count', 'content_flags', 'filename_risk'] not in index"
+
+2025-07-29 06:39:07,786 - INFO - AI model trained and saved successfully
+2025-07-29 06:39:07,786 - INFO - AI model trained and saved successfully
+2025-07-29 06:39:07,789 - INFO - Finding files to scan...
+2025-07-29 06:39:07,789 - INFO - Finding files to scan...
+2025-07-29 06:39:07,789 - INFO - Normal scan: scanning path /workspace
+2025-07-29 06:39:07,789 - INFO - Normal scan: scanning path /workspace
+2025-07-29 06:39:07,789 - INFO - Searching 1 directories for files...
+2025-07-29 06:39:07,789 - INFO - Searching 1 directories for files...
+2025-07-29 06:39:08,508 - INFO - Found 1 files to scan
+2025-07-29 06:39:08,508 - INFO - Found 1 files to scan
+2025-07-29 06:39:08,508 - INFO - Starting scan of 1 files...
+2025-07-29 06:39:08,508 - INFO - Starting scan of 1 files...
+2025-07-29 06:39:08,508 - INFO - Known malware detected: suspicious_malware.bat
+2025-07-29 06:39:08,508 - INFO - Known malware detected: suspicious_malware.bat
+2025-07-29 06:39:08,509 - WARNING - THREAT DETECTED: suspicious_malware.bat | Level: CRITICAL | Method: KNOWN_MALWARE | Confidence: 1.00 | Size: 71.0 B
+2025-07-29 06:39:08,509 - WARNING - THREAT DETECTED: suspicious_malware.bat | Level: CRITICAL | Method: KNOWN_MALWARE | Confidence: 1.00 | Size: 71.0 B
+2025-07-29 06:39:08,509 - INFO - Threat detected during monitoring: suspicious_malware.bat (KNOWN_MALWARE)
+2025-07-29 06:39:08,509 - INFO - Threat detected during monitoring: suspicious_malware.bat (KNOWN_MALWARE)
+2025-07-29 06:39:08,509 - INFO - Scan complete. Scanned 1 files in 0.00s
+2025-07-29 06:39:08,509 - INFO - Scan complete. Scanned 1 files in 0.00s
+2025-07-29 06:39:08,509 - INFO - Performance: 1378.8 files/second
+2025-07-29 06:39:08,509 - INFO - Performance: 1378.8 files/second
+2025-07-29 06:39:08,509 - INFO - Threats found: 0
+2025-07-29 06:39:08,509 - INFO - Threats found: 0
