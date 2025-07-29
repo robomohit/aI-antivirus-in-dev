@@ -1,0 +1,90 @@
+2025-07-29 06:44:59,533 - INFO - Ultimate AI Antivirus v4.X Started
+2025-07-29 06:44:59,533 - INFO - Ultimate AI Antivirus v4.X Started
+2025-07-29 06:44:59,533 - INFO - Monitoring path: /workspace
+2025-07-29 06:44:59,533 - INFO - Monitoring path: /workspace
+2025-07-29 06:44:59,533 - INFO - Quarantine enabled: True
+2025-07-29 06:44:59,533 - INFO - Quarantine enabled: True
+2025-07-29 06:44:59,533 - INFO - Scan mode: NORMAL
+2025-07-29 06:44:59,533 - INFO - Scan mode: NORMAL
+2025-07-29 06:44:59,536 - INFO - Error loading PyTorch model: 'collections.OrderedDict' object has no attribute 'eval'
+2025-07-29 06:44:59,536 - INFO - Error loading PyTorch model: 'collections.OrderedDict' object has no attribute 'eval'
+2025-07-29 06:45:01,465 - INFO - Error training PyTorch model: Traceback (most recent call last):
+  File "/workspace/venv/lib/python3.13/site-packages/pandas/core/indexes/base.py", line 3812, in get_loc
+    return self._engine.get_loc(casted_key)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "pandas/_libs/index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/hashtable_class_helper.pxi", line 7088, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas/_libs/hashtable_class_helper.pxi", line 7096, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'label'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/train_model_pytorch.py", line 509, in <module>
+    main()
+    ~~~~^^
+  File "/workspace/train_model_pytorch.py", line 481, in main
+    X, y, scaler, label_encoders = prepare_data()
+                                   ~~~~~~~~~~~~^^
+  File "/workspace/train_model_pytorch.py", line 87, in prepare_data
+    print(df['label'].value_counts())
+          ~~^^^^^^^^^
+  File "/workspace/venv/lib/python3.13/site-packages/pandas/core/frame.py", line 4107, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "/workspace/venv/lib/python3.13/site-packages/pandas/core/indexes/base.py", line 3819, in get_loc
+    raise KeyError(key) from err
+KeyError: 'label'
+
+2025-07-29 06:45:01,465 - INFO - Error training PyTorch model: Traceback (most recent call last):
+  File "/workspace/venv/lib/python3.13/site-packages/pandas/core/indexes/base.py", line 3812, in get_loc
+    return self._engine.get_loc(casted_key)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "pandas/_libs/index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/hashtable_class_helper.pxi", line 7088, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas/_libs/hashtable_class_helper.pxi", line 7096, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'label'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/train_model_pytorch.py", line 509, in <module>
+    main()
+    ~~~~^^
+  File "/workspace/train_model_pytorch.py", line 481, in main
+    X, y, scaler, label_encoders = prepare_data()
+                                   ~~~~~~~~~~~~^^
+  File "/workspace/train_model_pytorch.py", line 87, in prepare_data
+    print(df['label'].value_counts())
+          ~~^^^^^^^^^
+  File "/workspace/venv/lib/python3.13/site-packages/pandas/core/frame.py", line 4107, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "/workspace/venv/lib/python3.13/site-packages/pandas/core/indexes/base.py", line 3819, in get_loc
+    raise KeyError(key) from err
+KeyError: 'label'
+
+2025-07-29 06:45:01,570 - INFO - AI model trained and saved successfully
+2025-07-29 06:45:01,570 - INFO - AI model trained and saved successfully
+2025-07-29 06:45:01,572 - INFO - Finding files to scan...
+2025-07-29 06:45:01,572 - INFO - Finding files to scan...
+2025-07-29 06:45:01,572 - INFO - Normal scan: scanning path /workspace
+2025-07-29 06:45:01,572 - INFO - Normal scan: scanning path /workspace
+2025-07-29 06:45:01,572 - INFO - Searching 1 directories for files...
+2025-07-29 06:45:01,572 - INFO - Searching 1 directories for files...
+2025-07-29 06:45:02,231 - INFO - Found 1 files to scan
+2025-07-29 06:45:02,231 - INFO - Found 1 files to scan
+2025-07-29 06:45:02,231 - INFO - Starting scan of 1 files...
+2025-07-29 06:45:02,231 - INFO - Starting scan of 1 files...
+2025-07-29 06:45:02,231 - INFO - Known malware detected: suspicious_malware.bat
+2025-07-29 06:45:02,231 - INFO - Known malware detected: suspicious_malware.bat
+2025-07-29 06:45:02,231 - WARNING - THREAT DETECTED: suspicious_malware.bat | Level: CRITICAL | Method: KNOWN_MALWARE | Confidence: 1.00 | Size: 71.0 B
+2025-07-29 06:45:02,231 - WARNING - THREAT DETECTED: suspicious_malware.bat | Level: CRITICAL | Method: KNOWN_MALWARE | Confidence: 1.00 | Size: 71.0 B
+2025-07-29 06:45:02,231 - INFO - Threat detected during monitoring: suspicious_malware.bat (KNOWN_MALWARE)
+2025-07-29 06:45:02,231 - INFO - Threat detected during monitoring: suspicious_malware.bat (KNOWN_MALWARE)
+2025-07-29 06:45:02,231 - INFO - Scan complete. Scanned 1 files in 0.00s
+2025-07-29 06:45:02,231 - INFO - Scan complete. Scanned 1 files in 0.00s
+2025-07-29 06:45:02,231 - INFO - Performance: 2293.2 files/second
+2025-07-29 06:45:02,231 - INFO - Performance: 2293.2 files/second
+2025-07-29 06:45:02,232 - INFO - Threats found: 0
+2025-07-29 06:45:02,232 - INFO - Threats found: 0

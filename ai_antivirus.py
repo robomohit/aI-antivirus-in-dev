@@ -840,7 +840,7 @@ class UltimateAIAntivirus:
             file_name = file_path.name
             threat_info = f"{detection_method} detection (confidence: {confidence:.2f})"
             
-            safe_print(f"\n🛡️ THREAT DETECTED: {file_name}")
+            safe_print(f"\nTHREAT DETECTED: {file_name}")
             safe_print(f"   Level: {threat_level}")
             safe_print(f"   Method: {threat_info}")
             safe_print(f"   Size: {format_file_size(file_path.stat().st_size)}")
@@ -852,20 +852,20 @@ class UltimateAIAntivirus:
                     success, quarantine_path = self.quarantine_file(file_path)
                     if success:
                         safe_log(self.logger, f"File quarantined: {file_path.name} -> {quarantine_path.name}")
-                        safe_print(f"✅ File quarantined: {quarantine_path.name}")
+                        safe_print(f"File quarantined: {quarantine_path.name}")
                     else:
                         safe_log(self.logger, f"Failed to quarantine: {file_path.name}", "error")
-                        safe_print(f"❌ Failed to quarantine: {file_path.name}")
+                        safe_print(f"Failed to quarantine: {file_path.name}")
                 else:
-                    safe_print(f"⏭️ Skipped quarantine for: {file_name}")
+                    safe_print(f"Skipped quarantine for: {file_name}")
                     safe_log(self.logger, f"User chose not to quarantine: {file_path.name}")
             except KeyboardInterrupt:
-                safe_print(f"\n⏭️ Skipped quarantine for: {file_name}")
+                safe_print(f"\nSkipped quarantine for: {file_name}")
                 safe_log(self.logger, f"User interrupted quarantine for: {file_path.name}")
             except Exception as e:
                 safe_log(self.logger, f"Error during user input: {e}")
                 # Default to not quarantining if there's an input error
-                safe_print(f"⏭️ Skipped quarantine for: {file_name}")
+                safe_print(f"Skipped quarantine for: {file_name}")
         else:
             # During normal monitoring, just log the threat
             safe_log(self.logger, f"Threat detected during monitoring: {file_path.name} ({detection_method})")
