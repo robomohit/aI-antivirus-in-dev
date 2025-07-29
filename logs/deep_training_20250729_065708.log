@@ -1,0 +1,10 @@
+2025-07-29 06:57:08,892 - INFO - Loading and preparing dataset...
+2025-07-29 06:57:08,919 - INFO - Dataset shape: (10000, 38)
+2025-07-29 06:57:08,919 - INFO - Label distribution:
+is_malicious
+0    5000
+1    5000
+Name: count, dtype: int64
+2025-07-29 06:57:08,926 - INFO - Preprocessing artifacts saved to model/preprocessing_artifacts.pkl
+2025-07-29 06:57:08,926 - INFO - Final feature count: 36
+2025-07-29 06:57:08,926 - INFO - Feature names: ['file_size_kb', 'entropy_score', 'creation_randomness', 'behavior_score', 'signature_count', 'content_flags', 'filename_risk', 'pattern_hack', 'pattern_steal', 'pattern_crack', 'pattern_keygen', 'pattern_cheat', 'pattern_free', 'pattern_cracked', 'pattern_premium', 'pattern_unlock', 'pattern_bypass', 'pattern_admin', 'pattern_root', 'pattern_system', 'pattern_kernel', 'pattern_driver', 'pattern_service', 'pattern_daemon', 'pattern_bot', 'pattern_miner', 'pattern_malware', 'pattern_virus', 'pattern_infect', 'pattern_spread', 'pattern_exploit', 'pattern_vulnerability', 'pattern_phish', 'pattern_hijack', 'extension_encoded', 'file_category_encoded']
