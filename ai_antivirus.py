@@ -715,16 +715,15 @@ def signal_handler(signum, frame):
 # ============================================================================
 
 def create_gui_placeholder():
-    """Create GUI placeholder (for future implementation)."""
-    console.print(Panel(
-        "[bold yellow]🖥️ GUI Mode (Coming Soon)[/bold yellow]\n"
-        "[green]Future versions will include a Tkinter GUI with:[/green]\n"
-        "• Start/Stop Scan buttons\n"
-        "• Real-time log viewer\n"
-        "• Threat statistics dashboard\n"
-        "• Model retraining interface",
-        border_style="yellow"
-    ))
+    """Launch the GUI interface."""
+    try:
+        import subprocess
+        import sys
+        console.print("[cyan]🖥️ Launching GUI...[/cyan]")
+        subprocess.run([sys.executable, "gui.py"])
+    except Exception as e:
+        console.print(f"[red]❌ Error launching GUI: {e}[/red]")
+        console.print("[yellow]You can run the GUI manually with: python3 gui.py[/yellow]")
 
 # ============================================================================
 # MAIN FUNCTION
