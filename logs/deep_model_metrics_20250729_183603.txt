@@ -1,0 +1,45 @@
+DEEP LEARNING MALWARE DETECTION MODEL METRICS
+==================================================
+
+MODEL ARCHITECTURE
+--------------------
+FeedForwardClassifier(
+  (network): Sequential(
+    (0): Linear(in_features=36, out_features=128, bias=True)
+    (1): ReLU()
+    (2): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (3): Dropout(p=0.3, inplace=False)
+    (4): Linear(in_features=128, out_features=64, bias=True)
+    (5): ReLU()
+    (6): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (7): Dropout(p=0.3, inplace=False)
+    (8): Linear(in_features=64, out_features=32, bias=True)
+    (9): ReLU()
+    (10): BatchNorm1d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (11): Dropout(p=0.3, inplace=False)
+    (12): Linear(in_features=32, out_features=1, bias=True)
+    (13): Sigmoid()
+  )
+)
+
+TRAINING PARAMETERS
+--------------------
+Device: cpu
+Optimizer: Adam
+Learning Rate: 0.001
+Loss Function: BCELoss
+Batch Size: 32
+
+TEST RESULTS
+--------------------
+Accuracy: 1.0000
+Precision: 1.0000
+Recall: 1.0000
+F1-Score: 1.0000
+AUC: 1.0000
+
+CONFUSION MATRIX
+--------------------
+[[1000    0]
+ [   0 1000]]
+

@@ -1,0 +1,14 @@
+2025-07-29 18:38:40,640 - INFO - Ultimate AI Antivirus v4.X Started
+2025-07-29 18:38:40,640 - INFO - Ultimate AI Antivirus v4.X Started
+2025-07-29 18:38:40,641 - INFO - Monitoring path: /workspace
+2025-07-29 18:38:40,641 - INFO - Monitoring path: /workspace
+2025-07-29 18:38:40,641 - INFO - Quarantine enabled: True
+2025-07-29 18:38:40,641 - INFO - Quarantine enabled: True
+2025-07-29 18:38:40,641 - INFO - Scan mode: SMART
+2025-07-29 18:38:40,641 - INFO - Scan mode: SMART
+2025-07-29 18:38:40,643 - INFO - Error loading PyTorch model: 'collections.OrderedDict' object has no attribute 'eval'
+2025-07-29 18:38:40,643 - INFO - Error loading PyTorch model: 'collections.OrderedDict' object has no attribute 'eval'
+2025-07-29 18:38:42,759 - INFO - Error in PyTorch training: 'collections.OrderedDict' object has no attribute 'eval'
+2025-07-29 18:38:42,759 - INFO - Error in PyTorch training: 'collections.OrderedDict' object has no attribute 'eval'
+2025-07-29 18:38:42,864 - INFO - AI model trained and saved successfully
+2025-07-29 18:38:42,864 - INFO - AI model trained and saved successfully

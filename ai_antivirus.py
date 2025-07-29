@@ -166,7 +166,7 @@ class UltimateAIAntivirus:
         self._setup_logging()
         
         # Load or train the AI model
-        self.model = self._load_or_train_model()
+        self.ai_model = self._load_or_train_model()
         
         # Initialize watchdog observer
         self.observer = Observer()
@@ -246,7 +246,7 @@ class UltimateAIAntivirus:
                 f"[green]Enhanced Security Agent with AI Integration[/green]\n"
                 f"[yellow]Monitoring: {self.monitor_path}[/yellow]\n"
                 f"[yellow]Quarantine: {'Enabled' if self.quarantine_enabled else 'Disabled'}[/yellow]\n"
-                f"[yellow]AI Model: {'Loaded' if self.model else 'Training...'}[/yellow]\n"
+                f"[yellow]AI Model: {'Loaded' if self.ai_model else 'Training...'}[/yellow]\n"
                 f"[yellow]Scan Mode: {self.scan_mode.upper()}[/yellow]\n"
                 f"[yellow]Suspicious extensions: {', '.join(list(SUSPICIOUS_EXTENSIONS)[:10])}...[/yellow]",
                 border_style="blue"
@@ -271,8 +271,41 @@ class UltimateAIAntivirus:
                 # Load the most recent model
                 latest_model = max(model_files, key=lambda x: x.stat().st_mtime)
                 import torch
-                model = torch.load(str(latest_model), map_location='cpu')
+                import torch.nn as nn
+                
+                # Define the model class before loading
+                class FeedForwardClassifier(nn.Module):
+                    def __init__(self, input_size: int, hidden_sizes=[128, 64, 32], dropout_rate=0.3):
+                        super(FeedForwardClassifier, self).__init__()
+                        layers = []
+                        prev_size = input_size
+                        for hidden_size in hidden_sizes:
+                            layers.extend([
+                                nn.Linear(prev_size, hidden_size),
+                                nn.ReLU(),
+                                nn.BatchNorm1d(hidden_size),
+                                nn.Dropout(dropout_rate)
+                            ])
+                            prev_size = hidden_size
+                        layers.append(nn.Linear(prev_size, 1))
+                        layers.append(nn.Sigmoid())
+                        self.network = nn.Sequential(*layers)
+                    
+                    def forward(self, x):
+                        return self.network(x)
+                
+                loaded_model = torch.load(str(latest_model), map_location='cpu', weights_only=False)
+                # Check if it's a state dict or full model
+                if isinstance(loaded_model, dict):
+                    # It's a state dict, we need to create the model first
+                    input_size = 36  # Based on our feature count
+                    model = FeedForwardClassifier(input_size)
+                    model.load_state_dict(loaded_model)
+                else:
+                    # It's a full model
+                    model = loaded_model
                 model.eval()
+                self.ai_model = model
                 safe_log(self.logger, f"PyTorch AI model loaded successfully: {latest_model.name}")
                 return model
             else:
@@ -284,7 +317,7 @@ class UltimateAIAntivirus:
             try:
                 # Import and run the PyTorch training
                 import subprocess
-                result = subprocess.run(['python3', 'train_model_pytorch.py'], 
+                result = subprocess.run(['python3', 'train_deep_model.py'], 
                                      capture_output=True, text=True, timeout=300)
                 if result.returncode == 0:
                     # Try loading again
@@ -292,8 +325,18 @@ class UltimateAIAntivirus:
                     if model_files:
                         latest_model = max(model_files, key=lambda x: x.stat().st_mtime)
                         import torch
-                        model = torch.load(str(latest_model), map_location='cpu')
+                        loaded_model = torch.load(str(latest_model), map_location='cpu', weights_only=False)
+                        # Check if it's a state dict or full model
+                        if isinstance(loaded_model, dict):
+                            # It's a state dict, we need to create the model first
+                            input_size = 36  # Based on our feature count
+                            model = FeedForwardClassifier(input_size)
+                            model.load_state_dict(loaded_model)
+                        else:
+                            # It's a full model
+                            model = loaded_model
                         model.eval()
+                        self.ai_model = model
                         safe_log(self.logger, f"PyTorch AI model trained and loaded: {latest_model.name}")
                         return model
                 else:
@@ -422,114 +465,66 @@ class UltimateAIAntivirus:
             safe_log(self.logger, f"Error extracting features from {file_path}: {e}", "error")
             return None
     
-    def _predict_with_ai(self, features: Dict) -> Dict:
-        """Make AI prediction for file analysis using PyTorch model."""
+    def _predict_with_ai(self, features: Dict[str, any]) -> Tuple[float, str]:
+        """Predict using the trained AI model."""
         try:
-            if not self.model:
-                return {'is_malicious': False, 'confidence': 0.0}
+            if self.model is None:
+                return 0.0, "AI_MODEL_NOT_LOADED"
             
-            # Check if this is a PyTorch model
-            if hasattr(self.model, 'eval'):
-                # PyTorch model
-                feature_vector = self._prepare_features_for_pytorch(features)
-                feature_tensor = torch.FloatTensor(feature_vector).unsqueeze(0)
-                
-                self.model.eval()
-                with torch.no_grad():
-                    prediction = self.model(feature_tensor)
-                    confidence = prediction.item()
-                
-                return {
-                    'is_malicious': confidence > 0.5,
-                    'confidence': confidence
-                }
-            else:
-                # Fallback to scikit-learn model
-                feature_df = pd.DataFrame([features])
-                prediction = self.model.predict(feature_df)[0]
-                confidence = self.model.predict_proba(feature_df)[0][1]
-                
-                return {
-                    'is_malicious': bool(prediction),
-                    'confidence': confidence
-                }
+            # Load preprocessing artifacts
+            with open('model/preprocessing_artifacts.pkl', 'rb') as f:
+                artifacts = pickle.load(f)
             
-        except Exception as e:
-            safe_log(self.logger, f"Error in AI prediction: {e}", "error")
-            return {'is_malicious': False, 'confidence': 0.0}
-    
-    def _prepare_features_for_pytorch(self, features: Dict) -> List[float]:
-        """Prepare features for PyTorch model input."""
-        try:
-            # Import required modules
-            import torch
-            from sklearn.preprocessing import MinMaxScaler, LabelEncoder
+            feature_names = artifacts['feature_names']
+            scaler = artifacts['scaler']
+            label_encoders = artifacts['label_encoders']
             
-            # Define feature order (must match training)
-            numerical_features = [
-                'file_size_kb', 'entropy_score', 'creation_randomness',
-                'behavior_score', 'signature_count', 'content_flags', 'filename_risk'
-            ]
-            
-            binary_features = [
-                'pattern_hack', 'pattern_steal', 'pattern_crack', 'pattern_keygen',
-                'pattern_cheat', 'pattern_free', 'pattern_cracked', 'pattern_premium',
-                'pattern_unlock', 'pattern_bypass', 'pattern_admin', 'pattern_root',
-                'pattern_system', 'pattern_kernel', 'pattern_driver', 'pattern_service',
-                'pattern_daemon', 'pattern_bot', 'pattern_miner', 'pattern_malware',
-                'pattern_virus', 'pattern_infect', 'pattern_spread'
-            ]
-            
-            categorical_features = ['file_category', 'extension']
-            
-            # Build feature vector
+            # Create feature vector in the same order as training
             feature_vector = []
+            for feature_name in feature_names:
+                if feature_name in features:
+                    feature_vector.append(features[feature_name])
+                else:
+                    # Handle missing features
+                    if feature_name.endswith('_encoded'):
+                        feature_vector.append(0)  # Default encoded value
+                    else:
+                        feature_vector.append(0.0)  # Default numerical value
             
-            # Add numerical features (normalized)
-            for feature in numerical_features:
-                value = features.get(feature, 0.0)
-                # Simple normalization (0-1)
-                if feature == 'file_size_kb':
-                    value = min(value / 1000.0, 1.0)  # Normalize to 1MB max
-                elif feature == 'entropy_score':
-                    value = min(value / 8.0, 1.0)  # Normalize to max entropy
-                elif feature == 'behavior_score':
-                    value = value / 10.0  # Already 0-10
-                elif feature == 'signature_count':
-                    value = min(value / 10.0, 1.0)  # Normalize to max 10 signatures
-                feature_vector.append(value)
+            # Convert to numpy array and reshape
+            X = np.array(feature_vector).reshape(1, -1)
             
-            # Add binary features
-            for feature in binary_features:
-                value = 1.0 if features.get(feature, False) else 0.0
-                feature_vector.append(value)
+            # Apply preprocessing
+            numerical_features = ['file_size_kb', 'entropy_score', 'creation_randomness', 
+                                'behavior_score', 'signature_count', 'content_flags', 'filename_risk']
+            X_numerical = X[:, :len(numerical_features)]
+            X_numerical = scaler.transform(X_numerical)
+            X[:, :len(numerical_features)] = X_numerical
             
-            # Add categorical features (encoded)
-            for feature in categorical_features:
-                value = features.get(feature, 'unknown')
-                # Simple encoding for common categories
-                if feature == 'file_category':
-                    category_encoding = {
-                        'executable': 0, 'script': 1, 'document': 2, 
-                        'media': 3, 'archive': 4, 'config': 5, 'web': 6, 'other': 7
-                    }
-                    encoded_value = category_encoding.get(value, 7) / 7.0  # Normalize
-                elif feature == 'extension':
-                    # Simple extension encoding
-                    ext_encoding = {
-                        '.exe': 0, '.bat': 1, '.cmd': 2, '.com': 3, '.scr': 4,
-                        '.vbs': 5, '.js': 6, '.ps1': 7, '.py': 8, '.sh': 9,
-                        '.txt': 10, '.pdf': 11, '.doc': 12, '.zip': 13, '.rar': 14
-                    }
-                    encoded_value = ext_encoding.get(value, 15) / 15.0  # Normalize
-                feature_vector.append(encoded_value)
+            # Convert to tensor
+            X_tensor = torch.FloatTensor(X)
             
-            return feature_vector
+            # Make prediction
+            self.ai_model.eval()
+            with torch.no_grad():
+                prediction = self.ai_model(X_tensor)
+                probability = prediction.item()
+            
+            # Determine threat level
+            if probability >= 0.8:
+                threat_level = "CRITICAL"
+            elif probability >= 0.6:
+                threat_level = "HIGH_RISK"
+            elif probability >= 0.4:
+                threat_level = "SUSPICIOUS"
+            else:
+                threat_level = "SAFE"
+            
+            return probability, threat_level
             
         except Exception as e:
-            safe_log(self.logger, f"Error preparing features for PyTorch: {e}", "error")
-            # Return zero vector as fallback
-            return [0.0] * 32
+            self.logger.error(f"Error in AI prediction: {e}")
+            return 0.0, "AI_PREDICTION_ERROR"
     
     def is_suspicious_by_extension(self, file_path: Path) -> bool:
         """Check if file is suspicious based on extension."""
@@ -714,8 +709,9 @@ class UltimateAIAntivirus:
         
         # 4. AI-based detection
         ai_result = self._predict_with_ai(features)
-        ai_suspicious = ai_result['is_malicious']
-        ai_confidence = ai_result['confidence']
+        ai_suspicious = ai_result[0] > 0.5 # Assuming a threshold for AI suspicious
+        ai_confidence = ai_result[0]
+        threat_level = ai_result[1]
         
         # 5. Traditional extension-based detection
         extension_suspicious = self.is_suspicious_by_extension(file_path)

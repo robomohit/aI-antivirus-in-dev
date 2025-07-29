@@ -1,0 +1,28 @@
+FEATURE IMPORTANCE ANALYSIS (SHAP)
+==================================================
+
+Top 20 Most Important Features:
+------------------------------
+file_size_kb: 0.0100
+extension_encoded: 0.0001
+signature_count: 0.0000
+behavior_score: 0.0000
+pattern_malware: 0.0000
+pattern_unlock: 0.0000
+pattern_exploit: 0.0000
+pattern_bypass: 0.0000
+pattern_bot: 0.0000
+entropy_score: 0.0000
+pattern_crack: 0.0000
+pattern_infect: 0.0000
+file_category_encoded: 0.0000
+pattern_hijack: 0.0000
+content_flags: 0.0000
+pattern_hack: 0.0000
+pattern_driver: 0.0000
+pattern_phish: 0.0000
+pattern_spread: 0.0000
+pattern_miner: 0.0000
+
+Total features analyzed: 36
+SHAP sample size: 200

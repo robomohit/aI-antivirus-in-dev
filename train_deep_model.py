@@ -187,7 +187,7 @@ class DeepLearningTrainer:
         X = X.astype(float)
         
         # Save preprocessing artifacts
-        self.save_preprocessing_artifacts(scaler, label_encoders, feature_columns)
+        self.save_preprocessing_artifacts(scaler, label_encoders, list(X.columns))
         
         self.logger.info(f"Final feature count: {X.shape[1]}")
         self.logger.info(f"Feature names: {list(X.columns)}")

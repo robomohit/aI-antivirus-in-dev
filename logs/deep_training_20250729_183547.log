@@ -1,0 +1,74 @@
+2025-07-29 18:35:47,471 - INFO - Loading and preparing dataset...
+2025-07-29 18:35:47,506 - INFO - Dataset shape: (10000, 38)
+2025-07-29 18:35:47,507 - INFO - Label distribution:
+is_malicious
+0    5000
+1    5000
+Name: count, dtype: int64
+2025-07-29 18:35:47,515 - INFO - Preprocessing artifacts saved to model/preprocessing_artifacts.pkl
+2025-07-29 18:35:47,515 - INFO - Final feature count: 36
+2025-07-29 18:35:47,515 - INFO - Feature names: ['file_size_kb', 'entropy_score', 'creation_randomness', 'behavior_score', 'signature_count', 'content_flags', 'filename_risk', 'pattern_hack', 'pattern_steal', 'pattern_crack', 'pattern_keygen', 'pattern_cheat', 'pattern_free', 'pattern_cracked', 'pattern_premium', 'pattern_unlock', 'pattern_bypass', 'pattern_admin', 'pattern_root', 'pattern_system', 'pattern_kernel', 'pattern_driver', 'pattern_service', 'pattern_daemon', 'pattern_bot', 'pattern_miner', 'pattern_malware', 'pattern_virus', 'pattern_infect', 'pattern_spread', 'pattern_exploit', 'pattern_vulnerability', 'pattern_phish', 'pattern_hijack', 'extension_encoded', 'file_category_encoded']
+2025-07-29 18:35:48,228 - INFO - Train samples: 6000
+2025-07-29 18:35:48,228 - INFO - Validation samples: 2000
+2025-07-29 18:35:48,228 - INFO - Test samples: 2000
+2025-07-29 18:35:48,228 - INFO - Starting training for 50 epochs...
+2025-07-29 18:35:48,228 - INFO - Device: cpu
+2025-07-29 18:35:48,515 - INFO - Epoch 1/50 - Train Loss: 0.1588, Train Acc: 0.9423 - Val Loss: 0.0079, Val Acc: 1.0000
+2025-07-29 18:35:48,807 - INFO - Epoch 2/50 - Train Loss: 0.0223, Train Acc: 0.9955 - Val Loss: 0.0020, Val Acc: 1.0000
+2025-07-29 18:35:49,098 - INFO - Epoch 3/50 - Train Loss: 0.0103, Train Acc: 0.9985 - Val Loss: 0.0011, Val Acc: 1.0000
+2025-07-29 18:35:49,384 - INFO - Epoch 4/50 - Train Loss: 0.0055, Train Acc: 0.9993 - Val Loss: 0.0005, Val Acc: 1.0000
+2025-07-29 18:35:49,665 - INFO - Epoch 5/50 - Train Loss: 0.0038, Train Acc: 0.9997 - Val Loss: 0.0003, Val Acc: 1.0000
+2025-07-29 18:35:49,936 - INFO - Epoch 6/50 - Train Loss: 0.0042, Train Acc: 0.9987 - Val Loss: 0.0002, Val Acc: 1.0000
+2025-07-29 18:35:50,502 - INFO - Epoch 7/50 - Train Loss: 0.0030, Train Acc: 0.9995 - Val Loss: 0.0001, Val Acc: 1.0000
+2025-07-29 18:35:50,823 - INFO - Epoch 8/50 - Train Loss: 0.0029, Train Acc: 0.9993 - Val Loss: 0.0001, Val Acc: 1.0000
+2025-07-29 18:35:51,160 - INFO - Epoch 9/50 - Train Loss: 0.0015, Train Acc: 0.9997 - Val Loss: 0.0001, Val Acc: 1.0000
+2025-07-29 18:35:51,490 - INFO - Epoch 10/50 - Train Loss: 0.0023, Train Acc: 0.9995 - Val Loss: 0.0002, Val Acc: 1.0000
+2025-07-29 18:35:51,765 - INFO - Epoch 11/50 - Train Loss: 0.0031, Train Acc: 0.9990 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:35:52,072 - INFO - Epoch 12/50 - Train Loss: 0.0035, Train Acc: 0.9990 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:35:52,388 - INFO - Epoch 13/50 - Train Loss: 0.0016, Train Acc: 0.9997 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:35:52,679 - INFO - Epoch 14/50 - Train Loss: 0.0006, Train Acc: 0.9998 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:35:52,966 - INFO - Epoch 15/50 - Train Loss: 0.0011, Train Acc: 0.9997 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:35:53,414 - INFO - Epoch 16/50 - Train Loss: 0.0015, Train Acc: 0.9995 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:35:53,704 - INFO - Epoch 17/50 - Train Loss: 0.0061, Train Acc: 0.9988 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:35:54,028 - INFO - Epoch 18/50 - Train Loss: 0.0014, Train Acc: 0.9997 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:35:54,480 - INFO - Epoch 19/50 - Train Loss: 0.0046, Train Acc: 0.9992 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:35:54,759 - INFO - Epoch 20/50 - Train Loss: 0.0007, Train Acc: 0.9998 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:35:55,084 - INFO - Epoch 21/50 - Train Loss: 0.0003, Train Acc: 1.0000 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:35:55,371 - INFO - Epoch 22/50 - Train Loss: 0.0010, Train Acc: 0.9998 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:35:55,646 - INFO - Epoch 23/50 - Train Loss: 0.0008, Train Acc: 0.9998 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:35:55,952 - INFO - Epoch 24/50 - Train Loss: 0.0004, Train Acc: 1.0000 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:35:56,272 - INFO - Epoch 25/50 - Train Loss: 0.0006, Train Acc: 0.9997 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:35:56,575 - INFO - Epoch 26/50 - Train Loss: 0.0002, Train Acc: 1.0000 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:35:56,856 - INFO - Epoch 27/50 - Train Loss: 0.0003, Train Acc: 1.0000 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:35:57,132 - INFO - Epoch 28/50 - Train Loss: 0.0004, Train Acc: 1.0000 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:35:57,402 - INFO - Epoch 29/50 - Train Loss: 0.0011, Train Acc: 0.9998 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:35:57,679 - INFO - Epoch 30/50 - Train Loss: 0.0013, Train Acc: 0.9997 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:35:57,958 - INFO - Epoch 31/50 - Train Loss: 0.0002, Train Acc: 1.0000 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:35:58,235 - INFO - Epoch 32/50 - Train Loss: 0.0003, Train Acc: 1.0000 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:35:58,500 - INFO - Epoch 33/50 - Train Loss: 0.0002, Train Acc: 1.0000 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:35:58,802 - INFO - Epoch 34/50 - Train Loss: 0.0001, Train Acc: 1.0000 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:35:59,120 - INFO - Epoch 35/50 - Train Loss: 0.0005, Train Acc: 0.9998 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:35:59,397 - INFO - Epoch 36/50 - Train Loss: 0.0003, Train Acc: 0.9998 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:35:59,681 - INFO - Epoch 37/50 - Train Loss: 0.0001, Train Acc: 1.0000 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:35:59,971 - INFO - Epoch 38/50 - Train Loss: 0.0001, Train Acc: 1.0000 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:36:00,240 - INFO - Epoch 39/50 - Train Loss: 0.0001, Train Acc: 1.0000 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:36:00,505 - INFO - Epoch 40/50 - Train Loss: 0.0001, Train Acc: 1.0000 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:36:00,777 - INFO - Epoch 41/50 - Train Loss: 0.0001, Train Acc: 1.0000 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:36:01,213 - INFO - Epoch 42/50 - Train Loss: 0.0005, Train Acc: 0.9998 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:36:01,533 - INFO - Epoch 43/50 - Train Loss: 0.0001, Train Acc: 1.0000 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:36:01,813 - INFO - Epoch 44/50 - Train Loss: 0.0014, Train Acc: 0.9997 - Val Loss: 0.0018, Val Acc: 0.9995
+2025-07-29 18:36:02,133 - INFO - Epoch 45/50 - Train Loss: 0.0006, Train Acc: 0.9998 - Val Loss: 0.0002, Val Acc: 1.0000
+2025-07-29 18:36:02,453 - INFO - Epoch 46/50 - Train Loss: 0.0065, Train Acc: 0.9985 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:36:02,754 - INFO - Epoch 47/50 - Train Loss: 0.0002, Train Acc: 1.0000 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:36:03,037 - INFO - Epoch 48/50 - Train Loss: 0.0010, Train Acc: 0.9995 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:36:03,326 - INFO - Epoch 49/50 - Train Loss: 0.0004, Train Acc: 1.0000 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:36:03,606 - INFO - Epoch 50/50 - Train Loss: 0.0001, Train Acc: 1.0000 - Val Loss: 0.0000, Val Acc: 1.0000
+2025-07-29 18:36:03,640 - INFO - Test Results:
+2025-07-29 18:36:03,641 - INFO -   Accuracy: 1.0000
+2025-07-29 18:36:03,641 - INFO -   Precision: 1.0000
+2025-07-29 18:36:03,641 - INFO -   Recall: 1.0000
+2025-07-29 18:36:03,641 - INFO -   F1-Score: 1.0000
+2025-07-29 18:36:03,641 - INFO -   AUC: 1.0000
+2025-07-29 18:36:03,647 - INFO - Model saved to model/ai_model.pt
+2025-07-29 18:36:04,878 - INFO - Visualizations saved with timestamp: 20250729_183603
+2025-07-29 18:36:04,878 - INFO - Metrics saved to logs/deep_model_metrics_20250729_183603.txt
