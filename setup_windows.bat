@@ -25,16 +25,16 @@ echo 📦 Installing dependencies...
 pip install -r requirements.txt
 
 echo.
-echo 🧠 Training AI model (this may take a few minutes)...
+echo Training AI model (this may take a few minutes)...
 python train_enhanced_model.py
 
 echo.
 echo 🎉 Setup complete! 
 echo.
-echo 🚀 To run the antivirus:
-echo    GUI Mode: python ai_antivirus.py --gui
-echo    Smart Scan: python ai_antivirus.py --smart-scan
-echo    Full Scan: python ai_antivirus.py --full-scan
+echo To run the antivirus:
+echo    GUI Mode: python ai_antivirus_windows.py --gui
+echo    Smart Scan: python ai_antivirus_windows.py --smart-scan
+echo    Full Scan: python ai_antivirus_windows.py --full-scan
 echo.
 echo 📖 See WINDOWS_SETUP_GUIDE.md for detailed instructions
 echo.

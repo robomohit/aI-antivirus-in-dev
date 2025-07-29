@@ -19,22 +19,22 @@ echo.
 set /p choice="Enter your choice (1-5): "
 
 if "%choice%"=="1" (
-    echo 🖥️ Starting GUI...
-    python ai_antivirus.py --gui
+    echo Starting GUI...
+    python ai_antivirus_windows.py --gui
 ) else if "%choice%"=="2" (
-    echo 🧠 Starting Smart Scan...
-    python ai_antivirus.py --smart-scan
+    echo Starting Smart Scan...
+    python ai_antivirus_windows.py --smart-scan
 ) else if "%choice%"=="3" (
-    echo ⚠️ WARNING: Full scan will scan your entire system!
+    echo WARNING: Full scan will scan your entire system!
     set /p confirm="Are you sure? (y/n): "
     if /i "%confirm%"=="y" (
-        echo 🔍 Starting Full Scan...
-        python ai_antivirus.py --full-scan
+        echo Starting Full Scan...
+        python ai_antivirus_windows.py --full-scan
     ) else (
-        echo ❌ Scan cancelled.
+        echo Scan cancelled.
     )
 ) else if "%choice%"=="4" (
-    echo 🧪 Running Test Suite...
+    echo Running Test Suite...
     python test_suite.py --lite
 ) else if "%choice%"=="5" (
     echo 👋 Goodbye!
