@@ -279,7 +279,7 @@ class UltimateAntivirusTestSuite:
         
         # Hash-based detection
         if self.test_results['known_malware_detected'] > 0:
-            table.add_row("  [bold cyan]Known Malware (Hash)[/bold]", 
+            table.add_row("  [bold cyan]Known Malware (Hash)[/bold cyan]", 
                          str(self.test_results['known_malware_detected']), 
                          f"{self.test_results['known_malware_detected']/self.test_results['total_files']*100:.1f}%")
         

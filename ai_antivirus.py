@@ -268,24 +268,22 @@ class UltimateAIAntivirus:
             if not self.model:
                 return {'is_malicious': False, 'confidence': 0.0}
             
-            # Create feature vector
-            feature_vector = np.zeros(len(self.model.feature_names_in_))
+            # Create DataFrame with proper feature names
+            feature_df = pd.DataFrame([features])
             
-            # Set file size
-            size_idx = np.where(self.model.feature_names_in_ == 'file_size_kb')[0]
-            if len(size_idx) > 0:
-                feature_vector[size_idx[0]] = features['file_size_kb']
-            
-            # Set extension
-            ext_prefix = 'ext_'
-            for i, feature_name in enumerate(self.model.feature_names_in_):
-                if feature_name.startswith(ext_prefix):
-                    if feature_name == f"ext_{features['extension']}":
-                        feature_vector[i] = 1
+            # Ensure all model features are present
+            if hasattr(self.model, 'feature_names_in_'):
+                model_features = self.model.feature_names_in_
+                for feature in model_features:
+                    if feature not in feature_df.columns:
+                        feature_df[feature] = 0.0
+                
+                # Reorder columns to match model expectations
+                feature_df = feature_df[model_features]
             
             # Make prediction
-            prediction = self.model.predict([feature_vector])[0]
-            confidence = max(self.model.predict_proba([feature_vector])[0])
+            prediction = self.model.predict(feature_df)[0]
+            confidence = self.model.predict_proba(feature_df)[0][1]
             
             return {
                 'is_malicious': bool(prediction),
