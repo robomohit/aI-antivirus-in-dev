@@ -592,14 +592,48 @@ class UltimateAIAntivirus:
             'gui_', 'interface_', 'window_'
         }
         
-        # Check exact matches
-        if file_name in {f.lower() for f in protected_files}:
+        # CRITICAL: NEVER analyze any project files
+        project_files = {
+            # Core antivirus files
+            'ai_antivirus.py', 'ai_antivirus_windows.py', 'ai_antivirus_copy.py',
+            'config.py', 'utils.py', 'signatures.py', 'train_model_pytorch.py', 
+            'create_dataset.py', 'train_enhanced_model.py',
+            
+            # Batch files and scripts
+            'setup_windows.bat', 'run_antivirus.bat', 'test_scan.py',
+            
+            # GUI and interface files
+            'gui.py', 'gui_windows.py', 'gui_interface.py',
+            
+            # Documentation
+            'README.md', 'README_WINDOWS.md', 'WINDOWS_SETUP_GUIDE.md',
+            'TRIPLE_CHECK_FIXES.md', 'WINDOWS_ENCODING_FIXES.md',
+            'README_ULTIMATE.md',
+            
+            # Test and utility files
+            'test_suite.py', 'run_final_test.py', 'test_malware_signatures.py',
+            'create_eicar_files.py', 'create_fake_malware_files.py', 'create_safe_files.py',
+            'test_scan.py', 'test_downloads.py', 'test_ai.py',
+            
+            # Configuration files
+            'requirements.txt', 'requirements_windows.txt',
+            
+            # Data files
+            'malware_dataset.csv', 'known_malware.csv',
+            
+            # Any file with these keywords
+            'smart_scan.py', 'scan_engine.py', 'scan_utils.py',
+            'gui_', 'interface_', 'window_', 'antivirus_', 'setup_', 'run_'
+        }
+        
+        # Check exact filename matches
+        if file_name in {f.lower() for f in project_files}:
             # Skip analysis for protected files
             self.stats['files_scanned'] += 1
             return None
         
         # Check pattern matches (files containing keywords)
-        protected_patterns = ['gui', 'smart', 'scan', 'interface', 'window', 'test_']
+        protected_patterns = ['gui', 'smart', 'scan', 'interface', 'window', 'test_', 'antivirus', 'setup', 'run']
         for pattern in protected_patterns:
             if pattern in file_name:
                 # Skip analysis for protected files
@@ -607,7 +641,7 @@ class UltimateAIAntivirus:
                 return None
         
         # Check if file is in protected directories
-        protected_dirs = ['gui', 'interface', 'smart', 'scan', 'test']
+        protected_dirs = ['gui', 'interface', 'smart', 'scan', 'test', 'antivirus', 'setup', 'run']
         for dir_name in protected_dirs:
             if dir_name in file_path_str:
                 # Skip analysis for protected files
@@ -917,19 +951,15 @@ class UltimateAIAntivirus:
     
     def _should_scan_file(self, file_path: Path) -> bool:
         """Determine if a file should be scanned."""
-        # Exclude certain directories and files
-        excluded_patterns = {
-            'quarantine', 'logs', 'model', 'test_files', 'test_signature_detection',
-            'known_malware.csv', 'malware_dataset.csv', '.git', '.svn', '.hg',
-            '__pycache__', '.pytest_cache', 'node_modules',
-            '.venv', 'venv', '.env', 'venv', 'env'
-        }
+        file_name = file_path.name.lower()
+        file_path_str = str(file_path).lower()
         
-        # Important project files that should never be quarantined
-        protected_files = {
+        # CRITICAL: NEVER scan any project files
+        project_files = {
             # Core antivirus files
-            'ai_antivirus.py', 'ai_antivirus_windows.py', 'config.py', 'utils.py',
-            'signatures.py', 'train_model_pytorch.py', 'create_dataset.py',
+            'ai_antivirus.py', 'ai_antivirus_windows.py', 'ai_antivirus_copy.py',
+            'config.py', 'utils.py', 'signatures.py', 'train_model_pytorch.py', 
+            'create_dataset.py', 'train_enhanced_model.py',
             
             # Batch files and scripts
             'setup_windows.bat', 'run_antivirus.bat', 'test_scan.py',
@@ -940,7 +970,7 @@ class UltimateAIAntivirus:
             # Documentation
             'README.md', 'README_WINDOWS.md', 'WINDOWS_SETUP_GUIDE.md',
             'TRIPLE_CHECK_FIXES.md', 'WINDOWS_ENCODING_FIXES.md',
-            'README_ULTIMATE.md', 'WINDOWS_SETUP_GUIDE.md',
+            'README_ULTIMATE.md',
             
             # Test and utility files
             'test_suite.py', 'run_final_test.py', 'test_malware_signatures.py',
@@ -953,37 +983,38 @@ class UltimateAIAntivirus:
             # Data files
             'malware_dataset.csv', 'known_malware.csv',
             
-            # Any file with 'smart' or 'scan' in the name
+            # Any file with these keywords
             'smart_scan.py', 'scan_engine.py', 'scan_utils.py',
-            
-            # Any file with 'gui' in the name
-            'gui_', 'interface_', 'window_'
+            'gui_', 'interface_', 'window_', 'antivirus_', 'setup_', 'run_'
         }
         
-        # Check if file path contains any excluded patterns
-        file_path_str = str(file_path).lower()
-        for pattern in excluded_patterns:
-            if pattern in file_path_str:
-                return False
-        
-        # Check if file is a protected project file
-        file_name = file_path.name.lower()
-        file_path_str = str(file_path).lower()
-        
-        # Check exact matches
-        if file_name in {f.lower() for f in protected_files}:
+        # Check exact filename matches
+        if file_name in {f.lower() for f in project_files}:
             return False
         
         # Check pattern matches (files containing keywords)
-        protected_patterns = ['gui', 'smart', 'scan', 'interface', 'window', 'test_']
+        protected_patterns = ['gui', 'smart', 'scan', 'interface', 'window', 'test_', 'antivirus', 'setup', 'run']
         for pattern in protected_patterns:
             if pattern in file_name:
                 return False
         
         # Check if file is in protected directories
-        protected_dirs = ['gui', 'interface', 'smart', 'scan', 'test']
+        protected_dirs = ['gui', 'interface', 'smart', 'scan', 'test', 'antivirus', 'setup', 'run']
         for dir_name in protected_dirs:
             if dir_name in file_path_str:
+                return False
+        
+        # Exclude certain directories and files
+        excluded_patterns = {
+            'quarantine', 'logs', 'model', 'test_files', 'test_signature_detection',
+            'known_malware.csv', 'malware_dataset.csv', '.git', '.svn', '.hg',
+            '__pycache__', '.pytest_cache', 'node_modules',
+            '.venv', 'venv', '.env', 'venv', 'env'
+        }
+        
+        # Check if file path contains any excluded patterns
+        for pattern in excluded_patterns:
+            if pattern in file_path_str:
                 return False
         
         # Additional protection for .bat files that are part of the project

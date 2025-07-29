@@ -1,0 +1,36 @@
+2025-07-29 06:12:21,680 - INFO - Ultimate AI Antivirus v4.X Started
+2025-07-29 06:12:21,680 - INFO - Ultimate AI Antivirus v4.X Started
+2025-07-29 06:12:21,680 - INFO - Monitoring path: /workspace
+2025-07-29 06:12:21,680 - INFO - Monitoring path: /workspace
+2025-07-29 06:12:21,681 - INFO - Quarantine enabled: True
+2025-07-29 06:12:21,681 - INFO - Quarantine enabled: True
+2025-07-29 06:12:21,681 - INFO - Scan mode: NORMAL
+2025-07-29 06:12:21,681 - INFO - Scan mode: NORMAL
+2025-07-29 06:12:21,685 - INFO - Error loading PyTorch model: 'collections.OrderedDict' object has no attribute 'eval'
+2025-07-29 06:12:21,685 - INFO - Error loading PyTorch model: 'collections.OrderedDict' object has no attribute 'eval'
+2025-07-29 06:12:23,660 - INFO - Error in PyTorch training: 'collections.OrderedDict' object has no attribute 'eval'
+2025-07-29 06:12:23,660 - INFO - Error in PyTorch training: 'collections.OrderedDict' object has no attribute 'eval'
+2025-07-29 06:12:23,765 - INFO - AI model trained and saved successfully
+2025-07-29 06:12:23,765 - INFO - AI model trained and saved successfully
+2025-07-29 06:12:23,767 - INFO - Finding files to scan...
+2025-07-29 06:12:23,767 - INFO - Finding files to scan...
+2025-07-29 06:12:23,768 - INFO - Normal scan: scanning path /workspace
+2025-07-29 06:12:23,768 - INFO - Normal scan: scanning path /workspace
+2025-07-29 06:12:23,768 - INFO - Searching 1 directories for files...
+2025-07-29 06:12:23,768 - INFO - Searching 1 directories for files...
+2025-07-29 06:12:24,400 - INFO - Found 1 files to scan
+2025-07-29 06:12:24,400 - INFO - Found 1 files to scan
+2025-07-29 06:12:24,401 - INFO - Starting scan of 1 files...
+2025-07-29 06:12:24,401 - INFO - Starting scan of 1 files...
+2025-07-29 06:12:24,401 - INFO - Known malware detected: suspicious_malware.bat
+2025-07-29 06:12:24,401 - INFO - Known malware detected: suspicious_malware.bat
+2025-07-29 06:12:24,401 - WARNING - THREAT DETECTED: suspicious_malware.bat | Level: CRITICAL | Method: KNOWN_MALWARE | Confidence: 1.00 | Size: 71.0 B
+2025-07-29 06:12:24,401 - WARNING - THREAT DETECTED: suspicious_malware.bat | Level: CRITICAL | Method: KNOWN_MALWARE | Confidence: 1.00 | Size: 71.0 B
+2025-07-29 06:12:24,401 - INFO - Threat detected during monitoring: suspicious_malware.bat (KNOWN_MALWARE)
+2025-07-29 06:12:24,401 - INFO - Threat detected during monitoring: suspicious_malware.bat (KNOWN_MALWARE)
+2025-07-29 06:12:24,401 - INFO - Scan complete. Scanned 1 files in 0.00s
+2025-07-29 06:12:24,401 - INFO - Scan complete. Scanned 1 files in 0.00s
+2025-07-29 06:12:24,401 - INFO - Performance: 2330.2 files/second
+2025-07-29 06:12:24,401 - INFO - Performance: 2330.2 files/second
+2025-07-29 06:12:24,401 - INFO - Threats found: 0
+2025-07-29 06:12:24,401 - INFO - Threats found: 0
