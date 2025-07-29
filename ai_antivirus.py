@@ -414,11 +414,38 @@ class UltimateAIAntivirus:
     
     def is_suspicious_by_extension(self, file_path: Path) -> bool:
         """Check if file is suspicious based on extension."""
-        return file_path.suffix.lower() in SUSPICIOUS_EXTENSIONS
+        extension = file_path.suffix.lower()
+        
+        # If it's a suspicious extension, check if it's a protected project file
+        if extension in SUSPICIOUS_EXTENSIONS:
+            # Don't flag project batch files as suspicious
+            if extension == '.bat':
+                file_name = file_path.name.lower()
+                protected_bat_files = {'setup_windows.bat', 'run_antivirus.bat'}
+                if file_name in protected_bat_files:
+                    return False
+            
+            return True
+        
+        return False
     
     def analyze_file(self, file_path: Path) -> Optional[Dict]:
         """Analyze a file using both traditional and AI methods."""
         if not file_path.exists():
+            return None
+        
+        # Check if this is a protected project file
+        file_name = file_path.name.lower()
+        protected_files = {
+            'setup_windows.bat', 'run_antivirus.bat', 'ai_antivirus.py', 
+            'ai_antivirus_windows.py', 'config.py', 'utils.py', 'requirements.txt',
+            'README.md', 'README_WINDOWS.md', 'WINDOWS_SETUP_GUIDE.md',
+            'test_scan.py', 'gui.py', 'test_suite.py', 'run_final_test.py'
+        }
+        
+        if file_name in protected_files:
+            # Skip analysis for protected files
+            self.stats['files_scanned'] += 1
             return None
         
         # Check if file is already known malware
@@ -650,11 +677,24 @@ class UltimateAIAntivirus:
             '.venv', 'venv', '.env'
         }
         
+        # Important project files that should never be quarantined
+        protected_files = {
+            'setup_windows.bat', 'run_antivirus.bat', 'ai_antivirus.py', 
+            'ai_antivirus_windows.py', 'config.py', 'utils.py', 'requirements.txt',
+            'README.md', 'README_WINDOWS.md', 'WINDOWS_SETUP_GUIDE.md',
+            'test_scan.py', 'gui.py', 'test_suite.py', 'run_final_test.py'
+        }
+        
         # Check if file path contains any excluded patterns
         file_path_str = str(file_path).lower()
         for pattern in excluded_patterns:
             if pattern in file_path_str:
                 return False
+        
+        # Check if file is a protected project file
+        file_name = file_path.name.lower()
+        if file_name in {f.lower() for f in protected_files}:
+            return False
         
         # Check file size (skip very large files)
         try:
