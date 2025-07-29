@@ -1,0 +1,100 @@
+2025-07-29 05:20:31,471 - INFO - Ultimate AI Antivirus v4.X Started
+2025-07-29 05:20:31,471 - INFO - Ultimate AI Antivirus v4.X Started
+2025-07-29 05:20:31,471 - INFO - Monitoring path: /workspace
+2025-07-29 05:20:31,471 - INFO - Monitoring path: /workspace
+2025-07-29 05:20:31,471 - INFO - Quarantine enabled: True
+2025-07-29 05:20:31,471 - INFO - Quarantine enabled: True
+2025-07-29 05:20:31,471 - INFO - Scan mode: NORMAL
+2025-07-29 05:20:31,471 - INFO - Scan mode: NORMAL
+2025-07-29 05:20:31,475 - INFO - Error loading PyTorch model: 'collections.OrderedDict' object has no attribute 'eval'
+2025-07-29 05:20:31,475 - INFO - Error loading PyTorch model: 'collections.OrderedDict' object has no attribute 'eval'
+2025-07-29 05:20:33,598 - INFO - Error in PyTorch training: 'collections.OrderedDict' object has no attribute 'eval'
+2025-07-29 05:20:33,598 - INFO - Error in PyTorch training: 'collections.OrderedDict' object has no attribute 'eval'
+2025-07-29 05:20:33,704 - INFO - AI model trained and saved successfully
+2025-07-29 05:20:33,704 - INFO - AI model trained and saved successfully
+2025-07-29 05:20:33,705 - INFO - Normal scan: scanning path /workspace
+2025-07-29 05:20:33,705 - INFO - Normal scan: scanning path /workspace
+2025-07-29 05:20:33,705 - INFO - Searching 1 directories for files...
+2025-07-29 05:20:33,705 - INFO - Searching 1 directories for files...
+2025-07-29 05:20:33,980 - INFO - Found 2 files to scan
+2025-07-29 05:20:33,980 - INFO - Found 2 files to scan
+2025-07-29 05:20:33,981 - INFO - Finding files to scan...
+2025-07-29 05:20:33,981 - INFO - Finding files to scan...
+2025-07-29 05:20:33,981 - INFO - Normal scan: scanning path /workspace
+2025-07-29 05:20:33,981 - INFO - Normal scan: scanning path /workspace
+2025-07-29 05:20:33,981 - INFO - Searching 1 directories for files...
+2025-07-29 05:20:33,981 - INFO - Searching 1 directories for files...
+2025-07-29 05:20:34,236 - INFO - Found 2 files to scan
+2025-07-29 05:20:34,236 - INFO - Found 2 files to scan
+2025-07-29 05:20:34,236 - INFO - Starting scan of 2 files...
+2025-07-29 05:20:34,236 - INFO - Starting scan of 2 files...
+2025-07-29 05:20:34,238 - ERROR - Error in AI prediction: The feature names should match those that were passed during fit.
+Feature names unseen at fit time:
+- behavior_score
+- content_flags
+- creation_randomness
+- entropy_score
+- extension
+- ...
+Feature names seen at fit time, yet now missing:
+- ext_.app
+- ext_.bash
+- ext_.bat
+- ext_.cmd
+- ext_.com
+- ...
+
+2025-07-29 05:20:34,238 - ERROR - Error in AI prediction: The feature names should match those that were passed during fit.
+Feature names unseen at fit time:
+- behavior_score
+- content_flags
+- creation_randomness
+- entropy_score
+- extension
+- ...
+Feature names seen at fit time, yet now missing:
+- ext_.app
+- ext_.bash
+- ext_.bat
+- ext_.cmd
+- ext_.com
+- ...
+
+2025-07-29 05:20:34,239 - ERROR - Error in AI prediction: The feature names should match those that were passed during fit.
+Feature names unseen at fit time:
+- behavior_score
+- content_flags
+- creation_randomness
+- entropy_score
+- extension
+- ...
+Feature names seen at fit time, yet now missing:
+- ext_.app
+- ext_.bash
+- ext_.bat
+- ext_.cmd
+- ext_.com
+- ...
+
+2025-07-29 05:20:34,239 - ERROR - Error in AI prediction: The feature names should match those that were passed during fit.
+Feature names unseen at fit time:
+- behavior_score
+- content_flags
+- creation_randomness
+- entropy_score
+- extension
+- ...
+Feature names seen at fit time, yet now missing:
+- ext_.app
+- ext_.bash
+- ext_.bat
+- ext_.cmd
+- ext_.com
+- ...
+
+2025-07-29 05:20:34,239 - INFO - Scan complete. Scanned 2 files in 0.00s
+2025-07-29 05:20:34,239 - INFO - Scan complete. Scanned 2 files in 0.00s
+2025-07-29 05:20:34,239 - INFO - Performance: 714.0 files/second
+2025-07-29 05:20:34,239 - INFO - Performance: 714.0 files/second
+2025-07-29 05:20:34,239 - INFO - Threats found: 0
+2025-07-29 05:20:34,239 - INFO - Threats found: 0

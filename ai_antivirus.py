@@ -280,6 +280,28 @@ class UltimateAIAntivirus:
                 return self._train_model()
         except Exception as e:
             safe_log(self.logger, f"Error loading PyTorch model: {e}")
+            # Try to train a new PyTorch model
+            try:
+                # Import and run the PyTorch training
+                import subprocess
+                result = subprocess.run(['python3', 'train_model_pytorch.py'], 
+                                     capture_output=True, text=True, timeout=300)
+                if result.returncode == 0:
+                    # Try loading again
+                    model_files = list(Path("model").glob("ai_model_*.pt"))
+                    if model_files:
+                        latest_model = max(model_files, key=lambda x: x.stat().st_mtime)
+                        import torch
+                        model = torch.load(str(latest_model), map_location='cpu')
+                        model.eval()
+                        safe_log(self.logger, f"PyTorch AI model trained and loaded: {latest_model.name}")
+                        return model
+                else:
+                    safe_log(self.logger, f"Error training PyTorch model: {result.stderr}")
+            except Exception as train_error:
+                safe_log(self.logger, f"Error in PyTorch training: {train_error}")
+            
+            # Fallback to old model
             return self._train_model()
     
     def _create_training_data(self):
@@ -534,10 +556,26 @@ class UltimateAIAntivirus:
         # Check if this is a protected project file
         file_name = file_path.name.lower()
         protected_files = {
-            'setup_windows.bat', 'run_antivirus.bat', 'ai_antivirus.py', 
-            'ai_antivirus_windows.py', 'config.py', 'utils.py', 'requirements.txt',
+            # Core antivirus files
+            'ai_antivirus.py', 'ai_antivirus_windows.py', 'config.py', 'utils.py',
+            'signatures.py', 'train_model_pytorch.py', 'create_dataset.py',
+            
+            # Batch files and scripts
+            'setup_windows.bat', 'run_antivirus.bat', 'test_scan.py',
+            
+            # Documentation
             'README.md', 'README_WINDOWS.md', 'WINDOWS_SETUP_GUIDE.md',
-            'test_scan.py', 'gui.py', 'test_suite.py', 'run_final_test.py'
+            'TRIPLE_CHECK_FIXES.md', 'WINDOWS_ENCODING_FIXES.md',
+            
+            # Test and utility files
+            'gui.py', 'test_suite.py', 'run_final_test.py', 'test_malware_signatures.py',
+            'create_eicar_files.py', 'create_fake_malware_files.py', 'create_safe_files.py',
+            
+            # Configuration files
+            'requirements.txt', 'requirements_windows.txt',
+            
+            # Data files
+            'malware_dataset.csv', 'known_malware.csv'
         }
         
         if file_name in protected_files:
@@ -815,18 +853,34 @@ class UltimateAIAntivirus:
         """Determine if a file should be scanned."""
         # Exclude certain directories and files
         excluded_patterns = {
-            'quarantine', 'logs', 'model', 'test_files',
-            'known_malware.csv', '.git', '.svn', '.hg',
+            'quarantine', 'logs', 'model', 'test_files', 'test_signature_detection',
+            'known_malware.csv', 'malware_dataset.csv', '.git', '.svn', '.hg',
             '__pycache__', '.pytest_cache', 'node_modules',
-            '.venv', 'venv', '.env'
+            '.venv', 'venv', '.env', 'venv', 'env'
         }
         
         # Important project files that should never be quarantined
         protected_files = {
-            'setup_windows.bat', 'run_antivirus.bat', 'ai_antivirus.py', 
-            'ai_antivirus_windows.py', 'config.py', 'utils.py', 'requirements.txt',
+            # Core antivirus files
+            'ai_antivirus.py', 'ai_antivirus_windows.py', 'config.py', 'utils.py',
+            'signatures.py', 'train_model_pytorch.py', 'create_dataset.py',
+            
+            # Batch files and scripts
+            'setup_windows.bat', 'run_antivirus.bat', 'test_scan.py',
+            
+            # Documentation
             'README.md', 'README_WINDOWS.md', 'WINDOWS_SETUP_GUIDE.md',
-            'test_scan.py', 'gui.py', 'test_suite.py', 'run_final_test.py'
+            'TRIPLE_CHECK_FIXES.md', 'WINDOWS_ENCODING_FIXES.md',
+            
+            # Test and utility files
+            'gui.py', 'test_suite.py', 'run_final_test.py', 'test_malware_signatures.py',
+            'create_eicar_files.py', 'create_fake_malware_files.py', 'create_safe_files.py',
+            
+            # Configuration files
+            'requirements.txt', 'requirements_windows.txt',
+            
+            # Data files
+            'malware_dataset.csv', 'known_malware.csv'
         }
         
         # Check if file path contains any excluded patterns
@@ -839,6 +893,13 @@ class UltimateAIAntivirus:
         file_name = file_path.name.lower()
         if file_name in {f.lower() for f in protected_files}:
             return False
+        
+        # Additional protection for .bat files that are part of the project
+        if file_path.suffix.lower() == '.bat':
+            bat_name = file_path.name.lower()
+            protected_bat_files = {'setup_windows.bat', 'run_antivirus.bat'}
+            if bat_name in protected_bat_files:
+                return False
         
         # Check file size (skip very large files)
         try:
