@@ -10,3 +10,4 @@
 2025-07-29 04:29:17,601 - INFO - AI model loaded successfully
 2025-07-29 04:29:17,603 - INFO - Started monitoring: /workspace/test_signature_detection
 2025-07-29 04:29:17,603 - INFO - Started monitoring: /workspace/test_signature_detection
+2025-07-29 04:34:52,133 - INFO - Received interrupt signal, shutting down...
