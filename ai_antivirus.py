@@ -39,7 +39,8 @@ from utils import (
     get_high_risk_paths, get_full_scan_paths, create_log_folders,
     print_colored, create_timestamp, get_file_metadata, format_size,
     validate_file_path, get_platform_info, get_file_hash, is_known_malware,
-    add_to_known_malware, get_known_malware_count
+    add_to_known_malware, get_known_malware_count, get_entropy,
+    get_file_type, get_filename_pattern_flags, simulate_file_creation_randomness
 )
 
 # Initialize colorama and rich
@@ -253,11 +254,41 @@ class UltimateAIAntivirus:
         """Extract features from a file for AI analysis."""
         try:
             stat = file_path.stat()
-            return {
+            
+            # Read file content for entropy calculation
+            try:
+                with open(file_path, 'rb') as f:
+                    content = f.read(1024)  # Read first 1KB for analysis
+            except:
+                content = b''
+            
+            # Calculate entropy
+            entropy_score = get_entropy(content) if content else 0.0
+            
+            # Get file category
+            file_category = get_file_type(file_path.name)
+            
+            # Get filename patterns
+            pattern_flags = get_filename_pattern_flags(file_path.name)
+            
+            # Simulate creation randomness
+            creation_randomness = simulate_file_creation_randomness()
+            
+            # Base features
+            features = {
                 'file_size_kb': stat.st_size / 1024,
+                'entropy_score': entropy_score,
+                'creation_randomness': creation_randomness,
                 'extension': file_path.suffix.lower(),
+                'file_category': file_category,
                 'last_modified': datetime.fromtimestamp(stat.st_mtime)
             }
+            
+            # Add pattern flags
+            features.update(pattern_flags)
+            
+            return features
+            
         except Exception as e:
             self.logger.error(f"❌ Error extracting features from {file_path}: {e}")
             return None
@@ -270,6 +301,13 @@ class UltimateAIAntivirus:
             
             # Create DataFrame with proper feature names
             feature_df = pd.DataFrame([features])
+            
+            # Add category dummies
+            category_dummies = pd.get_dummies([features.get('file_category', 'other')], prefix='category')
+            extension_dummies = pd.get_dummies([features.get('extension', '.unknown')], prefix='ext')
+            
+            # Combine features
+            feature_df = pd.concat([feature_df, category_dummies, extension_dummies], axis=1)
             
             # Ensure all model features are present
             if hasattr(self.model, 'feature_names_in_'):

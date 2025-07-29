@@ -155,13 +155,29 @@ def get_filename_pattern_flags(filename: str) -> Dict[str, bool]:
     filename_lower = filename.lower()
     
     suspicious_patterns = {
-        'contains_cheat': any(word in filename_lower for word in ['cheat', 'hack', 'crack']),
-        'contains_keygen': any(word in filename_lower for word in ['keygen', 'serial', 'crack']),
-        'contains_virus': any(word in filename_lower for word in ['virus', 'trojan', 'malware']),
-        'contains_suspicious': any(word in filename_lower for word in ['free', 'download', 'cracked']),
-        'has_random_chars': len([c for c in filename if c.isalnum()]) < len(filename) * 0.7,
-        'is_hidden': filename.startswith('.'),
-        'has_multiple_extensions': filename.count('.') > 1
+        'pattern_hack': any(word in filename_lower for word in ['hack', 'hacker', 'hacking']),
+        'pattern_steal': any(word in filename_lower for word in ['steal', 'stealer', 'stealing']),
+        'pattern_crack': any(word in filename_lower for word in ['crack', 'cracker', 'cracking']),
+        'pattern_keygen': any(word in filename_lower for word in ['keygen', 'serial', 'key']),
+        'pattern_cheat': any(word in filename_lower for word in ['cheat', 'cheater', 'cheating']),
+        'pattern_free': any(word in filename_lower for word in ['free', 'freeware']),
+        'pattern_cracked': any(word in filename_lower for word in ['cracked', 'nulled', 'warez']),
+        'pattern_premium': any(word in filename_lower for word in ['premium', 'pro', 'professional']),
+        'pattern_unlock': any(word in filename_lower for word in ['unlock', 'unlocker']),
+        'pattern_bypass': any(word in filename_lower for word in ['bypass', 'bypasser']),
+        'pattern_admin': any(word in filename_lower for word in ['admin', 'administrator']),
+        'pattern_root': any(word in filename_lower for word in ['root', 'rootkit']),
+        'pattern_system': any(word in filename_lower for word in ['system', 'sys']),
+        'pattern_kernel': any(word in filename_lower for word in ['kernel', 'driver']),
+        'pattern_driver': any(word in filename_lower for word in ['driver', 'drv']),
+        'pattern_service': any(word in filename_lower for word in ['service', 'svc']),
+        'pattern_daemon': any(word in filename_lower for word in ['daemon', 'demon']),
+        'pattern_bot': any(word in filename_lower for word in ['bot', 'robot']),
+        'pattern_miner': any(word in filename_lower for word in ['miner', 'mining']),
+        'pattern_malware': any(word in filename_lower for word in ['malware', 'malicious']),
+        'pattern_virus': any(word in filename_lower for word in ['virus', 'viral']),
+        'pattern_infect': any(word in filename_lower for word in ['infect', 'infection']),
+        'pattern_spread': any(word in filename_lower for word in ['spread', 'worm'])
     }
     
     return suspicious_patterns
