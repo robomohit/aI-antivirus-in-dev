@@ -1,0 +1,26 @@
+2025-07-29 19:33:49,590 - INFO - Ultimate AI Antivirus v4.X Started
+2025-07-29 19:33:49,590 - INFO - Ultimate AI Antivirus v4.X Started
+2025-07-29 19:33:49,591 - INFO - Monitoring path: /workspace
+2025-07-29 19:33:49,591 - INFO - Monitoring path: /workspace
+2025-07-29 19:33:49,591 - INFO - Quarantine enabled: False
+2025-07-29 19:33:49,591 - INFO - Quarantine enabled: False
+2025-07-29 19:33:49,591 - INFO - Scan mode: NORMAL
+2025-07-29 19:33:49,591 - INFO - Scan mode: NORMAL
+2025-07-29 19:33:49,597 - INFO - Error loading PyTorch model: Error(s) in loading state_dict for FeedForwardClassifier:
+	Missing key(s) in state_dict: "network.2.weight", "network.2.bias", "network.2.running_mean", "network.2.running_var", "network.6.weight", "network.6.bias", "network.6.running_mean", "network.6.running_var", "network.10.weight", "network.10.bias", "network.10.running_mean", "network.10.running_var". 
+	Unexpected key(s) in state_dict: "network.3.weight", "network.3.bias", "network.3.running_mean", "network.3.running_var", "network.3.num_batches_tracked", "network.7.weight", "network.7.bias", "network.7.running_mean", "network.7.running_var", "network.7.num_batches_tracked", "network.11.weight", "network.11.bias", "network.11.running_mean", "network.11.running_var", "network.11.num_batches_tracked". 
+	size mismatch for network.0.weight: copying a param with shape torch.Size([128, 32]) from checkpoint, the shape in current model is torch.Size([128, 36]).
+2025-07-29 19:33:49,597 - INFO - Error loading PyTorch model: Error(s) in loading state_dict for FeedForwardClassifier:
+	Missing key(s) in state_dict: "network.2.weight", "network.2.bias", "network.2.running_mean", "network.2.running_var", "network.6.weight", "network.6.bias", "network.6.running_mean", "network.6.running_var", "network.10.weight", "network.10.bias", "network.10.running_mean", "network.10.running_var". 
+	Unexpected key(s) in state_dict: "network.3.weight", "network.3.bias", "network.3.running_mean", "network.3.running_var", "network.3.num_batches_tracked", "network.7.weight", "network.7.bias", "network.7.running_mean", "network.7.running_var", "network.7.num_batches_tracked", "network.11.weight", "network.11.bias", "network.11.running_mean", "network.11.running_var", "network.11.num_batches_tracked". 
+	size mismatch for network.0.weight: copying a param with shape torch.Size([128, 32]) from checkpoint, the shape in current model is torch.Size([128, 36]).
+2025-07-29 19:33:51,755 - INFO - Error in PyTorch training: Error(s) in loading state_dict for FeedForwardClassifier:
+	Missing key(s) in state_dict: "network.2.weight", "network.2.bias", "network.2.running_mean", "network.2.running_var", "network.6.weight", "network.6.bias", "network.6.running_mean", "network.6.running_var", "network.10.weight", "network.10.bias", "network.10.running_mean", "network.10.running_var". 
+	Unexpected key(s) in state_dict: "network.3.weight", "network.3.bias", "network.3.running_mean", "network.3.running_var", "network.3.num_batches_tracked", "network.7.weight", "network.7.bias", "network.7.running_mean", "network.7.running_var", "network.7.num_batches_tracked", "network.11.weight", "network.11.bias", "network.11.running_mean", "network.11.running_var", "network.11.num_batches_tracked". 
+	size mismatch for network.0.weight: copying a param with shape torch.Size([128, 32]) from checkpoint, the shape in current model is torch.Size([128, 36]).
+2025-07-29 19:33:51,755 - INFO - Error in PyTorch training: Error(s) in loading state_dict for FeedForwardClassifier:
+	Missing key(s) in state_dict: "network.2.weight", "network.2.bias", "network.2.running_mean", "network.2.running_var", "network.6.weight", "network.6.bias", "network.6.running_mean", "network.6.running_var", "network.10.weight", "network.10.bias", "network.10.running_mean", "network.10.running_var". 
+	Unexpected key(s) in state_dict: "network.3.weight", "network.3.bias", "network.3.running_mean", "network.3.running_var", "network.3.num_batches_tracked", "network.7.weight", "network.7.bias", "network.7.running_mean", "network.7.running_var", "network.7.num_batches_tracked", "network.11.weight", "network.11.bias", "network.11.running_mean", "network.11.running_var", "network.11.num_batches_tracked". 
+	size mismatch for network.0.weight: copying a param with shape torch.Size([128, 32]) from checkpoint, the shape in current model is torch.Size([128, 36]).
+2025-07-29 19:33:51,866 - INFO - AI model trained and saved successfully
+2025-07-29 19:33:51,866 - INFO - AI model trained and saved successfully

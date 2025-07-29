@@ -592,7 +592,9 @@ class UltimateAIAntivirus:
             # Core antivirus files
             'ai_antivirus.py', 'ai_antivirus_windows.py', 'ai_antivirus_copy.py',
             'config.py', 'utils.py', 'signatures.py', 'train_model_pytorch.py', 
-            'create_dataset.py', 'train_enhanced_model.py',
+            'create_dataset.py', 'train_enhanced_model.py', 'train_deep_model.py',
+            'explain_deep_model.py', 'eda_analysis.py', 'final_test.py',
+            'test_model_integration.py', 'create_enhanced_dataset.py',
             
             # Batch files and scripts
             'setup_windows.bat', 'run_antivirus.bat', 'test_scan.py',
@@ -603,7 +605,7 @@ class UltimateAIAntivirus:
             # Documentation
             'README.md', 'README_WINDOWS.md', 'WINDOWS_SETUP_GUIDE.md',
             'TRIPLE_CHECK_FIXES.md', 'WINDOWS_ENCODING_FIXES.md',
-            'README_ULTIMATE.md',
+            'README_ULTIMATE.md', 'PROJECT_SUMMARY.md',
             
             # Test and utility files
             'test_suite.py', 'run_final_test.py', 'test_malware_signatures.py',
@@ -616,9 +618,14 @@ class UltimateAIAntivirus:
             # Data files
             'malware_dataset.csv', 'known_malware.csv',
             
+            # Training files
+            'train_enhanced_model_windows.py', 'create_dataset_windows.py',
+            'train_ultimate_model.py',
+            
             # Any file with these keywords
             'smart_scan.py', 'scan_engine.py', 'scan_utils.py',
-            'gui_', 'interface_', 'window_', 'antivirus_', 'setup_', 'run_'
+            'gui_', 'interface_', 'window_', 'antivirus_', 'setup_', 'run_',
+            'test_', 'train_', 'create_', 'explain_', 'eda_', 'final_'
         }
         
         # Check exact filename matches
@@ -627,16 +634,46 @@ class UltimateAIAntivirus:
             self.stats['files_scanned'] += 1
             return None
         
-        # Check pattern matches (files containing keywords)
-        protected_patterns = ['gui', 'smart', 'scan', 'interface', 'window', 'test_', 'antivirus', 'setup', 'run']
+        # Check pattern matches (files containing keywords) - EXPANDED
+        protected_patterns = [
+            'gui', 'smart', 'scan', 'interface', 'window', 'antivirus', 
+            'setup', 'run', 'train', 'create', 'explain', 'eda', 'final',
+            'config', 'utils', 'signatures', 'model', 'dataset', 'enhanced',
+            'windows', 'ultimate', 'deep', 'shap', 'feature', 'importance'
+        ]
         for pattern in protected_patterns:
             if pattern in file_name:
                 # Skip analysis for protected files
                 self.stats['files_scanned'] += 1
                 return None
         
-        # Check if file is in protected directories
-        protected_dirs = ['gui', 'interface', 'smart', 'scan', 'test', 'antivirus', 'setup', 'run']
+        # Special handling for test files - only protect actual test scripts, not test malware
+        if 'test_' in file_name:
+            # Protect actual test scripts
+            protected_test_files = {
+                'test_suite.py', 'test_scan.py', 'test_malware_signatures.py',
+                'test_model_integration.py', 'test_protection.py', 'test_ai.py',
+                'test_downloads.py'
+            }
+            if file_name in protected_test_files:
+                # Skip analysis for protected files
+                self.stats['files_scanned'] += 1
+                return None
+            # Allow test malware files to be scanned
+            if any(keyword in file_name for keyword in ['malware', 'trojan', 'ransomware', 'backdoor', 'keylogger', 'worm', 'real_']):
+                pass  # Allow these to be scanned
+            else:
+                # Skip analysis for protected files
+                self.stats['files_scanned'] += 1
+                return None
+        
+        # Check if file is in protected directories - EXPANDED
+        protected_dirs = [
+            'gui', 'interface', 'smart', 'scan', 'test', 'antivirus', 'setup', 
+            'run', 'train', 'create', 'explain', 'eda', 'final', 'config',
+            'utils', 'signatures', 'model', 'dataset', 'enhanced', 'windows',
+            'ultimate', 'deep', 'shap', 'feature', 'importance'
+        ]
         for dir_name in protected_dirs:
             if dir_name in file_path_str:
                 # Skip analysis for protected files
@@ -950,12 +987,14 @@ class UltimateAIAntivirus:
         file_name = file_path.name.lower()
         file_path_str = str(file_path).lower()
         
-        # CRITICAL: NEVER scan any project files
+        # CRITICAL: NEVER scan any project files - COMPREHENSIVE PROTECTION
         project_files = {
             # Core antivirus files
             'ai_antivirus.py', 'ai_antivirus_windows.py', 'ai_antivirus_copy.py',
             'config.py', 'utils.py', 'signatures.py', 'train_model_pytorch.py', 
-            'create_dataset.py', 'train_enhanced_model.py',
+            'create_dataset.py', 'train_enhanced_model.py', 'train_deep_model.py',
+            'explain_deep_model.py', 'eda_analysis.py', 'final_test.py',
+            'test_model_integration.py', 'create_enhanced_dataset.py',
             
             # Batch files and scripts
             'setup_windows.bat', 'run_antivirus.bat', 'test_scan.py',
@@ -966,7 +1005,7 @@ class UltimateAIAntivirus:
             # Documentation
             'README.md', 'README_WINDOWS.md', 'WINDOWS_SETUP_GUIDE.md',
             'TRIPLE_CHECK_FIXES.md', 'WINDOWS_ENCODING_FIXES.md',
-            'README_ULTIMATE.md',
+            'README_ULTIMATE.md', 'PROJECT_SUMMARY.md',
             
             # Test and utility files
             'test_suite.py', 'run_final_test.py', 'test_malware_signatures.py',
@@ -979,33 +1018,64 @@ class UltimateAIAntivirus:
             # Data files
             'malware_dataset.csv', 'known_malware.csv',
             
+            # Training files
+            'train_enhanced_model_windows.py', 'create_dataset_windows.py',
+            'train_ultimate_model.py',
+            
             # Any file with these keywords
             'smart_scan.py', 'scan_engine.py', 'scan_utils.py',
-            'gui_', 'interface_', 'window_', 'antivirus_', 'setup_', 'run_'
+            'gui_', 'interface_', 'window_', 'antivirus_', 'setup_', 'run_',
+            'test_', 'train_', 'create_', 'explain_', 'eda_', 'final_'
         }
         
         # Check exact filename matches
         if file_name in {f.lower() for f in project_files}:
             return False
         
-        # Check pattern matches (files containing keywords)
-        protected_patterns = ['gui', 'smart', 'scan', 'interface', 'window', 'test_', 'antivirus', 'setup', 'run']
+        # Check pattern matches (files containing keywords) - EXPANDED
+        protected_patterns = [
+            'gui', 'smart', 'scan', 'interface', 'window', 'antivirus', 
+            'setup', 'run', 'train', 'create', 'explain', 'eda', 'final',
+            'config', 'utils', 'signatures', 'model', 'dataset', 'enhanced',
+            'windows', 'ultimate', 'deep', 'shap', 'feature', 'importance'
+        ]
         for pattern in protected_patterns:
             if pattern in file_name:
                 return False
         
-        # Check if file is in protected directories
-        protected_dirs = ['gui', 'interface', 'smart', 'scan', 'test', 'antivirus', 'setup', 'run']
+        # Special handling for test files - only protect actual test scripts, not test malware
+        if 'test_' in file_name:
+            # Protect actual test scripts
+            protected_test_files = {
+                'test_suite.py', 'test_scan.py', 'test_malware_signatures.py',
+                'test_model_integration.py', 'test_protection.py', 'test_ai.py',
+                'test_downloads.py'
+            }
+            if file_name in protected_test_files:
+                return False
+            # Allow test malware files to be scanned
+            if any(keyword in file_name for keyword in ['malware', 'trojan', 'ransomware', 'backdoor', 'keylogger', 'worm', 'real_']):
+                return True  # Allow these to be scanned
+            else:
+                return False  # Protect other test files
+        
+        # Check if file is in protected directories - EXPANDED
+        protected_dirs = [
+            'gui', 'interface', 'smart', 'scan', 'test', 'antivirus', 'setup', 
+            'run', 'train', 'create', 'explain', 'eda', 'final', 'config',
+            'utils', 'signatures', 'model', 'dataset', 'enhanced', 'windows',
+            'ultimate', 'deep', 'shap', 'feature', 'importance'
+        ]
         for dir_name in protected_dirs:
             if dir_name in file_path_str:
                 return False
         
-        # Exclude certain directories and files
+        # Exclude certain directories and files - EXPANDED
         excluded_patterns = {
             'quarantine', 'logs', 'model', 'test_files', 'test_signature_detection',
             'known_malware.csv', 'malware_dataset.csv', '.git', '.svn', '.hg',
             '__pycache__', '.pytest_cache', 'node_modules',
-            '.venv', 'venv', '.env', 'venv', 'env'
+            '.venv', 'venv', '.env', 'venv', 'env', 'ai_test', 'test_downloads'
         }
         
         # Check if file path contains any excluded patterns
@@ -1016,8 +1086,27 @@ class UltimateAIAntivirus:
         # Additional protection for .bat files that are part of the project
         if file_path.suffix.lower() == '.bat':
             bat_name = file_path.name.lower()
-            protected_bat_files = {'setup_windows.bat', 'run_antivirus.bat'}
+            protected_bat_files = {
+                'setup_windows.bat', 'run_antivirus.bat', 'trojan_test.bat',
+                'real_malware_test.bat', 'ransomware_test.bat', 'suspicious_malware.bat',
+                'test_malware.bat'
+            }
             if bat_name in protected_bat_files:
+                return False
+        
+        # Additional protection for .py files that are part of the project
+        if file_path.suffix.lower() == '.py':
+            py_name = file_path.name.lower()
+            protected_py_files = {
+                'config.py', 'utils.py', 'signatures.py', 'gui.py', 'test_suite.py',
+                'run_final_test.py', 'train_deep_model.py', 'explain_deep_model.py',
+                'eda_analysis.py', 'final_test.py', 'test_model_integration.py',
+                'create_enhanced_dataset.py', 'ai_antivirus.py', 'ai_antivirus_windows.py',
+                'ai_antivirus_copy.py', 'train_enhanced_model.py', 'train_enhanced_model_windows.py',
+                'create_dataset.py', 'create_dataset_windows.py', 'train_model_pytorch.py',
+                'train_ultimate_model.py', 'test_scan.py', 'test_malware_signatures.py'
+            }
+            if py_name in protected_py_files:
                 return False
         
         # Check file size (skip very large files)
