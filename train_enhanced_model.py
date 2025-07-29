@@ -59,7 +59,7 @@ def load_and_prepare_data():
 
 def train_model_with_validation(X, y):
     """Train model with 3-split validation (60% train, 20% validation, 20% test)."""
-    print("🧠 Training model with 3-split validation...")
+    print("Training model with 3-split validation...")
     
     # First split: 80% for training/validation, 20% for final test
     X_temp, X_test, y_temp, y_test = train_test_split(
@@ -235,14 +235,14 @@ def save_model_and_metrics(model, results, feature_names, df):
     metrics_file = f'logs/model_metrics_{timestamp}.txt'
     
     with open(metrics_file, 'w') as f:
-        f.write("🧠 ULTIMATE AI ANTIVIRUS MODEL METRICS\n")
+        f.write("ULTIMATE AI ANTIVIRUS MODEL METRICS\n")
         f.write("=" * 60 + "\n")
         f.write(f"Training Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
         f.write(f"Dataset Size: {len(df)} samples\n")
         f.write(f"Features: {len(feature_names)}\n\n")
         
         # Dataset summary
-        f.write("📊 DATASET SUMMARY\n")
+        f.write("DATASET SUMMARY\n")
         f.write("-" * 30 + "\n")
         f.write(f"Total samples: {len(df)}\n")
         f.write(f"Malware samples: {len(df[df['is_malicious'] == 1])}\n")
@@ -252,7 +252,7 @@ def save_model_and_metrics(model, results, feature_names, df):
         f.write(f"Extensions: {df['extension'].nunique()}\n\n")
         
         # Model performance
-        f.write("📈 MODEL PERFORMANCE\n")
+        f.write("MODEL PERFORMANCE\n")
         f.write("-" * 30 + "\n")
         for set_name in ['train', 'validation', 'test']:
             f.write(f"\n{set_name.upper()} SET:\n")
@@ -267,25 +267,25 @@ def save_model_and_metrics(model, results, feature_names, df):
         val_acc = results['validation']['accuracy']
         overfitting_score = train_acc - val_acc
         
-        f.write(f"\n🔍 OVERFITTING ANALYSIS\n")
+        f.write(f"\nOVERFITTING ANALYSIS\n")
         f.write("-" * 30 + "\n")
         f.write(f"Train-Val Difference: {overfitting_score:.4f}\n")
         if overfitting_score > 0.05:
-            f.write("Status: ⚠️  POTENTIAL OVERFITTING\n")
+            f.write("Status: WARNING - POTENTIAL OVERFITTING\n")
         elif overfitting_score > 0.02:
-            f.write("Status: ⚠️  SLIGHT OVERFITTING\n")
+            f.write("Status: CAUTION - SLIGHT OVERFITTING\n")
         else:
-            f.write("Status: ✅ WELL-BALANCED\n")
+            f.write("Status: WELL-BALANCED\n")
         
         # Feature importance
-        f.write(f"\n📊 FEATURE IMPORTANCE (Top 20)\n")
+        f.write(f"\nFEATURE IMPORTANCE (Top 20)\n")
         f.write("-" * 30 + "\n")
         importances = model.feature_importances_
         indices = np.argsort(importances)[::-1]
         for i in range(min(20, len(feature_names))):
             f.write(f"{feature_names[indices[i]]}: {importances[indices[i]]:.4f}\n")
     
-    print(f"📄 Metrics saved to: {metrics_file}")
+    print(f"Metrics saved to: {metrics_file}")
     
     # Save visualizations
     save_visualizations(model, results, feature_names)
@@ -294,7 +294,7 @@ def save_model_and_metrics(model, results, feature_names, df):
 
 def main():
     """Main training function."""
-    print("🚀 ULTIMATE AI ANTIVIRUS MODEL TRAINING v5.X")
+    print("ULTIMATE AI ANTIVIRUS MODEL TRAINING v5.X")
     print("=" * 60)
     
     # Load data
@@ -311,23 +311,23 @@ def main():
     
     # Print final summary
     print("\n" + "=" * 60)
-    print("🎯 TRAINING COMPLETE!")
+    print("TRAINING COMPLETE!")
     print("=" * 60)
-    print(f"📊 Test Accuracy: {results['test']['accuracy']:.4f}")
-    print(f"📊 Test F1-Score: {results['test']['f1']:.4f}")
-    print(f"📊 Test AUC: {results['test']['auc']:.4f}")
-    print(f"💾 Model saved: model/model.pkl")
-    print(f"📄 Metrics saved: logs/model_metrics_{timestamp}.txt")
-    print(f"📊 Visualizations saved: logs/")
+    print(f"Test Accuracy: {results['test']['accuracy']:.4f}")
+    print(f"Test F1-Score: {results['test']['f1']:.4f}")
+    print(f"Test AUC: {results['test']['auc']:.4f}")
+    print(f"Model saved: model/model.pkl")
+    print(f"Metrics saved: logs/model_metrics_{timestamp}.txt")
+    print(f"Visualizations saved: logs/")
     
     # Check for overfitting
     overfitting_score = results['train']['accuracy'] - results['validation']['accuracy']
     if overfitting_score > 0.05:
-        print("⚠️  WARNING: Potential overfitting detected!")
+        print("WARNING: Potential overfitting detected!")
     elif overfitting_score > 0.02:
-        print("⚠️  CAUTION: Slight overfitting possible")
+        print("CAUTION: Slight overfitting possible")
     else:
-        print("✅ Model appears well-balanced")
+        print("Model appears well-balanced")
 
 if __name__ == "__main__":
     main()
