@@ -1,0 +1,12 @@
+Document text.
+Document text.
+Safe file content.
+Sample data for testing.
+Lorem ipsum dolor sit amet.
+Sample data for testing.
+Document content here.
+Document content here.
+Safe file content.
+Sample text.
+This is a safe document.
+Sample text.

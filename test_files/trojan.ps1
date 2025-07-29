@@ -1,0 +1,1 @@
+Write-Host "Suspicious PowerShell script"

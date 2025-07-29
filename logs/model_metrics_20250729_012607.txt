@@ -1,0 +1,66 @@
+🧠 ULTIMATE AI ANTIVIRUS MODEL METRICS
+============================================================
+Training Date: 2025-07-29 01:26:07
+Dataset Size: 4982 samples
+Features: 71
+
+📊 DATASET SUMMARY
+------------------------------
+Total samples: 4982
+Malware samples: 2484
+Safe samples: 2498
+EICAR samples: 20
+Simulated samples: 2464
+Safe samples: 2498
+
+📈 MODEL PERFORMANCE
+------------------------------
+
+TRAIN SET:
+  Accuracy:  1.0000
+  Precision: 1.0000
+  Recall:    1.0000
+  F1-Score:  1.0000
+  AUC:       1.0000
+
+VALIDATION SET:
+  Accuracy:  0.9990
+  Precision: 1.0000
+  Recall:    0.9980
+  F1-Score:  0.9990
+  AUC:       1.0000
+
+TEST SET:
+  Accuracy:  1.0000
+  Precision: 1.0000
+  Recall:    1.0000
+  F1-Score:  1.0000
+  AUC:       1.0000
+
+🔍 OVERFITTING ANALYSIS
+------------------------------
+Train-Val Difference: 0.0010
+Status: ✅ WELL-BALANCED
+
+📊 FEATURE IMPORTANCE (Top 20)
+------------------------------
+entropy_score: 0.4741
+file_size_kb: 0.1095
+category_executable: 0.0877
+category_script: 0.0785
+category_media: 0.0566
+ext_.scr: 0.0278
+category_document: 0.0246
+ext_.cmd: 0.0154
+ext_.vbs: 0.0147
+ext_.ps1: 0.0145
+ext_.exe: 0.0123
+ext_.py: 0.0115
+ext_.bat: 0.0099
+category_config: 0.0090
+category_archive: 0.0088
+category_web: 0.0082
+category_other: 0.0061
+ext_.js: 0.0046
+ext_.pdf: 0.0023
+ext_.csv: 0.0021

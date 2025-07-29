@@ -1,0 +1,1 @@
+print("Safe Python script")
