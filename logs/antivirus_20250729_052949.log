@@ -14,3 +14,4 @@
 2025-07-29 05:29:51,183 - INFO - AI model trained and saved successfully
 2025-07-29 05:29:51,270 - INFO - Started monitoring: /workspace
 2025-07-29 05:29:51,270 - INFO - Started monitoring: /workspace
+2025-07-29 05:35:15,404 - INFO - Received interrupt signal, shutting down...

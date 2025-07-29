@@ -1,0 +1,24 @@
+2025-07-29 05:50:31,244 - INFO - Ultimate AI Antivirus v4.X Started
+2025-07-29 05:50:31,244 - INFO - Ultimate AI Antivirus v4.X Started
+2025-07-29 05:50:31,244 - INFO - Monitoring path: /workspace
+2025-07-29 05:50:31,244 - INFO - Monitoring path: /workspace
+2025-07-29 05:50:31,244 - INFO - Quarantine enabled: True
+2025-07-29 05:50:31,244 - INFO - Quarantine enabled: True
+2025-07-29 05:50:31,244 - INFO - Scan mode: NORMAL
+2025-07-29 05:50:31,244 - INFO - Scan mode: NORMAL
+2025-07-29 05:50:31,247 - INFO - Error loading PyTorch model: 'collections.OrderedDict' object has no attribute 'eval'
+2025-07-29 05:50:31,247 - INFO - Error loading PyTorch model: 'collections.OrderedDict' object has no attribute 'eval'
+2025-07-29 05:50:33,269 - INFO - Error in PyTorch training: 'collections.OrderedDict' object has no attribute 'eval'
+2025-07-29 05:50:33,269 - INFO - Error in PyTorch training: 'collections.OrderedDict' object has no attribute 'eval'
+2025-07-29 05:50:33,371 - INFO - AI model trained and saved successfully
+2025-07-29 05:50:33,371 - INFO - AI model trained and saved successfully
+2025-07-29 05:50:33,374 - INFO - Finding files to scan...
+2025-07-29 05:50:33,374 - INFO - Finding files to scan...
+2025-07-29 05:50:33,374 - INFO - Normal scan: scanning path /workspace
+2025-07-29 05:50:33,374 - INFO - Normal scan: scanning path /workspace
+2025-07-29 05:50:33,374 - INFO - Searching 1 directories for files...
+2025-07-29 05:50:33,374 - INFO - Searching 1 directories for files...
+2025-07-29 05:50:33,716 - INFO - Found 0 files to scan
+2025-07-29 05:50:33,716 - INFO - Found 0 files to scan
+2025-07-29 05:50:33,717 - INFO - No files to scan
+2025-07-29 05:50:33,717 - INFO - No files to scan

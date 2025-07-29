@@ -1,0 +1,66 @@
+2025-07-29 05:51:16,110 - INFO - Ultimate AI Antivirus v4.X Started
+2025-07-29 05:51:16,110 - INFO - Ultimate AI Antivirus v4.X Started
+2025-07-29 05:51:16,111 - INFO - Monitoring path: /workspace
+2025-07-29 05:51:16,111 - INFO - Monitoring path: /workspace
+2025-07-29 05:51:16,111 - INFO - Quarantine enabled: True
+2025-07-29 05:51:16,111 - INFO - Quarantine enabled: True
+2025-07-29 05:51:16,111 - INFO - Scan mode: NORMAL
+2025-07-29 05:51:16,111 - INFO - Scan mode: NORMAL
+2025-07-29 05:51:16,114 - INFO - Error loading PyTorch model: 'collections.OrderedDict' object has no attribute 'eval'
+2025-07-29 05:51:16,114 - INFO - Error loading PyTorch model: 'collections.OrderedDict' object has no attribute 'eval'
+2025-07-29 05:51:18,006 - INFO - Error in PyTorch training: 'collections.OrderedDict' object has no attribute 'eval'
+2025-07-29 05:51:18,006 - INFO - Error in PyTorch training: 'collections.OrderedDict' object has no attribute 'eval'
+2025-07-29 05:51:18,111 - INFO - AI model trained and saved successfully
+2025-07-29 05:51:18,111 - INFO - AI model trained and saved successfully
+2025-07-29 05:51:18,113 - INFO - Finding files to scan...
+2025-07-29 05:51:18,113 - INFO - Finding files to scan...
+2025-07-29 05:51:18,113 - INFO - Normal scan: scanning path /workspace
+2025-07-29 05:51:18,113 - INFO - Normal scan: scanning path /workspace
+2025-07-29 05:51:18,114 - INFO - Searching 1 directories for files...
+2025-07-29 05:51:18,114 - INFO - Searching 1 directories for files...
+2025-07-29 05:51:18,422 - INFO - Found 1 files to scan
+2025-07-29 05:51:18,422 - INFO - Found 1 files to scan
+2025-07-29 05:51:18,422 - INFO - Starting scan of 1 files...
+2025-07-29 05:51:18,422 - INFO - Starting scan of 1 files...
+2025-07-29 05:51:18,423 - ERROR - Error in AI prediction: The feature names should match those that were passed during fit.
+Feature names unseen at fit time:
+- behavior_score
+- content_flags
+- creation_randomness
+- entropy_score
+- extension
+- ...
+Feature names seen at fit time, yet now missing:
+- ext_.app
+- ext_.bash
+- ext_.bat
+- ext_.cmd
+- ext_.com
+- ...
+
+2025-07-29 05:51:18,423 - ERROR - Error in AI prediction: The feature names should match those that were passed during fit.
+Feature names unseen at fit time:
+- behavior_score
+- content_flags
+- creation_randomness
+- entropy_score
+- extension
+- ...
+Feature names seen at fit time, yet now missing:
+- ext_.app
+- ext_.bash
+- ext_.bat
+- ext_.cmd
+- ext_.com
+- ...
+
+2025-07-29 05:51:18,424 - WARNING - THREAT DETECTED: suspicious_malware.bat | Level: SAFE | Method: EXTENSION | Confidence: 0.00 | Size: 71.0 B
+2025-07-29 05:51:18,424 - WARNING - THREAT DETECTED: suspicious_malware.bat | Level: SAFE | Method: EXTENSION | Confidence: 0.00 | Size: 71.0 B
+2025-07-29 05:51:18,424 - INFO - Threat detected during monitoring: suspicious_malware.bat (EXTENSION)
+2025-07-29 05:51:18,424 - INFO - Threat detected during monitoring: suspicious_malware.bat (EXTENSION)
+2025-07-29 05:51:18,424 - INFO - Scan complete. Scanned 1 files in 0.00s
+2025-07-29 05:51:18,424 - INFO - Scan complete. Scanned 1 files in 0.00s
+2025-07-29 05:51:18,424 - INFO - Performance: 518.3 files/second
+2025-07-29 05:51:18,424 - INFO - Performance: 518.3 files/second
+2025-07-29 05:51:18,424 - INFO - Threats found: 1
+2025-07-29 05:51:18,424 - INFO - Threats found: 1
