@@ -312,7 +312,7 @@ class UltimateAIAntivirus:
             return features
             
         except Exception as e:
-            self.logger.error(f"❌ Error extracting features from {file_path}: {e}")
+            self.logger.error(f"Error extracting features from {file_path}: {e}")
             return None
     
     def _predict_with_ai(self, features: Dict) -> Dict:
@@ -351,7 +351,7 @@ class UltimateAIAntivirus:
             }
             
         except Exception as e:
-            self.logger.error(f"❌ Error in AI prediction: {e}")
+            self.logger.error(f"Error in AI prediction: {e}")
             return {'is_malicious': False, 'confidence': 0.0}
     
     def is_suspicious_by_extension(self, file_path: Path) -> bool:
@@ -366,7 +366,7 @@ class UltimateAIAntivirus:
         # Check if file is already known malware
         file_hash = get_file_hash(str(file_path))
         if file_hash and is_known_malware(file_hash):
-            self.logger.info(f"🧠 Known malware detected: {file_path.name}")
+            self.logger.info(f"Known malware detected: {file_path.name}")
             self.stats['files_scanned'] += 1
             self.stats['last_scan_time'] = datetime.now()
             return {
@@ -448,13 +448,13 @@ class UltimateAIAntivirus:
         file_size = analysis_result['file_size_kb']
         
         # Log detailed information
-        self.logger.warning(f"🚨 THREAT DETECTED: {file_path}")
-        self.logger.info(f"📊 File size: {file_size:.1f} KB")
-        self.logger.info(f"🔍 Detection method: {detection_method}")
-        self.logger.info(f"🧠 AI confidence: {ai_confidence:.2%}")
-        self.logger.info(f"⚠️ Threat level: {threat_level}")
-        self.logger.info(f"🕒 Last modified: {analysis_result['last_modified']}")
-        self.logger.info(f"📁 Extension: {analysis_result['extension']}")
+        self.logger.warning(f"THREAT DETECTED: {file_path}")
+        self.logger.info(f"File size: {file_size:.1f} KB")
+        self.logger.info(f"Detection method: {detection_method}")
+        self.logger.info(f"AI confidence: {ai_confidence:.2%}")
+        self.logger.info(f"Threat level: {threat_level}")
+        self.logger.info(f"Last modified: {analysis_result['last_modified']}")
+        self.logger.info(f"Extension: {analysis_result['extension']}")
     
     def quarantine_file(self, file_path: Path) -> Tuple[bool, Optional[Path]]:
         """Move a suspicious file to the quarantine folder."""
@@ -473,7 +473,7 @@ class UltimateAIAntivirus:
             return True, quarantine_path
             
         except Exception as e:
-            self.logger.error(f"❌ Failed to quarantine {file_path}: {e}")
+            self.logger.error(f"Failed to quarantine {file_path}: {e}")
             return False, None
     
     def handle_suspicious_file(self, analysis_result: Dict):
@@ -490,12 +490,12 @@ class UltimateAIAntivirus:
         threat_emoji = THREAT_LEVELS.get(threat_level, {}).get('emoji', '⚠️')
         threat_color = THREAT_LEVELS.get(threat_level, {}).get('color', Fore.YELLOW)
         
-        console.print(f"{threat_color}{threat_emoji} THREAT DETECTED! {threat_emoji}{Style.RESET_ALL}")
-        console.print(f"📁 File: {file_path}")
-        console.print(f"🔍 Detection: {detection_method}")
-        console.print(f"📊 Size: {analysis_result['file_size_kb']:.1f} KB")
-        console.print(f"🧠 AI Confidence: {ai_confidence:.2%}")
-        console.print(f"⚠️ Threat Level: {threat_level} {threat_emoji}")
+        safe_print(f"THREAT DETECTED!")
+        safe_print(f"File: {file_path}")
+        safe_print(f"Detection: {detection_method}")
+        safe_print(f"Size: {analysis_result['file_size_kb']:.1f} KB")
+        safe_print(f"AI Confidence: {ai_confidence:.2%}")
+        safe_print(f"Threat Level: {threat_level}")
         
         # Add to known malware database if it's a new AI or BOTH detection
         if detection_method in ["AI", "BOTH"]:
@@ -510,24 +510,24 @@ class UltimateAIAntivirus:
         if self.quarantine_enabled:
             success, quarantine_path = self.quarantine_file(file_path)
             if success:
-                console.print(f"🚫 Quarantined: {quarantine_path}")
+                safe_print(f"Quarantined: {quarantine_path}")
             else:
-                console.print("❌ Failed to quarantine file")
+                safe_print("Failed to quarantine file")
     
     def scan_directory(self, show_progress: bool = True):
         """Scan directory with enhanced progress tracking."""
         if not self.monitor_path.exists():
-            self.logger.error(f"❌ Monitor path does not exist: {self.monitor_path}")
+            self.logger.error(f"Monitor path does not exist: {self.monitor_path}")
             return
         
         # Get files to scan based on scan mode
         files_to_scan = self._get_files_to_scan()
         
         if not files_to_scan:
-            self.logger.info("✅ No files to scan")
+            self.logger.info("No files to scan")
             return
         
-        self.logger.info(f"🔍 Scanning directory: {self.monitor_path}")
+        self.logger.info(f"Scanning directory: {self.monitor_path}")
         
         if show_progress:
             with Progress(
@@ -545,7 +545,7 @@ class UltimateAIAntivirus:
                         if analysis_result and analysis_result['is_suspicious']:
                             self.handle_suspicious_file(analysis_result)
                     except Exception as e:
-                        self.logger.error(f"❌ Error scanning {file_path}: {e}")
+                        self.logger.error(f"Error scanning {file_path}: {e}")
                     
                     progress.advance(task)
         else:
@@ -557,7 +557,7 @@ class UltimateAIAntivirus:
                 except Exception as e:
                     self.logger.error(f"❌ Error scanning {file_path}: {e}")
         
-        self.logger.info(f"✅ Initial scan complete. Found {self.stats['threats_found']} suspicious files.")
+        self.logger.info(f"Initial scan complete. Found {self.stats['threats_found']} suspicious files.")
     
     def _get_files_to_scan(self) -> List[Path]:
         """Get files to scan based on scan mode."""
@@ -566,17 +566,17 @@ class UltimateAIAntivirus:
         if self.scan_mode == "smart":
             # Smart scan: only high-risk directories
             scan_paths = get_high_risk_paths()
-            self.logger.info(f"🧠 Smart scan mode: scanning {len(scan_paths)} high-risk directories")
+            self.logger.info(f"Smart scan mode: scanning {len(scan_paths)} high-risk directories")
             
         elif self.scan_mode == "full":
             # Full scan: entire system
             scan_paths = get_full_scan_paths()
-            self.logger.info(f"🔍 Full scan mode: scanning {len(scan_paths)} system paths")
+            self.logger.info(f"Full scan mode: scanning {len(scan_paths)} system paths")
             
         else:
             # Normal scan: just the monitor path
             scan_paths = [self.monitor_path]
-            self.logger.info(f"📁 Normal scan mode: scanning monitor path")
+            self.logger.info(f"Normal scan mode: scanning monitor path")
         
         # Collect files from all scan paths
         for scan_path in scan_paths:
@@ -698,7 +698,7 @@ class UltimateAIAntivirus:
         self.observer.schedule(self.event_handler, str(self.monitor_path), recursive=True)
         self.observer.start()
         
-        console.print("👁️ File monitoring started")
+        safe_print("File monitoring started")
         console.print("Press Ctrl+C to stop monitoring")
         
         try:
@@ -777,10 +777,10 @@ def create_gui_placeholder():
     try:
         import subprocess
         import sys
-        console.print("[cyan]🖥️ Launching GUI...[/cyan]")
+        safe_print("Launching GUI...")
         subprocess.run([sys.executable, "gui.py"])
     except Exception as e:
-        console.print(f"[red]❌ Error launching GUI: {e}[/red]")
+                  safe_print(f"Error launching GUI: {e}")
         console.print("[yellow]You can run the GUI manually with: python3 gui.py[/yellow]")
 
 # ============================================================================
