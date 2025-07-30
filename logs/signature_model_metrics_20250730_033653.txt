@@ -1,0 +1,27 @@
+SIGNATURE-FOCUSED AI ANTIVIRUS MODEL
+==================================================
+Training Date: 2025-07-30 03:36:53
+Model Type: Signature/Hash Focused (NO EXTENSIONS)
+Dataset Size: 10000 samples
+Features Used: 15
+
+FEATURES (Extension IGNORED):
+------------------------------
+  - file_size_kb
+  - entropy_score
+  - creation_randomness
+  - behavior_score
+  - signature_count
+  - content_flags
+  - filename_risk
+  - has_malicious_signatures
+  - pattern_malware
+  - pattern_trojan
+  - pattern_ransomware
+  - pattern_backdoor
+  - pattern_keylogger
+  - pattern_steal
+  - pattern_exploit
+
+Model saved to: model/signature_model_20250730_033653.pkl
+Artifacts saved to: model/signature_artifacts_20250730_033653.pkl
