@@ -755,6 +755,16 @@ class WindowsAIAntivirus:
             if any(legit in file_path_str for legit in ['python.exe', 'pip.exe', 'activate.bat', 'deactivate.bat', 'pyvenv.cfg', 'pywin32_postinstall.exe']):
                 return None
             
+            # Skip legitimate browser and application files
+            if any(legit in file_path_str for legit in [
+                'firefox', 'chrome', 'edge', 'opera', 'safari', 'brave',
+                'profiles.ini', 'containers.json', 'sessioncheckpoints.json',
+                'application.ini', 'mozglue.dll', 'd3dcompiler_47.dll',
+                'softokn3.dll', 'tor.exe', 'channel-prefs.js', 'compatibility.ini',
+                'plugin-container.exe', 'function.js', 'build_nuitka.bat', 'scan_custom.bat'
+            ]):
+                return None
+            
             # Skip protected files
             for protected_pattern in self.protected_files:
                 if protected_pattern in str(file_path):
