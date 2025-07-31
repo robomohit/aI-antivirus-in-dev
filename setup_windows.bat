@@ -60,6 +60,19 @@ if errorlevel 1 (
 echo.
 echo NOTE: Using ai_antivirus_windows_optimized.py (Windows optimized version)
 echo If you see false positives, make sure you're using this file!
+echo.
+echo ========================================
+echo SCANNING SPECIFIC DIRECTORIES
+echo ========================================
+echo.
+echo To scan a specific directory, use:
+echo python ai_antivirus_windows_optimized.py scan "C:\Users\ACER\Desktop" quick
+echo.
+echo Examples:
+echo - Desktop: python ai_antivirus_windows_optimized.py scan "C:\Users\ACER\Desktop" quick
+echo - Downloads: python ai_antivirus_windows_optimized.py scan "C:\Users\ACER\Downloads" smart
+echo - Documents: python ai_antivirus_windows_optimized.py scan "C:\Users\ACER\Documents" full
+echo.
 
 echo.
 echo ========================================

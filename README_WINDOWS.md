@@ -82,14 +82,20 @@ python ai_antivirus.py monitor .
 
 ### **Scan Specific Windows Locations**
 ```cmd
+# Scan Desktop
+python ai_antivirus_windows_optimized.py scan "C:\Users\ACER\Desktop" quick
+
 # Scan Downloads folder
-python ai_antivirus.py scan C:\Users\%USERNAME%\Downloads smart
+python ai_antivirus_windows_optimized.py scan "C:\Users\ACER\Downloads" smart
+
+# Scan Documents
+python ai_antivirus_windows_optimized.py scan "C:\Users\ACER\Documents" full
 
 # Scan Program Files
-python ai_antivirus.py scan "C:\Program Files" quick
+python ai_antivirus_windows_optimized.py scan "C:\Program Files" quick
 
 # Scan entire C: drive (full scan)
-python ai_antivirus.py scan C:\ full
+python ai_antivirus_windows_optimized.py scan C:\ full
 ```
 
 ### **Scan Specific File Types**
