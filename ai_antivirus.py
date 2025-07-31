@@ -743,6 +743,8 @@ class WindowsAIAntivirus:
             
             # Skip virtual environment files completely
             file_path_str = str(file_path).lower()
+            file_name_lower = file_path.name.lower()
+            
             if any(venv_dir in file_path_str for venv_dir in ['venv', 'env', '.venv', '\\lib\\site-packages']):
                 return None
             
@@ -755,15 +757,29 @@ class WindowsAIAntivirus:
             if any(legit in file_path_str for legit in ['python.exe', 'pip.exe', 'activate.bat', 'deactivate.bat', 'pyvenv.cfg', 'pywin32_postinstall.exe']):
                 return None
             
-            # Skip legitimate browser and application files
-            if any(legit in file_path_str for legit in [
+            # Skip legitimate browser and application files (check both path and filename)
+            legitimate_files = [
                 'firefox', 'chrome', 'edge', 'opera', 'safari', 'brave',
                 'profiles.ini', 'containers.json', 'sessioncheckpoints.json',
                 'application.ini', 'mozglue.dll', 'd3dcompiler_47.dll',
                 'softokn3.dll', 'tor.exe', 'channel-prefs.js', 'compatibility.ini',
-                'plugin-container.exe', 'function.js', 'build_nuitka.bat', 'scan_custom.bat'
-            ]):
+                'plugin-container.exe', 'function.js', 'build_nuitka.bat', 'scan_custom.bat',
+                'scan_desktop.bat', 'scan_downloads.bat', 'scan_documents.bat',
+                'libegl.dll', 'ipcclientcerts.dll', 'tbb_version.json', 'xulstore.json',
+                'update-settings.ini', 'firewall_rules.json', 'lgpllibs.dll'
+            ]
+            
+            # Check if file name matches any legitimate file
+            if any(legit.lower() in file_name_lower for legit in legitimate_files):
+                self._print(f"{Fore.GREEN}✅ Skipping legitimate file: {file_path.name}")
                 return None
+            
+            # Check if any legitimate pattern is in the full path
+            if any(legit.lower() in file_path_str for legit in legitimate_files):
+                self._print(f"{Fore.GREEN}✅ Skipping legitimate file: {file_path.name}")
+                return None
+            
+
             
             # Skip protected files
             for protected_pattern in self.protected_files:
