@@ -27,12 +27,16 @@ def restore_quarantined_files():
         "activate.bat", "deactivate.bat", "Activate.ps1",
         "pyvenv.cfg", "pywin32_postinstall.exe",
         
-        # Python package DLLs
+        # Python package DLLs and executables
         "lib_lightgbm.dll", "msvcp140.dll", "vcomp140.dll",
-        "pywintypes311.dll", "pythoncom311.dll",
+        "pywintypes311.dll", "pythoncom311.dll", "f2py.exe",
+        "testInterp.vbs", "w64.exe", "t32.exe", "PyISAPI_loader.dll",
+        "gui-64.exe", "debugTest.vbs", "Activate.ps1", "npymath.ini",
+        "mfc140u.dll", "testPyScriptlet.js", "cli-64.exe", "gui-32.exe",
+        "msvcp140-1a0962f2a91a74c6d7136a768987a591.dll",
         
         # Other legitimate files
-        "*.cfg", "*.ini", "*.json", "*.xml"
+        "*.cfg", "*.ini", "*.json", "*.xml", "*.vbs", "*.js"
     ]
     
     restored_count = 0
@@ -53,6 +57,11 @@ def restore_quarantined_files():
         if "venv" in str(quarantined_file) or "env" in str(quarantined_file):
             should_restore = True
         
+        # Restore all Python package files
+        if any(ext in file_name.lower() for ext in ['.dll', '.exe', '.vbs', '.js', '.ini', '.cfg']):
+            if any(pkg in file_name.lower() for pkg in ['numpy', 'pandas', 'scipy', 'sklearn', 'lightgbm', 'pywin32', 'pip', 'setuptools', 'pythonwin', 'win32com', 'win32']):
+                should_restore = True
+        
         if should_restore:
             try:
                 # Determine original location
@@ -63,7 +72,13 @@ def restore_quarantined_files():
                     # Try to restore to venv directory
                     venv_path = Path("venv")
                     if venv_path.exists():
-                        original_path = venv_path / file_name
+                        # Try to find the original subdirectory
+                        for subdir in venv_path.rglob("*"):
+                            if subdir.is_dir() and file_name in [f.name for f in subdir.iterdir()]:
+                                original_path = subdir / file_name
+                                break
+                        if not original_path:
+                            original_path = venv_path / file_name
                     else:
                         # Create venv directory if it doesn't exist
                         venv_path.mkdir(exist_ok=True)
@@ -71,6 +86,9 @@ def restore_quarantined_files():
                 else:
                     # Restore to current directory
                     original_path = Path(file_name)
+                
+                # Create parent directory if it doesn't exist
+                original_path.parent.mkdir(parents=True, exist_ok=True)
                 
                 # Restore the file
                 shutil.move(str(quarantined_file), str(original_path))
@@ -86,6 +104,7 @@ def restore_quarantined_files():
     if restored_count > 0:
         print("🛡️  Note: The antivirus has been updated to prevent false positives on legitimate files.")
         print("📝 Future scans will exclude virtual environment and Python package files.")
+        print("🔧 If you need to run the antivirus again, it will now properly exclude these files.")
 
 if __name__ == "__main__":
     restore_quarantined_files()

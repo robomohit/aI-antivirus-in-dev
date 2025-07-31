@@ -741,23 +741,24 @@ class WindowsAIAntivirus:
             if not file_path.exists():
                 return None
             
+            # Skip virtual environment files completely
+            file_path_str = str(file_path).lower()
+            if any(venv_dir in file_path_str for venv_dir in ['venv', 'env', '.venv', '\\lib\\site-packages']):
+                return None
+            
+            # Skip Python package files
+            if any(ext in file_path_str for ext in ['.dll', '.pyd', '.so', '.exe']):
+                if any(pkg in file_path_str for pkg in ['numpy', 'pandas', 'scipy', 'sklearn', 'lightgbm', 'pywin32', 'pip', 'setuptools', 'pythonwin', 'win32com', 'win32']):
+                    return None
+            
+            # Skip legitimate Python files
+            if any(legit in file_path_str for legit in ['python.exe', 'pip.exe', 'activate.bat', 'deactivate.bat', 'pyvenv.cfg', 'pywin32_postinstall.exe']):
+                return None
+            
             # Skip protected files
             for protected_pattern in self.protected_files:
                 if protected_pattern in str(file_path):
                     return None
-            
-            # Skip virtual environment files
-            if "venv" in str(file_path) or "env" in str(file_path) or ".venv" in str(file_path):
-                return None
-            
-            # Skip Python package files
-            if any(ext in str(file_path).lower() for ext in ['.dll', '.pyd', '.so', '.exe']):
-                if any(pkg in str(file_path).lower() for pkg in ['numpy', 'pandas', 'scipy', 'sklearn', 'lightgbm', 'pywin32', 'pip', 'setuptools']):
-                    return None
-            
-            # Skip legitimate Python files
-            if any(legit in str(file_path).lower() for legit in ['python.exe', 'pip.exe', 'activate.bat', 'deactivate.bat', 'pyvenv.cfg']):
-                return None
             
             # Extract features
             features = self.extract_comprehensive_features(file_path)
@@ -853,14 +854,22 @@ class WindowsAIAntivirus:
             protected_patterns = self.protected_files
             files_to_scan = [f for f in files_to_scan if not any(pattern in str(f) for pattern in protected_patterns)]
             
-            # Filter out virtual environment directories
-            files_to_scan = [f for f in files_to_scan if not any(venv_dir in str(f) for venv_dir in ['venv', 'env', '.venv', 'ENV'])]
+            # Filter out virtual environment directories and Python package files
+            files_to_scan = [f for f in files_to_scan if not any(venv_dir in str(f).lower() for venv_dir in ['venv', 'env', '.venv', 'env', '\\lib\\site-packages'])]
             
-            # Filter out Python package files
+            # Filter out Python package files more aggressively
             files_to_scan = [f for f in files_to_scan if not (
                 any(ext in str(f).lower() for ext in ['.dll', '.pyd', '.so', '.exe']) and
-                any(pkg in str(f).lower() for pkg in ['numpy', 'pandas', 'scipy', 'sklearn', 'lightgbm', 'pywin32', 'pip', 'setuptools'])
+                any(pkg in str(f).lower() for pkg in ['numpy', 'pandas', 'scipy', 'sklearn', 'lightgbm', 'pywin32', 'pip', 'setuptools', 'pythonwin', 'win32com', 'win32'])
             )]
+            
+            # Filter out specific legitimate files
+            files_to_scan = [f for f in files_to_scan if not any(legit in str(f).lower() for legit in [
+                'python.exe', 'pip.exe', 'activate.bat', 'deactivate.bat', 'pyvenv.cfg', 
+                'pywin32_postinstall.exe', 'f2py.exe', 'testinterp.vbs', 'w64.exe', 't32.exe',
+                'pyisapi_loader.dll', 'gui-64.exe', 'debugtest.vbs', 'activate.ps1', 'npymath.ini',
+                'mfc140u.dll', 'testpyscriptlet.js', 'cli-64.exe', 'gui-32.exe', 'msvcp140'
+            ])]
             
             self._print(f"{Fore.CYAN}📁 Found {len(files_to_scan)} files to scan")
             
