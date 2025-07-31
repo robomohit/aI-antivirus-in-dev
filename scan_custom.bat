@@ -1,9 +1,28 @@
 @echo off
 echo ========================================
-echo Windows AI Antivirus - Downloads Scan
+echo Windows AI Antivirus - Custom Directory Scan
 echo ========================================
 
+if "%1"=="" (
+    echo ERROR: Please provide a directory path
+    echo Usage: scan_custom.bat "C:\path\to\directory" [scan_mode]
+    echo.
+    echo Scan modes: quick, smart, full
+    echo Example: scan_custom.bat "C:\Users\ACER\Desktop" quick
+    pause
+    exit /b 1
+)
+
+set SCAN_PATH=%1
+set SCAN_MODE=%2
+
+if "%SCAN_MODE%"=="" set SCAN_MODE=quick
+
 echo.
+echo Target Directory: %SCAN_PATH%
+echo Scan Mode: %SCAN_MODE%
+echo.
+
 echo Checking Python installation...
 python --version >nul 2>&1
 if errorlevel 1 (
@@ -60,18 +79,18 @@ if errorlevel 1 (
 
 echo.
 echo ========================================
-echo Scanning Downloads folder...
+echo Scanning: %SCAN_PATH%
 echo ========================================
 
-python ai_antivirus_windows_optimized.py scan "C:\Users\ACER\Downloads" smart
+python ai_antivirus_windows_optimized.py scan "%SCAN_PATH%" %SCAN_MODE%
 if errorlevel 1 (
-    echo WARNING: Downloads scan completed with errors
+    echo WARNING: Scan completed with errors
 ) else (
-    echo Downloads scan completed successfully!
+    echo Scan completed successfully!
 )
 
 echo.
 echo ========================================
-echo Downloads scan finished!
+echo Custom scan finished!
 echo ========================================
 pause
