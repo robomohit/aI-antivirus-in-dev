@@ -57,6 +57,9 @@ if errorlevel 1 (
 ) else (
     echo Antivirus test successful!
 )
+echo.
+echo NOTE: Using ai_antivirus_windows_optimized.py (Windows optimized version)
+echo If you see false positives, make sure you're using this file!
 
 echo.
 echo ========================================

@@ -71,10 +71,29 @@ class WindowsAIAntivirus:
         # Protected system files (don't quarantine these)
         self.protected_files = [
             "ai_antivirus_windows_optimized.py",
+            "ai_antivirus.py",
             "comprehensive_diverse_model_*.pkl",
             "comprehensive_diverse_metadata_*.pkl",
+            "setup_windows.bat",
+            "requirements_windows.txt",
+            "README_WINDOWS.md",
+            # Windows system files
             "explorer.exe", "svchost.exe", "winlogon.exe", "csrss.exe",
-            "services.exe", "lsass.exe", "wininit.exe", "spoolsv.exe"
+            "services.exe", "lsass.exe", "wininit.exe", "spoolsv.exe",
+            # Python virtual environment files
+            "venv/", "env/", "ENV/", ".venv/",
+            "python.exe", "pythonw.exe", "pip.exe", "pip3.exe",
+            "activate.bat", "deactivate.bat", "Activate.ps1",
+            "pyvenv.cfg", "pywin32_postinstall.exe",
+            # Python package files
+            "*.dll", "*.pyd", "*.so", "*.exe",
+            "lib_lightgbm.dll", "msvcp140*.dll", "vcomp140.dll",
+            "pywintypes*.dll", "pythoncom*.dll",
+            # Setup and configuration files
+            "setup_windows.bat", "requirements_windows.txt",
+            "*.cfg", "*.ini", "*.json", "*.xml",
+            # Documentation
+            "README*.md", "*.txt", "*.log"
         ]
         
         # Initialize comprehensive model
@@ -722,6 +741,20 @@ class WindowsAIAntivirus:
             if not file_path.exists():
                 return None
             
+            # Skip virtual environment files completely
+            file_path_str = str(file_path).lower()
+            if any(venv_dir in file_path_str for venv_dir in ['venv', 'env', '.venv', '\\lib\\site-packages']):
+                return None
+            
+            # Skip Python package files
+            if any(ext in file_path_str for ext in ['.dll', '.pyd', '.so', '.exe']):
+                if any(pkg in file_path_str for pkg in ['numpy', 'pandas', 'scipy', 'sklearn', 'lightgbm', 'pywin32', 'pip', 'setuptools', 'pythonwin', 'win32com', 'win32']):
+                    return None
+            
+            # Skip legitimate Python files
+            if any(legit in file_path_str for legit in ['python.exe', 'pip.exe', 'activate.bat', 'deactivate.bat', 'pyvenv.cfg', 'pywin32_postinstall.exe']):
+                return None
+            
             # Skip protected files
             for protected_pattern in self.protected_files:
                 if protected_pattern in str(file_path):
@@ -820,6 +853,23 @@ class WindowsAIAntivirus:
             # Filter out protected files
             protected_patterns = self.protected_files
             files_to_scan = [f for f in files_to_scan if not any(pattern in str(f) for pattern in protected_patterns)]
+            
+            # Filter out virtual environment directories and Python package files
+            files_to_scan = [f for f in files_to_scan if not any(venv_dir in str(f).lower() for venv_dir in ['venv', 'env', '.venv', 'env', '\\lib\\site-packages'])]
+            
+            # Filter out Python package files more aggressively
+            files_to_scan = [f for f in files_to_scan if not (
+                any(ext in str(f).lower() for ext in ['.dll', '.pyd', '.so', '.exe']) and
+                any(pkg in str(f).lower() for pkg in ['numpy', 'pandas', 'scipy', 'sklearn', 'lightgbm', 'pywin32', 'pip', 'setuptools', 'pythonwin', 'win32com', 'win32'])
+            )]
+            
+            # Filter out specific legitimate files
+            files_to_scan = [f for f in files_to_scan if not any(legit in str(f).lower() for legit in [
+                'python.exe', 'pip.exe', 'activate.bat', 'deactivate.bat', 'pyvenv.cfg', 
+                'pywin32_postinstall.exe', 'f2py.exe', 'testinterp.vbs', 'w64.exe', 't32.exe',
+                'pyisapi_loader.dll', 'gui-64.exe', 'debugtest.vbs', 'activate.ps1', 'npymath.ini',
+                'mfc140u.dll', 'testpyscriptlet.js', 'cli-64.exe', 'gui-32.exe', 'msvcp140'
+            ])]
             
             self._print(f"{Fore.CYAN}📁 Found {len(files_to_scan)} files to scan")
             
