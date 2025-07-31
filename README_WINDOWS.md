@@ -25,18 +25,29 @@ pip install -r requirements_windows.txt
 ```
 
 ### **3. Run the Antivirus**
+
+#### **Option 1: Easy Batch Files (Recommended)**
+```cmd
+# Double-click these files for instant scanning:
+scan_desktop.bat      # Scans Desktop (quick mode)
+scan_downloads.bat    # Scans Downloads (smart mode)
+scan_documents.bat    # Scans Documents (full mode)
+scan_custom.bat       # Scans any directory you specify
+```
+
+#### **Option 2: Command Line**
 ```cmd
 # Quick scan (fastest)
-python ai_antivirus.py scan . quick
+python ai_antivirus_windows_optimized.py scan . quick
 
 # Smart scan (balanced)
-python ai_antivirus.py scan . smart
+python ai_antivirus_windows_optimized.py scan . smart
 
 # Full scan (comprehensive)
-python ai_antivirus.py scan . full
+python ai_antivirus_windows_optimized.py scan . full
 
 # Monitor mode (real-time protection)
-python ai_antivirus.py monitor .
+python ai_antivirus_windows_optimized.py monitor .
 ```
 
 ## **🎯 Windows-Specific Features**
