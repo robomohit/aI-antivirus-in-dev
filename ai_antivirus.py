@@ -876,12 +876,20 @@ class WindowsAIAntivirus:
             # Scan files
             threats_found = []
             files_scanned = 0
+            total_files = len(files_to_scan)
             
-            for file_path in files_to_scan:
+            self._print(f"{Fore.CYAN}🔄 Starting scan of {total_files} files...")
+            
+            for i, file_path in enumerate(files_to_scan):
                 try:
                     # Skip system files if not in full scan mode
                     if self.scan_mode != "full" and self._is_windows_system_file(file_path):
                         continue
+                    
+                    # Show progress every 5 files or for every file if less than 20 total
+                    if total_files <= 20 or i % 5 == 0:
+                        progress = (i + 1) / total_files * 100
+                        self._print(f"{Fore.CYAN}🔄 Scanning: {file_path.name} ({i+1}/{total_files} - {progress:.1f}%)")
                     
                     analysis = self.analyze_file(file_path)
                     if analysis:
@@ -899,9 +907,10 @@ class WindowsAIAntivirus:
                                 if success:
                                     self._print(f"{Fore.YELLOW}🛡️  Quarantined: {file_path.name}")
                     
-                    # Progress indicator
-                    if files_scanned % 10 == 0:
-                        self._print(f"{Fore.CYAN}⠋ Scanned {files_scanned} files...")
+                    # Progress indicator for larger scans
+                    if total_files > 20 and i % 10 == 0 and i > 0:
+                        progress = (i + 1) / total_files * 100
+                        self._print(f"{Fore.CYAN}⠋ Progress: {i+1}/{total_files} files scanned ({progress:.1f}%)")
                 
                 except Exception as e:
                     logging.error(f"Error scanning {file_path}: {e}")
@@ -911,14 +920,16 @@ class WindowsAIAntivirus:
             self._print(f"\n{Fore.CYAN}{'='*60}")
             self._print(f"{Fore.CYAN}📊 COMPREHENSIVE SCAN RESULTS")
             self._print(f"{Fore.CYAN}{'='*60}")
-            self._print(f"{Fore.GREEN}✅ Files scanned: {files_scanned}")
+            self._print(f"{Fore.GREEN}✅ Files scanned: {files_scanned}/{total_files}")
             self._print(f"{Fore.RED}🚨 Threats found: {len(threats_found)}")
             
             if threats_found:
                 self._print(f"{Fore.RED}🚨 Scan completed with {len(threats_found)} threats found!")
+                for threat in threats_found:
+                    self._print(f"{Fore.RED}   - {threat['file_name']} ({threat['threat_level']})")
             else:
                 self._print(f"{Fore.GREEN}✅ No threats detected!")
-                self._print(f"{Fore.GREEN}✅ Scan completed - no threats found!")
+                self._print(f"{Fore.GREEN}✅ Scan completed successfully - system is clean!")
             
         except Exception as e:
             logging.error(f"Error in directory scan: {e}")
