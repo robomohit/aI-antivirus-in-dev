@@ -733,6 +733,63 @@ class WindowsAIAntivirus:
             logging.error(f"Error in prediction: {e}")
             return 0.5, "UNKNOWN"
     
+    def _generate_detection_explanation(self, features, probability, threat_level):
+        """Generate detailed explanation for why a file was detected as suspicious."""
+        reasons = []
+        
+        # High entropy (encrypted/packed content)
+        entropy = features.get('entropy', 0)
+        if entropy > 7.5:
+            reasons.append(f"High entropy ({entropy:.2f}) - possible encryption/packing")
+        elif entropy > 6.5:
+            reasons.append(f"Moderate entropy ({entropy:.2f}) - suspicious content")
+        
+        # Suspicious file extension
+        file_ext = features.get('file_extension', '').lower()
+        suspicious_exts = ['.exe', '.dll', '.bat', '.cmd', '.vbs', '.js', '.ps1', '.scr', '.pif']
+        if file_ext in suspicious_exts:
+            reasons.append(f"Suspicious extension: {file_ext}")
+        
+        # High malware suspicion score
+        suspicion = features.get('malware_suspicion', 0)
+        if suspicion > 0.7:
+            reasons.append(f"High malware suspicion score ({suspicion:.2f})")
+        elif suspicion > 0.5:
+            reasons.append(f"Moderate malware suspicion score ({suspicion:.2f})")
+        
+        # Low benign score
+        benign_score = features.get('benign_score', 0)
+        if benign_score < 0.3:
+            reasons.append(f"Low benign score ({benign_score:.2f})")
+        
+        # File size anomalies
+        file_size = features.get('file_size', 0)
+        if file_size > 50 * 1024 * 1024:  # > 50MB
+            reasons.append(f"Large file size ({file_size / (1024*1024):.1f}MB)")
+        elif file_size < 100:  # < 100 bytes
+            reasons.append(f"Very small file size ({file_size} bytes)")
+        
+        # Hidden or system file
+        if features.get('is_hidden', False):
+            reasons.append("Hidden file attribute")
+        if features.get('is_system_file', False):
+            reasons.append("System file attribute")
+        
+        # AI model confidence
+        if probability > 0.9:
+            reasons.append(f"AI model high confidence ({probability:.1%})")
+        elif probability > 0.7:
+            reasons.append(f"AI model moderate confidence ({probability:.1%})")
+        
+        # If no specific reasons, provide general explanation
+        if not reasons:
+            if probability > 0.5:
+                reasons.append(f"AI model detected suspicious patterns ({probability:.1%} confidence)")
+            else:
+                reasons.append("Multiple suspicious indicators detected")
+        
+        return " | ".join(reasons)
+    
     def analyze_file(self, file_path):
         """Analyze a single file for threats."""
         try:
@@ -755,6 +812,16 @@ class WindowsAIAntivirus:
             if any(legit in file_path_str for legit in ['python.exe', 'pip.exe', 'activate.bat', 'deactivate.bat', 'pyvenv.cfg', 'pywin32_postinstall.exe']):
                 return None
             
+            # Skip legitimate browser and application files
+            if any(legit in file_path_str for legit in [
+                'firefox', 'chrome', 'edge', 'opera', 'safari', 'brave',
+                'profiles.ini', 'containers.json', 'sessioncheckpoints.json',
+                'application.ini', 'mozglue.dll', 'd3dcompiler_47.dll',
+                'softokn3.dll', 'tor.exe', 'channel-prefs.js', 'compatibility.ini',
+                'plugin-container.exe', 'function.js', 'build_nuitka.bat', 'scan_custom.bat'
+            ]):
+                return None
+            
             # Skip protected files
             for protected_pattern in self.protected_files:
                 if protected_pattern in str(file_path):
@@ -768,9 +835,13 @@ class WindowsAIAntivirus:
             # Make prediction
             probability, threat_level = self.predict_with_comprehensive_model(features)
             
+            # Generate detection explanation
+            detection_reason = self._generate_detection_explanation(features, probability, threat_level)
+            
             # Create analysis result
             analysis_result = {
                 'file_path': str(file_path),
+                'file_name': file_path.name,
                 'file_size': features.get('file_size', 0),
                 'file_extension': features.get('file_extension', ''),
                 'threat_level': threat_level,
@@ -779,7 +850,8 @@ class WindowsAIAntivirus:
                 'is_hidden': features.get('is_hidden', False),
                 'entropy': features.get('entropy', 0),
                 'malware_suspicion': features.get('malware_suspicion', 0),
-                'benign_score': features.get('benign_score', 0)
+                'benign_score': features.get('benign_score', 0),
+                'detection_reason': detection_reason
             }
             
             return analysis_result
@@ -898,8 +970,9 @@ class WindowsAIAntivirus:
                         if analysis['threat_level'] in ['HIGH', 'MEDIUM']:
                             threats_found.append(analysis)
                             
-                            # Print threat details
+                            # Print threat details with detection reason
                             self._print(f"{Fore.RED}🚨 THREAT DETECTED: {file_path.name} ({analysis['threat_level']})")
+                            self._print(f"{Fore.YELLOW}🔍 Detection Reason: {analysis.get('detection_reason', 'Unknown')}")
                             
                             # Quarantine high threats
                             if analysis['threat_level'] == 'HIGH':
