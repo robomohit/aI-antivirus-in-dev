@@ -42,6 +42,28 @@ except ImportError:
     RICH_AVAILABLE = False
     print("⚠️  Rich not available, using basic output")
 
+# Fallback colorama import
+try:
+    from colorama import Fore, Back, Style
+except ImportError:
+    # Define fallback colors if colorama is not available
+    class Fore:
+        GREEN = '\033[92m'
+        RED = '\033[91m'
+        YELLOW = '\033[93m'
+        CYAN = '\033[96m'
+        RESET = '\033[0m'
+    
+    class Back:
+        GREEN = '\033[42m'
+        RED = '\033[41m'
+        YELLOW = '\033[43m'
+        RESET = '\033[0m'
+    
+    class Style:
+        BRIGHT = '\033[1m'
+        RESET_ALL = '\033[0m'
+
 class WindowsAIAntivirus:
     def __init__(self):
         """Initialize the Windows-optimized AI Antivirus."""
@@ -270,11 +292,11 @@ class WindowsAIAntivirus:
                 logging.error(f"Error reading file {file_path}: {e}")
                 return None
             
-            # Calculate features
+            # Calculate features (matching model's expected features)
             features['entropy'] = self.calculate_entropy(data)
-            features['max_entropy'] = self.calculate_max_entropy(data)
             features['strings_count'] = self.count_strings(data)
             features['avg_string_length'] = self.calculate_avg_string_length(data)
+            features['max_string_length'] = self.calculate_max_string_length(data)
             features['printable_ratio'] = self.calculate_printable_ratio(data)
             features['histogram_regularity'] = self.calculate_histogram_regularity(data)
             features['entropy_consistency'] = self.calculate_entropy_consistency(data)
@@ -381,6 +403,30 @@ class WindowsAIAntivirus:
                 return 0.0
             
             return sum(len(s) for s in strings) / len(strings)
+        except:
+            return 0.0
+    
+    def calculate_max_string_length(self, data):
+        """Calculate maximum string length."""
+        try:
+            strings = []
+            current_string = ""
+            
+            for byte in data:
+                if 32 <= byte <= 126:  # Printable ASCII
+                    current_string += chr(byte)
+                else:
+                    if len(current_string) >= 4:
+                        strings.append(current_string)
+                    current_string = ""
+            
+            if len(current_string) >= 4:
+                strings.append(current_string)
+            
+            if not strings:
+                return 0.0
+            
+            return max(len(s) for s in strings)
         except:
             return 0.0
     
@@ -715,14 +761,18 @@ class WindowsAIAntivirus:
             for col in self.feature_cols:
                 feature_vector.append(features.get(col, 0.0))
             
-            # Make prediction
-            prediction = self.comprehensive_model.predict_proba([feature_vector])[0]
-            malware_probability = prediction[1]  # Probability of malware
+            # Make prediction (LightGBM Booster uses predict method)
+            prediction = self.comprehensive_model.predict([feature_vector])[0]
+            
+            # Convert to probability (LightGBM outputs raw scores)
+            # Apply sigmoid function to convert to probability
+            import math
+            malware_probability = 1 / (1 + math.exp(-prediction))
             
             # Determine threat level
-            if malware_probability >= 0.7:
+            if malware_probability >= 0.6:
                 threat_level = "HIGH"
-            elif malware_probability >= 0.3:
+            elif malware_probability >= 0.4:
                 threat_level = "MEDIUM"
             else:
                 threat_level = "LOW"
@@ -785,6 +835,13 @@ class WindowsAIAntivirus:
             for protected_pattern in self.protected_files:
                 if protected_pattern in str(file_path):
                     return None
+            
+            # Skip system files more aggressively
+            system_paths = ['/etc/', '/proc/', '/sys/', '/dev/', '/var/log/', '/usr/bin/', '/usr/sbin/']
+            file_path_str = str(file_path).lower()
+            if any(system_path in file_path_str for system_path in system_paths):
+                self._print(f"{Fore.GREEN}✅ Skipping system file: {file_path.name}")
+                return None
             
             # Extract features
             features = self.extract_comprehensive_features(file_path)
