@@ -22,7 +22,7 @@ init()
 
 class BalancedAIAntivirus:
     def __init__(self):
-        self.models_dir = "balanced_models"
+        self.models_dir = "retrained_models"
         self.quarantine_dir = "quarantine"
         self.log_file = "antivirus_balanced.log"
         
@@ -54,12 +54,12 @@ class BalancedAIAntivirus:
         
         try:
             # Find latest model files
-            model_files = list(Path(self.models_dir).glob("balanced_model_*.pkl"))
-            metadata_files = list(Path(self.models_dir).glob("balanced_metadata_*.pkl"))
+            model_files = list(Path(self.models_dir).glob("real_model_*.pkl"))
+            metadata_files = list(Path(self.models_dir).glob("real_metadata_*.pkl"))
             
             if not model_files or not metadata_files:
-                print(f"{Fore.RED}❌ No balanced model found!")
-                print(f"{Fore.YELLOW}💡 Run train_balanced_model.py first")
+                print(f"{Fore.RED}❌ No real model found!")
+                print(f"{Fore.YELLOW}💡 Run quick_real_training.py first")
                 return
             
             # Get latest files
@@ -72,7 +72,7 @@ class BalancedAIAntivirus:
             with open(latest_metadata, 'rb') as f:
                 self.metadata = pickle.load(f)
             
-            print(f"{Fore.GREEN}✅ Balanced model loaded: {latest_model.name}")
+                            print(f"{Fore.GREEN}✅ Real model loaded: {latest_model.name}")
             print(f"{Fore.GREEN}✅ Metadata loaded: {latest_metadata.name}")
             
             # Show model performance

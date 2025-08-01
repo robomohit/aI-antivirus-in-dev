@@ -72,8 +72,8 @@ class WindowsAIAntivirus:
         self.protected_files = [
             "ai_antivirus_windows_optimized.py",
             "ai_antivirus.py",
-            "comprehensive_diverse_model_*.pkl",
-            "comprehensive_diverse_metadata_*.pkl",
+            "real_model_*.pkl",
+            "real_metadata_*.pkl",
             "setup_windows.bat",
             "requirements_windows.txt",
             "README_WINDOWS.md",
@@ -128,19 +128,19 @@ class WindowsAIAntivirus:
     def _load_comprehensive_model(self):
         """Load the comprehensive diverse model."""
         try:
-            # Find the latest comprehensive model files
-            model_files = list(Path('.').glob('comprehensive_diverse_model_*.pkl'))
-            metadata_files = list(Path('.').glob('comprehensive_diverse_metadata_*.pkl'))
+            # Find the latest real model files
+            model_files = list(Path('retrained_models').glob('real_model_*.pkl'))
+            metadata_files = list(Path('retrained_models').glob('real_metadata_*.pkl'))
             
             if not model_files:
-                self._print(f"{Fore.RED}❌ No comprehensive model found!")
+                self._print(f"{Fore.RED}❌ No real model found!")
                 return
             
             # Use the latest model
             model_path = sorted(model_files)[-1]
             metadata_path = sorted(metadata_files)[-1]
             
-            self._print(f"{Fore.CYAN}📁 Loading comprehensive model: {model_path}")
+            self._print(f"{Fore.CYAN}📁 Loading real model: {model_path}")
             self._print(f"{Fore.CYAN}📁 Loading metadata: {metadata_path}")
             
             with open(model_path, 'rb') as f:
@@ -151,13 +151,13 @@ class WindowsAIAntivirus:
             
             self.feature_cols = self.comprehensive_metadata.get('feature_cols', [])
             
-            self._print(f"{Fore.GREEN}✅ Comprehensive model loaded successfully!")
+            self._print(f"{Fore.GREEN}✅ Real model loaded successfully!")
             self._print(f"{Fore.CYAN}📊 Features: {len(self.feature_cols)}")
             self._print(f"{Fore.CYAN}📊 Training samples: {self.comprehensive_metadata.get('training_samples', 0)}")
             
         except Exception as e:
-            self._print(f"{Fore.RED}❌ Error loading comprehensive model: {e}")
-            logging.error(f"Error loading comprehensive model: {e}")
+            self._print(f"{Fore.RED}❌ Error loading real model: {e}")
+            logging.error(f"Error loading real model: {e}")
     
     def _print(self, text):
         """Windows-safe print function."""
