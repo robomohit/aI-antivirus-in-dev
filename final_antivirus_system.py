@@ -64,8 +64,8 @@ class FinalAntivirusSystem:
         
         try:
             # Find the latest model files
-            model_files = list(Path(self.models_dir).glob("retrained_model_*.pkl"))
-            metadata_files = list(Path(self.models_dir).glob("retrained_metadata_*.pkl"))
+            model_files = list(Path(self.models_dir).glob("real_model_*.pkl"))
+            metadata_files = list(Path(self.models_dir).glob("real_metadata_*.pkl"))
             
             if not model_files or not metadata_files:
                 print(f"{Fore.RED}❌ No retrained models found!")
