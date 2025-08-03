@@ -275,14 +275,6 @@ class WindowsAIAntivirus:
             # Basic file info
             stat = file_path.stat()
             features['file_size'] = stat.st_size
-            features['file_extension'] = file_path.suffix.lower()
-            
-            # Windows-specific info
-            windows_info = self._get_windows_file_info(file_path)
-            features['is_system_file'] = windows_info['is_system']
-            features['is_hidden'] = windows_info['is_hidden']
-            features['is_readonly'] = windows_info['is_readonly']
-            features['has_version_info'] = windows_info['version'] is not None
             
             # Read file content
             try:
@@ -300,25 +292,6 @@ class WindowsAIAntivirus:
             features['printable_ratio'] = self.calculate_printable_ratio(data)
             features['histogram_regularity'] = self.calculate_histogram_regularity(data)
             features['entropy_consistency'] = self.calculate_entropy_consistency(data)
-            
-            # Windows-specific features
-            features['malware_suspicion'] = self.calculate_comprehensive_malware_suspicion(data, file_path.suffix)
-            features['benign_score'] = self.calculate_comprehensive_benign_score(data, file_path.suffix)
-            
-            # Histogram features
-            histogram = self.calculate_histogram(data)
-            for i, val in enumerate(histogram):
-                features[f'histogram_{i}'] = val
-            
-            # Byte entropy features
-            byte_entropy = self.calculate_byte_entropy(data)
-            for i, val in enumerate(byte_entropy):
-                features[f'byte_entropy_{i}'] = val
-            
-            # String entropy features
-            string_entropy = self.calculate_string_entropy(data)
-            for i, val in enumerate(string_entropy):
-                features[f'string_entropy_{i}'] = val
             
             return features
             
@@ -1014,9 +987,24 @@ class WindowsAIAntivirus:
                 self._print(f"{Fore.GREEN}✅ No threats detected!")
                 self._print(f"{Fore.GREEN}✅ Scan completed successfully - system is clean!")
             
+            # Return scan results
+            return {
+                'files_scanned': files_scanned,
+                'total_files': total_files,
+                'threats_found': threats_found,
+                'success': True
+            }
+            
         except Exception as e:
             logging.error(f"Error in directory scan: {e}")
             self._print(f"{Fore.RED}❌ Error during scan: {e}")
+            return {
+                'files_scanned': 0,
+                'total_files': 0,
+                'threats_found': [],
+                'success': False,
+                'error': str(e)
+            }
     
     def real_time_monitor(self, directory_path="."):
         """Start real-time monitoring."""

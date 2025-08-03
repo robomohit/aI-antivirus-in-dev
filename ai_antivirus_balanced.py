@@ -72,7 +72,7 @@ class BalancedAIAntivirus:
             with open(latest_metadata, 'rb') as f:
                 self.metadata = pickle.load(f)
             
-                            print(f"{Fore.GREEN}✅ Real model loaded: {latest_model.name}")
+            print(f"{Fore.GREEN}✅ Real model loaded: {latest_model.name}")
             print(f"{Fore.GREEN}✅ Metadata loaded: {latest_metadata.name}")
             
             # Show model performance
