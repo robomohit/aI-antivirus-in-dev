@@ -821,21 +821,37 @@ class WindowsAIAntivirus:
             if not features:
                 return None
             
+            # Read file data for detailed analysis
+            try:
+                with open(file_path, 'rb') as f:
+                    data = f.read()
+            except Exception as e:
+                logging.error(f"Error reading file data: {e}")
+                data = b''
+            
             # Make prediction
             probability, threat_level = self.predict_with_comprehensive_model(features)
             
-            # Create analysis result
+            # Perform detailed threat analysis
+            threat_analysis = self.analyze_threat_patterns(file_path, data, features)
+            
+            # Create comprehensive analysis result
             analysis_result = {
                 'file_path': str(file_path),
                 'file_size': features.get('file_size', 0),
-                'file_extension': features.get('file_extension', ''),
+                'file_extension': file_path.suffix.lower(),
                 'threat_level': threat_level,
                 'malware_probability': probability,
                 'is_system_file': features.get('is_system_file', False),
                 'is_hidden': features.get('is_hidden', False),
                 'entropy': features.get('entropy', 0),
-                'malware_suspicion': features.get('malware_suspicion', 0),
-                'benign_score': features.get('benign_score', 0)
+                'threat_type': threat_analysis.get('threat_type', 'Unknown'),
+                'confidence': threat_analysis.get('confidence', 'Low'),
+                'detection_reasons': threat_analysis.get('detection_reasons', []),
+                'suspicious_patterns': threat_analysis.get('suspicious_patterns', []),
+                'code_analysis': threat_analysis.get('code_analysis', {}),
+                'binary_analysis': threat_analysis.get('binary_analysis', {}),
+                'behavior_indicators': threat_analysis.get('behavior_indicators', [])
             }
             
             return analysis_result
@@ -843,6 +859,379 @@ class WindowsAIAntivirus:
         except Exception as e:
             logging.error(f"Error analyzing file {file_path}: {e}")
             return None
+    
+    def analyze_threat_patterns(self, file_path, data, features):
+        """Analyze file for specific threat patterns and explain detection reasons."""
+        threat_analysis = {
+            'threat_type': 'Unknown',
+            'confidence': 'Low',
+            'detection_reasons': [],
+            'suspicious_patterns': [],
+            'code_analysis': {},
+            'binary_analysis': {},
+            'behavior_indicators': []
+        }
+        
+        try:
+            file_path = Path(file_path)
+            file_name = file_path.name.lower()
+            file_ext = file_path.suffix.lower()
+            
+            # Analyze file characteristics
+            file_size = features.get('file_size', 0)
+            entropy = features.get('entropy', 0)
+            printable_ratio = features.get('printable_ratio', 0)
+            strings_count = features.get('strings_count', 0)
+            
+            # Binary analysis
+            if file_ext in ['.exe', '.dll', '.sys', '.scr']:
+                threat_analysis['binary_analysis'] = self._analyze_binary_patterns(data, file_name)
+            
+            # Code analysis for script files
+            if file_ext in ['.py', '.js', '.vbs', '.ps1', '.bat', '.cmd']:
+                threat_analysis['code_analysis'] = self._analyze_code_patterns(data, file_name)
+            
+            # File name analysis
+            threat_analysis['suspicious_patterns'] = self._analyze_filename_patterns(file_name)
+            
+            # Behavioral indicators
+            threat_analysis['behavior_indicators'] = self._analyze_behavior_indicators(features, file_name)
+            
+            # Determine threat type based on analysis
+            threat_analysis['threat_type'] = self._classify_threat_type(threat_analysis, features)
+            threat_analysis['confidence'] = self._calculate_detection_confidence(threat_analysis, features)
+            
+            # Compile detection reasons
+            threat_analysis['detection_reasons'] = self._compile_detection_reasons(threat_analysis, features)
+            
+            return threat_analysis
+            
+        except Exception as e:
+            logging.error(f"Error in threat pattern analysis: {e}")
+            return threat_analysis
+    
+    def _analyze_binary_patterns(self, data, file_name):
+        """Analyze binary files for suspicious patterns."""
+        patterns = {
+            'pe_header': False,
+            'high_entropy_sections': False,
+            'suspicious_imports': [],
+            'packed_indicators': False,
+            'anti_debug_techniques': False,
+            'suspicious_strings': []
+        }
+        
+        try:
+            # Check for PE header
+            if len(data) > 2 and data[:2] == b'MZ':
+                patterns['pe_header'] = True
+            
+            # Look for suspicious strings
+            suspicious_strings = [
+                b'CreateRemoteThread', b'VirtualAllocEx', b'WriteProcessMemory',
+                b'SetWindowsHookEx', b'GetProcAddress', b'LoadLibrary',
+                b'CreateProcess', b'ShellExecute', b'WinExec',
+                b'RegCreateKey', b'RegSetValue', b'RegDeleteValue',
+                b'CreateFile', b'DeleteFile', b'MoveFile',
+                b'InternetOpen', b'HttpOpenRequest', b'HttpSendRequest',
+                b'CryptEncrypt', b'CryptDecrypt', b'CryptCreateHash',
+                b'GetSystemTime', b'GetTickCount', b'Sleep',
+                b'IsDebuggerPresent', b'CheckRemoteDebuggerPresent',
+                b'OutputDebugString', b'GetLastError'
+            ]
+            
+            for suspicious in suspicious_strings:
+                if suspicious in data:
+                    patterns['suspicious_strings'].append(suspicious.decode('utf-8', errors='ignore'))
+            
+            # Check for high entropy (packed/encrypted)
+            if len(data) > 1024:
+                sample_data = data[:1024]
+                sample_entropy = self.calculate_entropy(sample_data)
+                if sample_entropy > 7.5:
+                    patterns['high_entropy_sections'] = True
+                    patterns['packed_indicators'] = True
+            
+            # Check for anti-debug techniques
+            anti_debug_strings = [b'IsDebuggerPresent', b'CheckRemoteDebuggerPresent', b'OutputDebugString']
+            if any(debug_str in data for debug_str in anti_debug_strings):
+                patterns['anti_debug_techniques'] = True
+            
+        except Exception as e:
+            logging.error(f"Error analyzing binary patterns: {e}")
+        
+        return patterns
+    
+    def _analyze_code_patterns(self, data, file_name):
+        """Analyze script files for malicious code patterns."""
+        patterns = {
+            'suspicious_functions': [],
+            'network_activity': False,
+            'file_operations': False,
+            'registry_operations': False,
+            'process_creation': False,
+            'obfuscation_indicators': False,
+            'malicious_patterns': []
+        }
+        
+        try:
+            code_str = data.decode('utf-8', errors='ignore').lower()
+            
+            # Python patterns
+            if file_name.endswith('.py'):
+                python_suspicious = [
+                    'subprocess.call', 'os.system', 'exec(', 'eval(',
+                    'urllib.request', 'requests.get', 'socket.',
+                    'open(', 'write(', 'delete(', 'remove(',
+                    'winreg.', 'registry', 'reg_',
+                    'ctypes.', 'windll.', 'kernel32.',
+                    'base64.', 'zlib.', 'marshal.',
+                    'pickle.', 'shelve.', 'importlib.'
+                ]
+                
+                for pattern in python_suspicious:
+                    if pattern in code_str:
+                        patterns['suspicious_functions'].append(pattern)
+                
+                # Check for obfuscation
+                if any(obfusc in code_str for obfusc in ['exec(', 'eval(', 'compile(', 'marshal.loads']):
+                    patterns['obfuscation_indicators'] = True
+            
+            # JavaScript patterns
+            elif file_name.endswith('.js'):
+                js_suspicious = [
+                    'eval(', 'function(', 'settimeout', 'setinterval',
+                    'xmlhttprequest', 'fetch(', 'document.write',
+                    'window.open', 'location.href', 'history.pushstate',
+                    'localstorage', 'sessionstorage', 'cookies',
+                    'activexobject', 'wscript.shell', 'fso.'
+                ]
+                
+                for pattern in js_suspicious:
+                    if pattern in code_str:
+                        patterns['suspicious_functions'].append(pattern)
+            
+            # PowerShell patterns
+            elif file_name.endswith('.ps1'):
+                ps_suspicious = [
+                    'invoke-expression', 'iex', 'invoke-command',
+                    'start-process', 'new-object', 'get-wmiobject',
+                    'net.tcpclient', 'system.net.sockets',
+                    'registry::', 'hkcu:', 'hklm:',
+                    'remove-item', 'del', 'rm',
+                    'set-content', 'out-file', 'add-content'
+                ]
+                
+                for pattern in ps_suspicious:
+                    if pattern in code_str:
+                        patterns['suspicious_functions'].append(pattern)
+            
+            # Check for network activity
+            network_patterns = ['http://', 'https://', 'ftp://', 'tcp://', 'udp://', 'socket', 'connect']
+            if any(pattern in code_str for pattern in network_patterns):
+                patterns['network_activity'] = True
+            
+            # Check for file operations
+            file_patterns = ['open(', 'write(', 'delete(', 'remove(', 'copy', 'move', 'rename']
+            if any(pattern in code_str for pattern in file_patterns):
+                patterns['file_operations'] = True
+            
+            # Check for process creation
+            process_patterns = ['subprocess', 'system(', 'exec(', 'start-process', 'createprocess']
+            if any(pattern in code_str for pattern in process_patterns):
+                patterns['process_creation'] = True
+            
+        except Exception as e:
+            logging.error(f"Error analyzing code patterns: {e}")
+        
+        return patterns
+    
+    def _analyze_filename_patterns(self, file_name):
+        """Analyze filename for suspicious patterns."""
+        suspicious_patterns = []
+        
+        # Check for hash-like names (common in malware)
+        if len(file_name) > 32 and all(c in '0123456789abcdef' for c in file_name.split('.')[0]):
+            suspicious_patterns.append('Hash-like filename (common in malware)')
+        
+        # Check for suspicious keywords
+        suspicious_keywords = [
+            'crack', 'hack', 'keygen', 'serial', 'patch', 'loader',
+            'inject', 'bypass', 'exploit', 'cheat', 'mod', 'hack',
+            'spoofer', 'binder', 'crypter', 'packer', 'unpacker',
+            'stealer', 'logger', 'keylogger', 'rat', 'backdoor',
+            'trojan', 'virus', 'worm', 'rootkit', 'spyware'
+        ]
+        
+        for keyword in suspicious_keywords:
+            if keyword in file_name:
+                suspicious_patterns.append(f'Contains suspicious keyword: {keyword}')
+        
+        # Check for random-looking names
+        if len(file_name) > 20 and not any(word in file_name for word in ['setup', 'install', 'update', 'config']):
+            suspicious_patterns.append('Random-looking filename')
+        
+        return suspicious_patterns
+    
+    def _analyze_behavior_indicators(self, features, file_name):
+        """Analyze behavioral indicators."""
+        indicators = []
+        
+        entropy = features.get('entropy', 0)
+        file_size = features.get('file_size', 0)
+        printable_ratio = features.get('printable_ratio', 0)
+        
+        # High entropy (packed/encrypted)
+        if entropy > 7.5:
+            indicators.append(f'High entropy ({entropy:.2f}) - possible packed/encrypted content')
+        
+        # Very low entropy (suspicious)
+        if entropy < 3.0 and file_size > 1000:
+            indicators.append(f'Very low entropy ({entropy:.2f}) - suspicious uniformity')
+        
+        # Large file with low printable ratio
+        if file_size > 1000000 and printable_ratio < 0.3:
+            indicators.append('Large binary file with low text content')
+        
+        # Small executable
+        if file_size < 10000 and file_name.endswith('.exe'):
+            indicators.append('Very small executable (suspicious)')
+        
+        return indicators
+    
+    def _classify_threat_type(self, threat_analysis, features):
+        """Classify the type of threat based on analysis."""
+        threat_score = 0
+        threat_type = 'Unknown'
+        
+        # Binary analysis scoring
+        binary_analysis = threat_analysis.get('binary_analysis', {})
+        if binary_analysis.get('pe_header'):
+            threat_score += 1
+        if binary_analysis.get('high_entropy_sections'):
+            threat_score += 2
+        if binary_analysis.get('suspicious_strings'):
+            threat_score += len(binary_analysis['suspicious_strings'])
+        if binary_analysis.get('anti_debug_techniques'):
+            threat_score += 3
+        
+        # Code analysis scoring
+        code_analysis = threat_analysis.get('code_analysis', {})
+        if code_analysis.get('suspicious_functions'):
+            threat_score += len(code_analysis['suspicious_functions'])
+        if code_analysis.get('network_activity'):
+            threat_score += 2
+        if code_analysis.get('file_operations'):
+            threat_score += 1
+        if code_analysis.get('process_creation'):
+            threat_score += 2
+        if code_analysis.get('obfuscation_indicators'):
+            threat_score += 3
+        
+        # Filename patterns
+        if threat_analysis.get('suspicious_patterns'):
+            threat_score += len(threat_analysis['suspicious_patterns'])
+        
+        # Behavioral indicators
+        if threat_analysis.get('behavior_indicators'):
+            threat_score += len(threat_analysis['behavior_indicators'])
+        
+        # Classify based on score
+        if threat_score >= 8:
+            threat_type = 'High-Risk Malware'
+        elif threat_score >= 5:
+            threat_type = 'Suspicious Malware'
+        elif threat_score >= 3:
+            threat_type = 'Potentially Malicious'
+        elif threat_score >= 1:
+            threat_type = 'Suspicious'
+        else:
+            threat_type = 'Unknown'
+        
+        return threat_type
+    
+    def _calculate_detection_confidence(self, threat_analysis, features):
+        """Calculate confidence level of detection."""
+        confidence_factors = 0
+        total_factors = 0
+        
+        # Binary analysis factors
+        binary_analysis = threat_analysis.get('binary_analysis', {})
+        if binary_analysis.get('pe_header'):
+            total_factors += 1
+        if binary_analysis.get('suspicious_strings'):
+            confidence_factors += min(len(binary_analysis['suspicious_strings']), 3)
+            total_factors += 3
+        if binary_analysis.get('anti_debug_techniques'):
+            confidence_factors += 2
+            total_factors += 2
+        
+        # Code analysis factors
+        code_analysis = threat_analysis.get('code_analysis', {})
+        if code_analysis.get('suspicious_functions'):
+            confidence_factors += min(len(code_analysis['suspicious_functions']), 5)
+            total_factors += 5
+        if code_analysis.get('obfuscation_indicators'):
+            confidence_factors += 2
+            total_factors += 2
+        
+        # Pattern factors
+        if threat_analysis.get('suspicious_patterns'):
+            confidence_factors += min(len(threat_analysis['suspicious_patterns']), 3)
+            total_factors += 3
+        
+        if total_factors == 0:
+            return 'Low'
+        
+        confidence_ratio = confidence_factors / total_factors
+        
+        if confidence_ratio >= 0.8:
+            return 'High'
+        elif confidence_ratio >= 0.5:
+            return 'Medium'
+        else:
+            return 'Low'
+    
+    def _compile_detection_reasons(self, threat_analysis, features):
+        """Compile detailed detection reasons."""
+        reasons = []
+        
+        # Add threat type
+        threat_type = threat_analysis.get('threat_type', 'Unknown')
+        if threat_type != 'Unknown':
+            reasons.append(f"Threat Type: {threat_type}")
+        
+        # Add binary analysis reasons
+        binary_analysis = threat_analysis.get('binary_analysis', {})
+        if binary_analysis.get('suspicious_strings'):
+            reasons.append(f"Suspicious API calls: {', '.join(binary_analysis['suspicious_strings'][:3])}")
+        if binary_analysis.get('high_entropy_sections'):
+            reasons.append("High entropy sections (possible packed/encrypted content)")
+        if binary_analysis.get('anti_debug_techniques'):
+            reasons.append("Anti-debugging techniques detected")
+        
+        # Add code analysis reasons
+        code_analysis = threat_analysis.get('code_analysis', {})
+        if code_analysis.get('suspicious_functions'):
+            reasons.append(f"Suspicious functions: {', '.join(code_analysis['suspicious_functions'][:3])}")
+        if code_analysis.get('network_activity'):
+            reasons.append("Network activity detected")
+        if code_analysis.get('file_operations'):
+            reasons.append("File system operations detected")
+        if code_analysis.get('process_creation'):
+            reasons.append("Process creation capabilities")
+        if code_analysis.get('obfuscation_indicators'):
+            reasons.append("Code obfuscation detected")
+        
+        # Add filename patterns
+        if threat_analysis.get('suspicious_patterns'):
+            reasons.extend(threat_analysis['suspicious_patterns'])
+        
+        # Add behavioral indicators
+        if threat_analysis.get('behavior_indicators'):
+            reasons.extend(threat_analysis['behavior_indicators'])
+        
+        return reasons
     
     def quarantine_file(self, file_path):
         """Quarantine a suspicious file."""
@@ -954,8 +1343,58 @@ class WindowsAIAntivirus:
                         if analysis['threat_level'] in ['HIGH', 'MEDIUM']:
                             threats_found.append(analysis)
                             
-                            # Print threat details
-                            self._print(f"{Fore.RED}🚨 THREAT DETECTED: {file_path.name} ({analysis['threat_level']})")
+                            # Print detailed threat analysis
+                            self._print(f"\n{Fore.RED}🚨 THREAT DETECTED: {file_path.name}")
+                            self._print(f"{Fore.RED}📊 Threat Level: {analysis['threat_level']}")
+                            self._print(f"{Fore.RED}📊 Malware Probability: {analysis['malware_probability']:.2%}")
+                            self._print(f"{Fore.RED}📊 Threat Type: {analysis.get('threat_type', 'Unknown')}")
+                            self._print(f"{Fore.RED}📊 Confidence: {analysis.get('confidence', 'Low')}")
+                            
+                            # Display detection reasons
+                            if analysis.get('detection_reasons'):
+                                self._print(f"{Fore.YELLOW}🔍 Detection Reasons:")
+                                for reason in analysis['detection_reasons']:
+                                    self._print(f"{Fore.YELLOW}   • {reason}")
+                            
+                            # Display suspicious patterns
+                            if analysis.get('suspicious_patterns'):
+                                self._print(f"{Fore.YELLOW}🔍 Suspicious Patterns:")
+                                for pattern in analysis['suspicious_patterns']:
+                                    self._print(f"{Fore.YELLOW}   • {pattern}")
+                            
+                            # Display behavioral indicators
+                            if analysis.get('behavior_indicators'):
+                                self._print(f"{Fore.YELLOW}🔍 Behavioral Indicators:")
+                                for indicator in analysis['behavior_indicators']:
+                                    self._print(f"{Fore.YELLOW}   • {indicator}")
+                            
+                            # Display binary analysis for executables
+                            if analysis.get('binary_analysis'):
+                                binary_analysis = analysis['binary_analysis']
+                                if binary_analysis.get('suspicious_strings'):
+                                    self._print(f"{Fore.YELLOW}🔍 Suspicious API Calls:")
+                                    for api_call in binary_analysis['suspicious_strings'][:5]:
+                                        self._print(f"{Fore.YELLOW}   • {api_call}")
+                                if binary_analysis.get('anti_debug_techniques'):
+                                    self._print(f"{Fore.YELLOW}   • Anti-debugging techniques detected")
+                                if binary_analysis.get('high_entropy_sections'):
+                                    self._print(f"{Fore.YELLOW}   • High entropy sections (packed/encrypted)")
+                            
+                            # Display code analysis for scripts
+                            if analysis.get('code_analysis'):
+                                code_analysis = analysis['code_analysis']
+                                if code_analysis.get('suspicious_functions'):
+                                    self._print(f"{Fore.YELLOW}🔍 Suspicious Code Patterns:")
+                                    for func in code_analysis['suspicious_functions'][:5]:
+                                        self._print(f"{Fore.YELLOW}   • {func}")
+                                if code_analysis.get('obfuscation_indicators'):
+                                    self._print(f"{Fore.YELLOW}   • Code obfuscation detected")
+                                if code_analysis.get('network_activity'):
+                                    self._print(f"{Fore.YELLOW}   • Network activity detected")
+                                if code_analysis.get('process_creation'):
+                                    self._print(f"{Fore.YELLOW}   • Process creation capabilities")
+                            
+                            self._print(f"{Fore.CYAN}{'='*60}")
                             
                             # Quarantine high threats
                             if analysis['threat_level'] == 'HIGH':
@@ -1021,7 +1460,58 @@ class WindowsAIAntivirus:
                         analysis = self.antivirus.analyze_file(file_path)
                         
                         if analysis and analysis['threat_level'] in ['HIGH', 'MEDIUM']:
-                            self.antivirus._print(f"{Fore.RED}🚨 THREAT DETECTED: {file_path.name} ({analysis['threat_level']})")
+                            # Print detailed threat analysis
+                            self.antivirus._print(f"\n{Fore.RED}🚨 REAL-TIME THREAT DETECTED: {file_path.name}")
+                            self.antivirus._print(f"{Fore.RED}📊 Threat Level: {analysis['threat_level']}")
+                            self.antivirus._print(f"{Fore.RED}📊 Malware Probability: {analysis['malware_probability']:.2%}")
+                            self.antivirus._print(f"{Fore.RED}📊 Threat Type: {analysis.get('threat_type', 'Unknown')}")
+                            self.antivirus._print(f"{Fore.RED}📊 Confidence: {analysis.get('confidence', 'Low')}")
+                            
+                            # Display detection reasons
+                            if analysis.get('detection_reasons'):
+                                self.antivirus._print(f"{Fore.YELLOW}🔍 Detection Reasons:")
+                                for reason in analysis['detection_reasons'][:3]:  # Show top 3 reasons
+                                    self.antivirus._print(f"{Fore.YELLOW}   • {reason}")
+                            
+                            # Display suspicious patterns
+                            if analysis.get('suspicious_patterns'):
+                                self.antivirus._print(f"{Fore.YELLOW}🔍 Suspicious Patterns:")
+                                for pattern in analysis['suspicious_patterns'][:2]:  # Show top 2 patterns
+                                    self.antivirus._print(f"{Fore.YELLOW}   • {pattern}")
+                            
+                            # Display behavioral indicators
+                            if analysis.get('behavior_indicators'):
+                                self.antivirus._print(f"{Fore.YELLOW}🔍 Behavioral Indicators:")
+                                for indicator in analysis['behavior_indicators'][:2]:  # Show top 2 indicators
+                                    self.antivirus._print(f"{Fore.YELLOW}   • {indicator}")
+                            
+                            # Display binary analysis for executables
+                            if analysis.get('binary_analysis'):
+                                binary_analysis = analysis['binary_analysis']
+                                if binary_analysis.get('suspicious_strings'):
+                                    self.antivirus._print(f"{Fore.YELLOW}🔍 Suspicious API Calls:")
+                                    for api_call in binary_analysis['suspicious_strings'][:3]:  # Show top 3
+                                        self.antivirus._print(f"{Fore.YELLOW}   • {api_call}")
+                                if binary_analysis.get('anti_debug_techniques'):
+                                    self.antivirus._print(f"{Fore.YELLOW}   • Anti-debugging techniques detected")
+                                if binary_analysis.get('high_entropy_sections'):
+                                    self.antivirus._print(f"{Fore.YELLOW}   • High entropy sections (packed/encrypted)")
+                            
+                            # Display code analysis for scripts
+                            if analysis.get('code_analysis'):
+                                code_analysis = analysis['code_analysis']
+                                if code_analysis.get('suspicious_functions'):
+                                    self.antivirus._print(f"{Fore.YELLOW}🔍 Suspicious Code Patterns:")
+                                    for func in code_analysis['suspicious_functions'][:3]:  # Show top 3
+                                        self.antivirus._print(f"{Fore.YELLOW}   • {func}")
+                                if code_analysis.get('obfuscation_indicators'):
+                                    self.antivirus._print(f"{Fore.YELLOW}   • Code obfuscation detected")
+                                if code_analysis.get('network_activity'):
+                                    self.antivirus._print(f"{Fore.YELLOW}   • Network activity detected")
+                                if code_analysis.get('process_creation'):
+                                    self.antivirus._print(f"{Fore.YELLOW}   • Process creation capabilities")
+                            
+                            self.antivirus._print(f"{Fore.CYAN}{'='*60}")
                             
                             if analysis['threat_level'] == 'HIGH':
                                 success, quarantine_path = self.antivirus.quarantine_file(file_path)
