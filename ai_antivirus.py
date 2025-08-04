@@ -835,6 +835,9 @@ class WindowsAIAntivirus:
             # Perform detailed threat analysis
             threat_analysis = self.analyze_threat_patterns(file_path, data, features)
             
+            # Get model explanation
+            model_explanation = self.explain_model_detection(features, probability, threat_level)
+            
             # Create comprehensive analysis result
             analysis_result = {
                 'file_path': str(file_path),
@@ -851,7 +854,8 @@ class WindowsAIAntivirus:
                 'suspicious_patterns': threat_analysis.get('suspicious_patterns', []),
                 'code_analysis': threat_analysis.get('code_analysis', {}),
                 'binary_analysis': threat_analysis.get('binary_analysis', {}),
-                'behavior_indicators': threat_analysis.get('behavior_indicators', [])
+                'behavior_indicators': threat_analysis.get('behavior_indicators', []),
+                'model_explanation': model_explanation
             }
             
             return analysis_result
@@ -1394,6 +1398,33 @@ class WindowsAIAntivirus:
                                 if code_analysis.get('process_creation'):
                                     self._print(f"{Fore.YELLOW}   • Process creation capabilities")
                             
+                            # Display model explanation
+                            if analysis.get('model_explanation'):
+                                model_explanation = analysis['model_explanation']
+                                self._print(f"{Fore.CYAN}🤖 MODEL ANALYSIS:")
+                                
+                                # Show model reasoning
+                                if model_explanation.get('model_reasoning'):
+                                    self._print(f"{Fore.CYAN}📊 Model Reasoning:")
+                                    for reason in model_explanation['model_reasoning']:
+                                        self._print(f"{Fore.CYAN}   • {reason}")
+                                
+                                # Show key indicators
+                                if model_explanation.get('key_indicators'):
+                                    self._print(f"{Fore.CYAN}🔍 Key Model Indicators:")
+                                    for indicator in model_explanation['key_indicators']:
+                                        self._print(f"{Fore.CYAN}   • {indicator['feature']}: {indicator['value']} (suspiciousness: {indicator['suspiciousness']:.2f})")
+                                        self._print(f"{Fore.CYAN}     {indicator['explanation']}")
+                                
+                                # Show feature analysis
+                                if model_explanation.get('feature_analysis'):
+                                    self._print(f"{Fore.CYAN}📈 Feature Analysis:")
+                                    for feature_name, analysis_data in model_explanation['feature_analysis'].items():
+                                        if analysis_data['contribution'] != 'neutral':
+                                            severity_color = Fore.RED if analysis_data['severity'] == 'high' else Fore.YELLOW
+                                            self._print(f"{severity_color}   • {feature_name}: {analysis_data['value']} ({analysis_data['contribution']})")
+                                            self._print(f"{severity_color}     {analysis_data['reasoning']}")
+                            
                             self._print(f"{Fore.CYAN}{'='*60}")
                             
                             # Quarantine high threats
@@ -1511,6 +1542,24 @@ class WindowsAIAntivirus:
                                 if code_analysis.get('process_creation'):
                                     self.antivirus._print(f"{Fore.YELLOW}   • Process creation capabilities")
                             
+                            # Display model explanation (abbreviated for real-time)
+                            if analysis.get('model_explanation'):
+                                model_explanation = analysis['model_explanation']
+                                self.antivirus._print(f"{Fore.CYAN}🤖 MODEL ANALYSIS:")
+                                
+                                # Show key indicators (top 2 for real-time)
+                                if model_explanation.get('key_indicators'):
+                                    self.antivirus._print(f"{Fore.CYAN}🔍 Key Model Indicators:")
+                                    for indicator in model_explanation['key_indicators'][:2]:
+                                        self.antivirus._print(f"{Fore.CYAN}   • {indicator['feature']}: {indicator['value']} (suspiciousness: {indicator['suspiciousness']:.2f})")
+                                        self.antivirus._print(f"{Fore.CYAN}     {indicator['explanation']}")
+                                
+                                # Show model reasoning (top 2 for real-time)
+                                if model_explanation.get('model_reasoning'):
+                                    self.antivirus._print(f"{Fore.CYAN}📊 Model Reasoning:")
+                                    for reason in model_explanation['model_reasoning'][:2]:
+                                        self.antivirus._print(f"{Fore.CYAN}   • {reason}")
+                            
                             self.antivirus._print(f"{Fore.CYAN}{'='*60}")
                             
                             if analysis['threat_level'] == 'HIGH':
@@ -1535,6 +1584,365 @@ class WindowsAIAntivirus:
         except Exception as e:
             logging.error(f"Error in real-time monitoring: {e}")
             self._print(f"{Fore.RED}❌ Error in monitoring: {e}")
+
+    def explain_model_detection(self, features, probability, threat_level):
+        """Explain how the model detected the threat based on feature values."""
+        model_explanation = {
+            'model_confidence': probability,
+            'threat_level': threat_level,
+            'feature_analysis': {},
+            'key_indicators': [],
+            'model_reasoning': [],
+            'feature_thresholds': {
+                'file_size': {'suspicious': 1000000, 'very_suspicious': 10000000},
+                'entropy': {'low_suspicious': 3.0, 'high_suspicious': 7.5},
+                'strings_count': {'low_suspicious': 10, 'high_suspicious': 1000},
+                'avg_string_length': {'suspicious': 50, 'very_suspicious': 200},
+                'max_string_length': {'suspicious': 100, 'very_suspicious': 500},
+                'printable_ratio': {'low_suspicious': 0.3, 'high_suspicious': 0.9},
+                'histogram_regularity': {'suspicious': 0.8, 'very_suspicious': 0.95},
+                'entropy_consistency': {'suspicious': 0.7, 'very_suspicious': 0.9}
+            }
+        }
+        
+        try:
+            # Analyze each feature and its contribution to the detection
+            for feature_name, value in features.items():
+                if feature_name in model_explanation['feature_thresholds']:
+                    thresholds = model_explanation['feature_thresholds'][feature_name]
+                    feature_analysis = self._analyze_feature_contribution(feature_name, value, thresholds)
+                    model_explanation['feature_analysis'][feature_name] = feature_analysis
+            
+            # Identify key indicators that contributed most to the detection
+            model_explanation['key_indicators'] = self._identify_key_indicators(features, probability)
+            
+            # Generate model reasoning
+            model_explanation['model_reasoning'] = self._generate_model_reasoning(features, probability, threat_level)
+            
+            return model_explanation
+            
+        except Exception as e:
+            logging.error(f"Error in model explanation: {e}")
+            return model_explanation
+    
+    def _analyze_feature_contribution(self, feature_name, value, thresholds):
+        """Analyze how a specific feature contributed to the detection."""
+        analysis = {
+            'value': value,
+            'contribution': 'neutral',
+            'reasoning': '',
+            'severity': 'normal'
+        }
+        
+        if feature_name == 'file_size':
+            if value > thresholds['very_suspicious']:
+                analysis['contribution'] = 'highly_suspicious'
+                analysis['reasoning'] = f'Very large file size ({value:,} bytes) - typical of packed malware or data stealers'
+                analysis['severity'] = 'high'
+            elif value > thresholds['suspicious']:
+                analysis['contribution'] = 'suspicious'
+                analysis['reasoning'] = f'Large file size ({value:,} bytes) - could indicate packed content'
+                analysis['severity'] = 'medium'
+            elif value < 10000:
+                analysis['contribution'] = 'suspicious'
+                analysis['reasoning'] = f'Very small file size ({value:,} bytes) - suspicious for executable'
+                analysis['severity'] = 'medium'
+        
+        elif feature_name == 'entropy':
+            if value > thresholds['high_suspicious']:
+                analysis['contribution'] = 'highly_suspicious'
+                analysis['reasoning'] = f'Very high entropy ({value:.2f}) - indicates packed/encrypted content'
+                analysis['severity'] = 'high'
+            elif value > 6.5:
+                analysis['contribution'] = 'suspicious'
+                analysis['reasoning'] = f'High entropy ({value:.2f}) - possible packed content'
+                analysis['severity'] = 'medium'
+            elif value < thresholds['low_suspicious']:
+                analysis['contribution'] = 'suspicious'
+                analysis['reasoning'] = f'Very low entropy ({value:.2f}) - suspicious uniformity'
+                analysis['severity'] = 'medium'
+        
+        elif feature_name == 'strings_count':
+            if value > thresholds['high_suspicious']:
+                analysis['contribution'] = 'suspicious'
+                analysis['reasoning'] = f'Very high string count ({value}) - could indicate obfuscated code'
+                analysis['severity'] = 'medium'
+            elif value < thresholds['low_suspicious']:
+                analysis['contribution'] = 'suspicious'
+                analysis['reasoning'] = f'Very low string count ({value}) - suspicious for executable'
+                analysis['severity'] = 'medium'
+        
+        elif feature_name == 'avg_string_length':
+            if value > thresholds['very_suspicious']:
+                analysis['contribution'] = 'highly_suspicious'
+                analysis['reasoning'] = f'Very long average strings ({value:.1f} chars) - possible obfuscation'
+                analysis['severity'] = 'high'
+            elif value > thresholds['suspicious']:
+                analysis['contribution'] = 'suspicious'
+                analysis['reasoning'] = f'Long average strings ({value:.1f} chars) - suspicious pattern'
+                analysis['severity'] = 'medium'
+        
+        elif feature_name == 'max_string_length':
+            if value > thresholds['very_suspicious']:
+                analysis['contribution'] = 'highly_suspicious'
+                analysis['reasoning'] = f'Very long maximum string ({value:.1f} chars) - possible obfuscation'
+                analysis['severity'] = 'high'
+            elif value > thresholds['suspicious']:
+                analysis['contribution'] = 'suspicious'
+                analysis['reasoning'] = f'Long maximum string ({value:.1f} chars) - suspicious pattern'
+                analysis['severity'] = 'medium'
+        
+        elif feature_name == 'printable_ratio':
+            if value < thresholds['low_suspicious']:
+                analysis['contribution'] = 'suspicious'
+                analysis['reasoning'] = f'Low printable ratio ({value:.2f}) - mostly binary content'
+                analysis['severity'] = 'medium'
+            elif value > thresholds['high_suspicious']:
+                analysis['contribution'] = 'suspicious'
+                analysis['reasoning'] = f'Very high printable ratio ({value:.2f}) - possible text-based malware'
+                analysis['severity'] = 'medium'
+        
+        elif feature_name == 'histogram_regularity':
+            if value > thresholds['very_suspicious']:
+                analysis['contribution'] = 'highly_suspicious'
+                analysis['reasoning'] = f'Very regular byte distribution ({value:.2f}) - possible encryption'
+                analysis['severity'] = 'high'
+            elif value > thresholds['suspicious']:
+                analysis['contribution'] = 'suspicious'
+                analysis['reasoning'] = f'Regular byte distribution ({value:.2f}) - suspicious pattern'
+                analysis['severity'] = 'medium'
+        
+        elif feature_name == 'entropy_consistency':
+            if value > thresholds['very_suspicious']:
+                analysis['contribution'] = 'highly_suspicious'
+                analysis['reasoning'] = f'Very consistent entropy ({value:.2f}) - possible packed content'
+                analysis['severity'] = 'high'
+            elif value > thresholds['suspicious']:
+                analysis['contribution'] = 'suspicious'
+                analysis['reasoning'] = f'Consistent entropy ({value:.2f}) - suspicious pattern'
+                analysis['severity'] = 'medium'
+        
+        return analysis
+    
+    def _identify_key_indicators(self, features, probability):
+        """Identify the key features that most contributed to the detection."""
+        key_indicators = []
+        
+        # Sort features by their suspiciousness
+        feature_scores = []
+        for feature_name, value in features.items():
+            if feature_name in ['file_size', 'entropy', 'strings_count', 'avg_string_length', 
+                              'max_string_length', 'printable_ratio', 'histogram_regularity', 'entropy_consistency']:
+                score = self._calculate_feature_suspiciousness(feature_name, value)
+                feature_scores.append((feature_name, value, score))
+        
+        # Sort by suspiciousness score
+        feature_scores.sort(key=lambda x: x[2], reverse=True)
+        
+        # Return top 3 most suspicious features
+        for feature_name, value, score in feature_scores[:3]:
+            if score > 0.5:  # Only include features that are actually suspicious
+                key_indicators.append({
+                    'feature': feature_name,
+                    'value': value,
+                    'suspiciousness': score,
+                    'explanation': self._get_feature_explanation(feature_name, value)
+                })
+        
+        return key_indicators
+    
+    def _calculate_feature_suspiciousness(self, feature_name, value):
+        """Calculate how suspicious a feature value is."""
+        thresholds = {
+            'file_size': {'low': 10000, 'high': 1000000, 'very_high': 10000000},
+            'entropy': {'low': 3.0, 'high': 6.5, 'very_high': 7.5},
+            'strings_count': {'low': 10, 'high': 500, 'very_high': 1000},
+            'avg_string_length': {'low': 10, 'high': 50, 'very_high': 200},
+            'max_string_length': {'low': 50, 'high': 100, 'very_high': 500},
+            'printable_ratio': {'low': 0.3, 'high': 0.9, 'very_high': 0.95},
+            'histogram_regularity': {'low': 0.5, 'high': 0.8, 'very_high': 0.95},
+            'entropy_consistency': {'low': 0.3, 'high': 0.7, 'very_high': 0.9}
+        }
+        
+        if feature_name not in thresholds:
+            return 0.0
+        
+        t = thresholds[feature_name]
+        
+        if feature_name == 'file_size':
+            if value > t['very_high']:
+                return 1.0
+            elif value > t['high']:
+                return 0.8
+            elif value < t['low']:
+                return 0.6
+            else:
+                return 0.0
+        
+        elif feature_name == 'entropy':
+            if value > t['very_high']:
+                return 1.0
+            elif value > t['high']:
+                return 0.8
+            elif value < t['low']:
+                return 0.6
+            else:
+                return 0.0
+        
+        elif feature_name in ['strings_count', 'avg_string_length', 'max_string_length']:
+            if value > t['very_high']:
+                return 1.0
+            elif value > t['high']:
+                return 0.8
+            elif value < t['low']:
+                return 0.6
+            else:
+                return 0.0
+        
+        elif feature_name == 'printable_ratio':
+            if value < t['low']:
+                return 0.8
+            elif value > t['high']:
+                return 0.6
+            else:
+                return 0.0
+        
+        elif feature_name in ['histogram_regularity', 'entropy_consistency']:
+            if value > t['very_high']:
+                return 1.0
+            elif value > t['high']:
+                return 0.8
+            else:
+                return 0.0
+        
+        return 0.0
+    
+    def _get_feature_explanation(self, feature_name, value):
+        """Get a human-readable explanation for a feature value."""
+        explanations = {
+            'file_size': {
+                'large': f'Large file size ({value:,} bytes) suggests packed content or data stealer',
+                'small': f'Small file size ({value:,} bytes) is suspicious for an executable',
+                'normal': f'Normal file size ({value:,} bytes)'
+            },
+            'entropy': {
+                'high': f'High entropy ({value:.2f}) indicates packed or encrypted content',
+                'low': f'Low entropy ({value:.2f}) shows suspicious uniformity',
+                'normal': f'Normal entropy ({value:.2f})'
+            },
+            'strings_count': {
+                'high': f'High string count ({value}) suggests obfuscated code',
+                'low': f'Low string count ({value}) is suspicious for executable',
+                'normal': f'Normal string count ({value})'
+            },
+            'avg_string_length': {
+                'long': f'Long average strings ({value:.1f} chars) suggest obfuscation',
+                'short': f'Short average strings ({value:.1f} chars)',
+                'normal': f'Normal average string length ({value:.1f} chars)'
+            },
+            'max_string_length': {
+                'long': f'Very long maximum string ({value:.1f} chars) suggests obfuscation',
+                'short': f'Short maximum string ({value:.1f} chars)',
+                'normal': f'Normal maximum string length ({value:.1f} chars)'
+            },
+            'printable_ratio': {
+                'low': f'Low printable ratio ({value:.2f}) indicates mostly binary content',
+                'high': f'High printable ratio ({value:.2f}) suggests text-based malware',
+                'normal': f'Normal printable ratio ({value:.2f})'
+            },
+            'histogram_regularity': {
+                'high': f'High regularity ({value:.2f}) suggests encryption or packing',
+                'low': f'Low regularity ({value:.2f})',
+                'normal': f'Normal histogram regularity ({value:.2f})'
+            },
+            'entropy_consistency': {
+                'high': f'High consistency ({value:.2f}) suggests packed content',
+                'low': f'Low consistency ({value:.2f})',
+                'normal': f'Normal entropy consistency ({value:.2f})'
+            }
+        }
+        
+        if feature_name not in explanations:
+            return f'Feature {feature_name}: {value}'
+        
+        # Determine which category the value falls into
+        if feature_name == 'file_size':
+            if value > 1000000:
+                return explanations[feature_name]['large']
+            elif value < 10000:
+                return explanations[feature_name]['small']
+            else:
+                return explanations[feature_name]['normal']
+        
+        elif feature_name == 'entropy':
+            if value > 7.0:
+                return explanations[feature_name]['high']
+            elif value < 3.0:
+                return explanations[feature_name]['low']
+            else:
+                return explanations[feature_name]['normal']
+        
+        elif feature_name in ['strings_count', 'avg_string_length', 'max_string_length']:
+            if value > 500:
+                return explanations[feature_name]['long'] if 'long' in explanations[feature_name] else explanations[feature_name]['high']
+            elif value < 50:
+                return explanations[feature_name]['short'] if 'short' in explanations[feature_name] else explanations[feature_name]['low']
+            else:
+                return explanations[feature_name]['normal']
+        
+        elif feature_name == 'printable_ratio':
+            if value < 0.3:
+                return explanations[feature_name]['low']
+            elif value > 0.9:
+                return explanations[feature_name]['high']
+            else:
+                return explanations[feature_name]['normal']
+        
+        elif feature_name in ['histogram_regularity', 'entropy_consistency']:
+            if value > 0.8:
+                return explanations[feature_name]['high']
+            elif value < 0.3:
+                return explanations[feature_name]['low']
+            else:
+                return explanations[feature_name]['normal']
+        
+        return f'Feature {feature_name}: {value}'
+    
+    def _generate_model_reasoning(self, features, probability, threat_level):
+        """Generate human-readable model reasoning."""
+        reasoning = []
+        
+        # Overall model confidence
+        if probability > 0.9:
+            reasoning.append(f"Model is {probability:.1%} confident this is malware")
+        elif probability > 0.7:
+            reasoning.append(f"Model is {probability:.1%} confident this is suspicious")
+        elif probability > 0.5:
+            reasoning.append(f"Model is {probability:.1%} confident this may be malicious")
+        else:
+            reasoning.append(f"Model has {probability:.1%} confidence in detection")
+        
+        # Threat level explanation
+        if threat_level == 'HIGH':
+            reasoning.append("High threat level indicates strong malware indicators")
+        elif threat_level == 'MEDIUM':
+            reasoning.append("Medium threat level indicates suspicious behavior")
+        else:
+            reasoning.append("Low threat level but still flagged by model")
+        
+        # Feature-based reasoning
+        suspicious_features = []
+        for feature_name, value in features.items():
+            if feature_name in ['file_size', 'entropy', 'strings_count', 'avg_string_length', 
+                              'max_string_length', 'printable_ratio', 'histogram_regularity', 'entropy_consistency']:
+                suspiciousness = self._calculate_feature_suspiciousness(feature_name, value)
+                if suspiciousness > 0.6:
+                    suspicious_features.append(feature_name)
+        
+        if suspicious_features:
+            reasoning.append(f"Key suspicious features: {', '.join(suspicious_features)}")
+        
+        return reasoning
 
 def main():
     """Main function for Windows antivirus."""
